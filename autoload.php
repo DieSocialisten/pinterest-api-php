@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Will autoload all required classes in the \DirkGroenen\Pinterest
  * namespace.
@@ -9,8 +10,8 @@
  * Based on the standard PSR-4 autoloader:
  * https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md
  */
-spl_autoload_register(function($class) {
-
+spl_autoload_register(
+  function ($class) {
     // project-specific namespace prefix
     $prefix = 'DirkGroenen\\Pinterest\\';
 
@@ -20,8 +21,8 @@ spl_autoload_register(function($class) {
     // does the class use the namespace prefix?
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
-        // no, move to the next registered autoloader
-        return;
+      // no, move to the next registered autoloader
+      return;
     }
 
     // get the relative class name
@@ -34,6 +35,7 @@ spl_autoload_register(function($class) {
 
     // if the file exists, require it
     if (file_exists($file)) {
-        require $file;
+      require $file;
     }
-});
+  }
+);

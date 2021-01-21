@@ -10,6 +10,7 @@
 
 namespace DirkGroenen\Pinterest\Exceptions;
 
-class CurlException extends \Exception {
+class CurlException extends \Exception
+{
 
 }

@@ -14,32 +14,33 @@ use DirkGroenen\Pinterest\Transport\Request;
 use DirkGroenen\Pinterest\Pinterest;
 
 
-class Endpoint {
+class Endpoint
+{
 
-    /**
-     * Instance of the request class
-     *
-     * @var Request
-     */
-    protected $request;
+  /**
+   * Instance of the request class
+   *
+   * @var Request
+   */
+  protected $request;
 
-    /**
-     * Instance of the master class
-     *
-     * @var Pinterest
-     */
-    protected $master;
+  /**
+   * Instance of the master class
+   *
+   * @var Pinterest
+   */
+  protected $master;
 
-    /**
-     * Create a new model instance
-     *
-     * @param  Request              $request
-     * @param  Pinterest            $master
-     */
-    public function __construct(Request $request, Pinterest $master)
-    {
-        $this->request = $request;
-        $this->master = $master;
-    }
+  /**
+   * Create a new model instance
+   *
+   * @param Request $request
+   * @param Pinterest $master
+   */
+  public function __construct(Request $request, Pinterest $master)
+  {
+    $this->request = $request;
+    $this->master = $master;
+  }
 
 }
