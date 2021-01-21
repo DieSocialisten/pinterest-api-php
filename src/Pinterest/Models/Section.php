@@ -20,6 +20,6 @@ class Section extends Model
    *
    * @var array
    */
-  protected $fillable = ["id", "title"];
+  protected array $fillable = ["id", "title"];
 
 }

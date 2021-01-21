@@ -13,28 +13,22 @@ namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
 use \DirkGroenen\Pinterest\Pinterest;
 use \DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class UsersTest extends \PHPUnit\Framework\TestCase
+class UsersTest extends TestCase
 {
+  private Pinterest $pinterest;
 
   /**
-   * The Pinterest instance
-   *
-   * @var Pinterest
-   */
-  private $pinterest;
-
-  /**
-   * Setup a new instance of the Pinterest class
-   *
-   * @return void
+   * @throws ReflectionException
    */
   public function setUp(): void
   {
-    $curlbuilder = CurlBuilderMock::create($this);
+    $curlBuilder = CurlBuilderMock::create($this);
 
     // Setup Pinterest
-    $this->pinterest = new Pinterest("0", "0", $curlbuilder);
+    $this->pinterest = new Pinterest("0", "0", $curlBuilder);
     $this->pinterest->auth->setOAuthToken("0");
   }
 
@@ -43,7 +37,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     $response = $this->pinterest->users->me();
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\User", $response);
-    $this->assertEquals($response->id, "503066358284560467");
+    $this->assertEquals("503066358284560467", $response->id);
   }
 
   public function testFindValidUser()
@@ -51,7 +45,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     $response = $this->pinterest->users->find('dirkgroenen');
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\User", $response);
-    $this->assertEquals($response->id, "503066358284560467");
+    $this->assertEquals("503066358284560467", $response->id);
   }
 
   /**
@@ -70,7 +64,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response->get(0));
-    $this->assertEquals($response->get(0)->id, "503066220854919493");
+    $this->assertEquals("503066220854919493", $response->get(0)->id);
   }
 
   public function testGetMePinsWithExtraFields()
@@ -82,8 +76,8 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     );
 
     $this->assertEquals(
-      $response->get(0)->image['small']['url'],
-      "http://media-cache-ak0.pinimg.com/30x30/e1/4e/45/e14e4532c516e2c532744a6ad6d2d2d0.jpg"
+      "http://media-cache-ak0.pinimg.com/30x30/e1/4e/45/e14e4532c516e2c532744a6ad6d2d2d0.jpg",
+      $response->get(0)->image['small']['url']
     );
   }
 
@@ -109,7 +103,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response->get(0));
-    $this->assertEquals($response->pagination, false);
+    $this->assertEquals(false, $response->pagination);
   }
 
   public function testGetMeLikes()

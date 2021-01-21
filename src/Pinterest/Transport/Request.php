@@ -16,25 +16,26 @@ use DirkGroenen\Pinterest\Exceptions\CurlException;
 
 class Request
 {
-
   /**
    * Access token
    *
-   * @var string
+   * @var string|null
    */
-  protected $access_token = null;
+  protected ?string $accessToken = null;
+
   /**
    * Host to make the calls to
    *
    * @var string
    */
-  private $host = "https://api.pinterest.com/v1/";
+  private string $host = "https://api.pinterest.com/v1/";
+
   /**
    * Instance of the CurlBuilder class
    *
    * @var CurlBuilder
    */
-  private $curlbuilder;
+  private CurlBuilder $curlBuilder;
 
   /**
    * Array with the headers from the last request
@@ -46,34 +47,33 @@ class Request
   /**
    * Constructor
    *
-   * @param CurlBuilder $curlbuilder
+   * @param CurlBuilder $curlBuilder
    */
-  public function __construct(CurlBuilder $curlbuilder)
+  public function __construct(CurlBuilder $curlBuilder)
   {
-    $this->curlbuilder = $curlbuilder;
+    $this->curlBuilder = $curlBuilder;
   }
 
   /**
    * Set the access token
    *
-   * @access public
    * @param string $token
-   * @return void
    */
-  public function setAccessToken($token)
+  public function setAccessToken(string $token)
   {
-    $this->access_token = $token;
+    $this->accessToken = $token;
   }
 
   /**
    * Make a get request to the given endpoint
    *
-   * @access public
    * @param string $endpoint
    * @param array $parameters
    * @return Response
+   *
+   * @throws PinterestException|CurlException
    */
-  public function get($endpoint, array $parameters = array())
+  public function get(string $endpoint, array $parameters = []): Response
   {
     if (!empty($parameters)) {
       $path = sprintf("%s?%s", $endpoint, http_build_query($parameters));
@@ -87,23 +87,22 @@ class Request
   /**
    * Execute the http request
    *
-   * @access public
    * @param string $method
    * @param string $apiCall
    * @param array $parameters
    * @param array $headers
    * @return Response
-   * @throws CurlException
-   * @throws PinterestException
+   *
+   * @throws CurlException|PinterestException
    */
-  public function execute($method, $apiCall, array $parameters = array(), $headers = array())
+  public function execute(string $method, string $apiCall, array $parameters = array(), $headers = array()): Response
   {
     // Check if the access token needs to be added
-    if ($this->access_token != null) {
+    if ($this->accessToken != null) {
       $headers = array_merge(
         $headers,
         array(
-          "Authorization: Bearer " . $this->access_token,
+          "Authorization: Bearer " . $this->accessToken,
         )
       );
     }
@@ -118,7 +117,7 @@ class Request
     );
 
     // Setup CURL
-    $ch = $this->curlbuilder->create();
+    $ch = $this->curlBuilder->create();
 
     // Set default options
     $ch->setOptions(
@@ -174,12 +173,11 @@ class Request
 
     if ($response_data === false && !$ch->hasErrors()) {
       throw new CurlException("Error: Curl request failed");
-    } else {
-      if ($ch->hasErrors()) {
-        throw new PinterestException(
-          'Error: execute() - cURL error: ' . $ch->getErrors(), $ch->getErrorNumber()
-        );
-      }
+
+    } elseif ($ch->hasErrors()) {
+      throw new PinterestException(
+        'Error: execute() - cURL error: ' . $ch->getErrors(), $ch->getErrorNumber()
+      );
     }
 
     // Initiate the response
@@ -206,12 +204,13 @@ class Request
   /**
    * Make a post request to the given endpoint
    *
-   * @access public
    * @param string $endpoint
    * @param array $parameters
    * @return Response
+   *
+   * @throws CurlException|PinterestException
    */
-  public function post($endpoint, array $parameters = array())
+  public function post(string $endpoint, array $parameters = array()): Response
   {
     return $this->execute("POST", sprintf("%s%s", $this->host, $endpoint), $parameters);
   }
@@ -219,12 +218,13 @@ class Request
   /**
    * Make a put request to the given endpoint
    *
-   * @access public
    * @param string $endpoint
    * @param array $parameters
    * @return Response
+   *
+   * @throws CurlException|PinterestException
    */
-  public function put($endpoint, array $parameters = array())
+  public function put(string $endpoint, array $parameters = array()): Response
   {
     return $this->execute("PUT", sprintf("%s%s", $this->host, $endpoint), $parameters);
   }
@@ -236,8 +236,10 @@ class Request
    * @param string $endpoint
    * @param array $parameters
    * @return Response
+   *
+   * @throws CurlException|PinterestException
    */
-  public function delete($endpoint, array $parameters = array())
+  public function delete(string $endpoint, array $parameters = array()): Response
   {
     return $this->execute("DELETE", sprintf("%s%s", $this->host, $endpoint) . "/", $parameters);
   }
@@ -245,16 +247,17 @@ class Request
   /**
    * Make an update request to the given endpoint
    *
-   * @access public
    * @param string $endpoint
    * @param array $parameters
-   * @param array $queryparameters
+   * @param array $queryParameters
    * @return Response
+   *
+   * @throws CurlException|PinterestException
    */
-  public function update($endpoint, array $parameters = array(), array $queryparameters = array())
+  public function update(string $endpoint, array $parameters = array(), array $queryParameters = array()): Response
   {
-    if (!empty($queryparameters)) {
-      $path = sprintf("%s?%s", $endpoint, http_build_query($queryparameters));
+    if (!empty($queryParameters)) {
+      $path = sprintf("%s?%s", $endpoint, http_build_query($queryParameters));
     } else {
       $path = $endpoint;
     }
@@ -271,5 +274,4 @@ class Request
   {
     return $this->headers;
   }
-
 }

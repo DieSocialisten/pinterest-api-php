@@ -12,13 +12,12 @@ namespace DirkGroenen\Pinterest\Models;
 
 class Pin extends Model
 {
-
   /**
    * The available object keys
    *
    * @var array
    */
-  protected $fillable = [
+  protected array $fillable = [
     "id",
     "link",
     "url",

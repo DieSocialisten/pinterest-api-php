@@ -10,6 +10,8 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\User;
 use DirkGroenen\Pinterest\Models\Collection;
 
@@ -19,14 +21,15 @@ class Users extends Endpoint
   /**
    * Get the current user
    *
-   * @access public
    * @param array $data
    * @return User
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function me(array $data = [])
+  public function me(array $data = []): User
   {
     $response = $this->request->get("me/", $data);
+
     return new User($this->master, $response);
   }
 
@@ -37,25 +40,28 @@ class Users extends Endpoint
    * @param string $username
    * @param array $data
    * @return User
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function find($username, array $data = [])
+  public function find(string $username, array $data = []): User
   {
     $response = $this->request->get(sprintf("users/%s/", $username), $data);
+
     return new User($this->master, $response);
   }
 
   /**
    * Get the authenticated user's pins
    *
-   * @access public
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   * @throws PinterestException|CurlException
    */
-  public function getMePins(array $data = [])
+  public function getMePins(array $data = []): Collection
   {
     $response = $this->request->get("me/pins/", $data);
+
     return new Collection($this->master, $response, "Pin");
   }
 
@@ -65,12 +71,14 @@ class Users extends Endpoint
    * @param string $query
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function searchMePins($query, array $data = [])
+  public function searchMePins(string $query, array $data = []): Collection
   {
     $data["query"] = $query;
     $response = $this->request->get("me/search/pins/", $data);
+
     return new Collection($this->master, $response, "Pin");
   }
 
@@ -80,55 +88,59 @@ class Users extends Endpoint
    * @param string $query
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function searchMeBoards($query, array $data = [])
+  public function searchMeBoards(string $query, array $data = []): Collection
   {
     $data["query"] = $query;
-
     $response = $this->request->get("me/search/boards/", $data);
+
     return new Collection($this->master, $response, "Board");
   }
 
   /**
    * Get the authenticated user's boards
    *
-   * @access public
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function getMeBoards(array $data = [])
+  public function getMeBoards(array $data = []): Collection
   {
     $response = $this->request->get("me/boards/", $data);
+
     return new Collection($this->master, $response, "Board");
   }
 
   /**
    * Get the authenticated user's likes
    *
-   * @access public
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function getMeLikes(array $data = [])
+  public function getMeLikes(array $data = []): Collection
   {
     $response = $this->request->get("me/likes/", $data);
+
     return new Collection($this->master, $response, "Pin");
   }
 
   /**
    * Get the authenticated user's followers
    *
-   * @access public
    * @param array $data
    * @return Collection
-   * @throws Exceptions\PinterestException
+   *
+   * @throws PinterestException|CurlException
    */
-  public function getMeFollowers(array $data = [])
+  public function getMeFollowers(array $data = []): Collection
   {
     $response = $this->request->get("me/followers/", $data);
+
     return new Collection($this->master, $response, "User");
   }
 

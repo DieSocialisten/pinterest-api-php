@@ -10,51 +10,56 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Models\Collection;
 
 class Pins extends Endpoint
 {
-
   /**
    * Get a pin object
    *
-   * @access public
-   * @param string $pin_id
+   * @param string $pinId
    * @param array $data
    * @return Pin
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function get($pin_id, array $data = [])
+  public function get(string $pinId, array $data = []): Pin
   {
-    $response = $this->request->get(sprintf("pins/%s/", $pin_id), $data);
+    $response = $this->request->get(sprintf("pins/%s/", $pinId), $data);
+
     return new Pin($this->master, $response);
   }
 
   /**
    * Get all pins from the given board
    *
-   * @access public
-   * @param string $board_id
+   * @param string $boardId
    * @param array $data
    * @return Collection
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function fromBoard($board_id, array $data = [])
+  public function fromBoard(string $boardId, array $data = []): Collection
   {
-    $response = $this->request->get(sprintf("boards/%s/pins/", $board_id), $data);
+    $response = $this->request->get(sprintf("boards/%s/pins/", $boardId), $data);
+
     return new Collection($this->master, $response, "Pin");
   }
 
   /**
    * Create a pin
    *
-   * @access public
    * @param array $data
    * @return Pin
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   *
+   * @throws PinterestException|CurlException
    */
-  public function create(array $data)
+  public function create(array $data): Pin
   {
     if (array_key_exists("image", $data)) {
       if (class_exists('\CURLFile')) {
@@ -65,38 +70,43 @@ class Pins extends Endpoint
     }
 
     $response = $this->request->post("pins/", $data);
+
     return new Pin($this->master, $response);
   }
 
   /**
    * Edit a pin
    *
-   * @access public
-   * @param string $pin_id
+   * @param string $pinId
    * @param array $data
-   * @param string $fields
+   * @param null $fields
    * @return Pin
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function edit($pin_id, array $data, $fields = null)
+  public function edit(string $pinId, array $data, $fields = null): Pin
   {
-    $query = (!$fields) ? array() : array("fields" => $fields);
+    $query = (!$fields) ? [] : ["fields" => $fields];
 
-    $response = $this->request->update(sprintf("pins/%s/", $pin_id), $data, $query);
+    $response = $this->request->update(sprintf("pins/%s/", $pinId), $data, $query);
+
     return new Pin($this->master, $response);
   }
 
   /**
    * Delete a pin
    *
-   * @access public
-   * @param string $pin_id
-   * @return boolean
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   * @param string $pinId
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function delete($pin_id)
+  public function delete(string $pinId): bool
   {
-    $this->request->delete(sprintf("pins/%s/", $pin_id));
+    $this->request->delete(sprintf("pins/%s/", $pinId));
+
     return true;
   }
 }

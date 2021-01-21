@@ -10,85 +10,82 @@
 
 namespace DirkGroenen\Pinterest\Tests\Utils;
 
+use DirkGroenen\Pinterest\Utils\CurlBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
+
 class CurlBuilderMock
 {
-
   /**
-   * Create a new mock of the curlbuilder and return
+   * Create a new mock of the curl builder and return
    * the given filename as content
    *
-   * @access public
-   * @param PHPUnit\Framework\TestCase $instance
-   * @return mock
+   * @param TestCase $instance
+   * @return MockObject|CurlBuilder
+   *
+   * @throws ReflectionException
    */
-  public static function create($instance)
+  public static function create(TestCase $instance): MockObject
   {
     $reflection = new \ReflectionMethod($instance, $instance->getName());
     $doc_block = $reflection->getDocComment();
 
-    $responsefile = self::parseDocBlock($doc_block, '@responsefile');
-    $responsecode = self::parseDocBlock($doc_block, '@responsecode');
+    $responseFile = self::parseDocBlock($doc_block, '@responsefile');
+    $responseCode = self::parseDocBlock($doc_block, '@responsecode');
 
-    $defaultheaders = array(
-      "X-Ratelimit-Limit" => "1000",
-      "X-Ratelimit-Remaining" => "998",
-      "X-Varnish" => "4059929980"
-    );
-
-    $skipmock = self::parseDocBlock($doc_block, '@skipmock');
-
-    if (empty($responsecode)) {
-      $responsecode = [201];
+    if (empty($responseCode)) {
+      $responseCode = [201];
     }
 
-    if (empty($responsefile)) {
-      $responsefile = [$instance->getName()];
+    if (empty($responseFile)) {
+      $responseFile = [$instance->getName()];
     }
 
-    // Setup Curlbuilder mock
-    $curlbuilder = $instance->getMockBuilder("\\DirkGroenen\\Pinterest\\Utils\\CurlBuilder")
+    // Setup Curl builder mock
+    $curlBuilder = $instance->getMockBuilder("\\DirkGroenen\\Pinterest\\Utils\\CurlBuilder")
       ->getMock();
 
-    $curlbuilder->expects($instance->any())
+    $curlBuilder->expects($instance->any())
       ->method('create')
       ->will($instance->returnSelf());
 
     // Build response file path
     $responseFilePath = __DIR__ . '/../responses/' . (new \ReflectionClass($instance))->getShortName(
-      ) . '/' . $responsefile[0] . ".json";
+      ) . '/' . $responseFile[0] . ".json";
 
     if (file_exists($responseFilePath)) {
-      $curlbuilder->expects($instance->once())
+      $curlBuilder->expects($instance->once())
         ->method('execute')
         ->will($instance->returnValue(file_get_contents($responseFilePath)));
     }
 
-    $curlbuilder->expects($instance->any())
+    $curlBuilder->expects($instance->any())
       ->method('getInfo')
-      ->will($instance->returnValue($responsecode[0]));
+      ->will($instance->returnValue($responseCode[0]));
 
-    return $curlbuilder;
+    return $curlBuilder;
   }
 
   /**
    * Parse the methods docblock and search for the
    * requested tag's value
    *
-   * @access private
-   * @param string $doc_block
+   * @param string $docBlock
    * @param string $tag
+   *
    * @return array
    */
-  private static function parseDocBlock($doc_block, $tag)
+  private static function parseDocBlock(string $docBlock, string $tag): array
   {
     $matches = array();
 
-    if (empty($doc_block)) {
+    if (empty($docBlock)) {
       return $matches;
     }
 
     $regex = "/{$tag} (.*)(\\r\\n|\\r|\\n)/U";
-    preg_match_all($regex, $doc_block, $matches);
+    preg_match_all($regex, $docBlock, $matches);
 
     if (empty($matches[1])) {
       return array();
@@ -103,5 +100,5 @@ class CurlBuilderMock
     }
 
     return $matches;
-  } // parseDocBlock
+  }
 }

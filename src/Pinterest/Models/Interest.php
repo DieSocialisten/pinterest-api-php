@@ -12,12 +12,10 @@ namespace DirkGroenen\Pinterest\Models;
 
 class Interest extends Model
 {
-
   /**
    * The available object keys
    *
    * @var array
    */
-  protected $fillable = ["id", "name"];
-
+  protected array $fillable = ["id", "name"];
 }

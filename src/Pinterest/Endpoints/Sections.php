@@ -10,39 +10,42 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Section;
 use DirkGroenen\Pinterest\Models\Collection;
 
 class Sections extends Endpoint
 {
-
   /**
    * Create a section
    *
-   * @access public
    * @param string $board
    * @param array $data
    * @return Section
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   *
+   * @throws PinterestException|CurlException
    */
-  public function create(string $board, array $data)
+  public function create(string $board, array $data): Section
   {
     $response = $this->request->put(sprintf("board/%s/sections/", $board), $data);
+
     return new Section($this->master, ['id' => $response->data]);
   }
 
   /**
    * Get sections for the given board
    *
-   * @access public
    * @param string $board
    * @param array $data
    * @return Collection<Section>
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   *
+   * @throws PinterestException|CurlException
    */
-  public function get(string $board, array $data = [])
+  public function get(string $board, array $data = []): Collection
   {
     $response = $this->request->get(sprintf("board/%s/sections/", $board), $data);
+
     return new Collection(
       $this->master, array_map(
       function ($r) {
@@ -56,29 +59,31 @@ class Sections extends Endpoint
   /**
    * Get pins for section
    *
-   * @access public
    * @param string $section
    * @param array $data
-   * @return Collection<Pin>
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   * @return Collection
+   *
+   * @throws PinterestException|CurlException
    */
-  public function pins(string $section, array $data = [])
+  public function pins(string $section, array $data = []): Collection
   {
     $response = $this->request->get(sprintf("board/sections/%s/pins/", $section), $data);
+
     return new Collection($this->master, $response, "Pin");
   }
 
   /**
    * Delete a board's section
    *
-   * @access public
    * @param string $section
-   * @return Collection<Pin>
-   * @throws \DirkGroenen\Pinterest\Exceptions\PinterestException
+   * @return bool
+   *
+   * @throws PinterestException|CurlException
    */
-  public function delete($section)
+  public function delete(string $section): bool
   {
     $this->request->delete(sprintf("board/sections/%s/", $section));
+
     return true;
   }
 }

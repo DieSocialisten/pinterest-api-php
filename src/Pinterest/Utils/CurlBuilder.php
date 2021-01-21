@@ -27,11 +27,8 @@ class CurlBuilder
    *
    * @var array
    */
-  private $headers;
+  private array $headers;
 
-  /**
-   * Constructor
-   */
   public function __construct()
   {
     $this->curl = curl_init();
@@ -40,10 +37,9 @@ class CurlBuilder
   /**
    * Return a new instance of the CurlBuilder
    *
-   * @access public
    * @return CurlBuilder
    */
-  public function create()
+  public function create(): CurlBuilder
   {
     return new self();
   }
@@ -51,8 +47,9 @@ class CurlBuilder
   /**
    * Execute the curl request
    *
-   * @access public
    * @return false|string
+   *
+   * @throws PinterestException
    */
   public function execute()
   {
@@ -65,8 +62,9 @@ class CurlBuilder
    * combining it with open basedir.
    *
    * @see http://slopjong.de/2012/03/31/curl-follow-locations-with-safe_mode-enabled-or-open_basedir-set/
-   * @access private
+   *
    * @return false|string
+   * @throws PinterestException
    */
   private function execFollow()
   {
@@ -85,7 +83,7 @@ class CurlBuilder
 
       if ($mr > 0) {
         $original_url = $this->getInfo(CURLINFO_EFFECTIVE_URL);
-        $newurl = $original_url;
+        $newUrl = $original_url;
 
         $this->setOptions(
           array(
@@ -95,7 +93,7 @@ class CurlBuilder
         );
 
         do {
-          $this->setOption(CURLOPT_URL, $newurl);
+          $this->setOption(CURLOPT_URL, $newUrl);
 
           $response = curl_exec($this->curl);
 
@@ -110,13 +108,13 @@ class CurlBuilder
 
             if ($code == 301 || $code == 302 || $code == 308) {
               preg_match('/Location:(.*?)\n/i', $header, $matches);
-              $newurl = trim(array_pop($matches));
+              $newUrl = trim(array_pop($matches));
+
+            } elseif ($code >= 300 && $code <= 399) {
+              throw new PinterestException('Error: Unhandled 3xx HTTP code: ' . $code);
+
             } else {
-              if ($code >= 300 && $code <= 399) {
-                throw new PinterestException('Error: Unhandled 3xx HTTP code: ' . $code);
-              } else {
-                $code = 0;
-              }
+              $code = 0;
             }
           }
         } while ($code && --$mr);
@@ -150,11 +148,10 @@ class CurlBuilder
   /**
    * Sets multiple options at the same time
    *
-   * @access public
    * @param array $options
    * @return $this
    */
-  public function setOptions(array $options = [])
+  public function setOptions(array $options = []): CurlBuilder
   {
     curl_setopt_array($this->curl, $options);
 
@@ -164,12 +161,12 @@ class CurlBuilder
   /**
    * Sets an option in the curl instance
    *
-   * @access public
-   * @param string $option
-   * @param false|string $value
+   * @param int $option
+   * @param callable|mixed $value
+   *
    * @return $this
    */
-  public function setOption($option, $value)
+  public function setOption(int $option, $value): CurlBuilder
   {
     curl_setopt($this->curl, $option, $value);
 
@@ -179,11 +176,10 @@ class CurlBuilder
   /**
    * Get curl info key
    *
-   * @access public
    * @param string $key
-   * @return string
+   * @return string|int
    */
-  public function getInfo($key)
+  public function getInfo(string $key)
   {
     return curl_getinfo($this->curl, $key);
   }
@@ -191,10 +187,9 @@ class CurlBuilder
   /**
    * Get last curl error number
    *
-   * @access public
    * @return int
    */
-  public function getErrorNumber()
+  public function getErrorNumber(): int
   {
     return curl_errno($this->curl);
   }
@@ -206,9 +201,10 @@ class CurlBuilder
    * @param string $headers
    * @return array
    */
-  private function parseHeaders($headers)
+  private function parseHeaders(string $headers): array
   {
     $result = array();
+
     foreach (explode("\n", $headers) as $row) {
       $header = explode(':', $row, 2);
       if (count($header) == 2) {
@@ -217,16 +213,16 @@ class CurlBuilder
         $result[] = $header[0];
       }
     }
+
     return $result;
   }
 
   /**
    * Check if the curl request ended up with errors
    *
-   * @access public
-   * @return integer
+   * @return int
    */
-  public function hasErrors()
+  public function hasErrors(): int
   {
     return curl_errno($this->curl);
   }
@@ -234,10 +230,9 @@ class CurlBuilder
   /**
    * Get curl errors
    *
-   * @access public
    * @return string
    */
-  public function getErrors()
+  public function getErrors(): string
   {
     return curl_error($this->curl);
   }
@@ -245,19 +240,15 @@ class CurlBuilder
   /**
    * Get headers
    *
-   * @access public
-   * @return string
+   * @return array
    */
-  public function getHeaders()
+  public function getHeaders(): array
   {
     return $this->headers;
   }
 
   /**
    * Close the curl resource
-   *
-   * @access public
-   * @return void
    */
   public function close()
   {

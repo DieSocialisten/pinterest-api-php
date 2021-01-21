@@ -10,69 +10,77 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Board;
 
 class Boards extends Endpoint
 {
-
   /**
    * Find the provided board
    *
-   * @access public
-   * @param string $board_id
+   * @param string $boardId
    * @param array $data
    * @return Board
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function get($board_id, array $data = [])
+  public function get(string $boardId, array $data = []): Board
   {
-    $response = $this->request->get(sprintf("boards/%s/", $board_id), $data);
+    $response = $this->request->get(sprintf("boards/%s/", $boardId), $data);
+
     return new Board($this->master, $response);
   }
 
   /**
    * Create a new board
    *
-   * @access public
    * @param array $data
    * @return Board
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function create(array $data)
+  public function create(array $data): Board
   {
     $response = $this->request->post("boards/", $data);
+
     return new Board($this->master, $response);
   }
 
   /**
    * Edit a board
    *
-   * @access public
-   * @param string $board_id
+   * @param string $boardId
    * @param array $data
-   * @param string $fields
+   * @param null $fields
    * @return Board
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function edit($board_id, array $data, $fields = null)
+  public function edit(string $boardId, array $data, $fields = null): Board
   {
-    $query = (!$fields) ? array() : array("fields" => $fields);
+    $query = (!$fields) ? [] : ["fields" => $fields];
 
-    $response = $this->request->update(sprintf("boards/%s/", $board_id), $data, $query);
+    $response = $this->request->update(sprintf("boards/%s/", $boardId), $data, $query);
+
     return new Board($this->master, $response);
   }
 
   /**
    * Delete a board
    *
-   * @access public
-   * @param string $board_id
-   * @return boolean
-   * @throws Exceptions/PinterestExceptions
+   * @param string $boardId
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function delete($board_id)
+  public function delete(string $boardId): bool
   {
-    $this->request->delete(sprintf("boards/%s/", $board_id));
+    $this->request->delete(sprintf("boards/%s/", $boardId));
+
     return true;
   }
 }

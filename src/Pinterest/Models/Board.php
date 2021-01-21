@@ -12,12 +12,11 @@ namespace DirkGroenen\Pinterest\Models;
 
 class Board extends Model
 {
-
   /**
    * The available object keys
    *
    * @var array
    */
-  protected $fillable = ["id", "name", "url", "description", "creator", "created_at", "counts", "image"];
+  protected array $fillable = ["id", "name", "url", "description", "creator", "created_at", "counts", "image"];
 
 }

@@ -11,59 +11,55 @@
 namespace DirkGroenen\Pinterest\Models;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
-use DirkGroenen\Pinterest\Pinterest\Transport\Response;
+use DirkGroenen\Pinterest\Transport\Response;
 use DirkGroenen\Pinterest\Pinterest;
 
 class Model implements \JsonSerializable
 {
-
   /**
    * The model's attributes
    *
    * @var array
    */
-  protected $attributes = [];
+  protected array $attributes = [];
 
   /**
    * The available object keys
    *
    * @var array
    */
-  protected $fillable = [];
+  protected array $fillable = [];
 
   /**
    * Instance of the master Pinterest class
    *
    * @var Pinterest
    */
-  protected $master;
+  protected Pinterest $master;
 
   /**
    * Create a new model instance
    *
    * @param Pinterest $master
-   * @param mixed $modeldata
+   * @param mixed $modelData
    */
-  public function __construct(Pinterest $master, $modeldata = null)
+  public function __construct(Pinterest $master, $modelData = null)
   {
     $this->master = $master;
 
     // Fill the model
-    if (is_array($modeldata)) {
-      $this->fill($modeldata);
-    } else {
-      if ($modeldata instanceof \DirkGroenen\Pinterest\Transport\Response) {
-        $this->fill($modeldata->data);
-      }
+    if (is_array($modelData)) {
+      $this->fill($modelData);
+
+    } elseif ($modelData instanceof Response) {
+      $this->fill($modelData->data);
     }
   }
 
   /**
    * Fill the attributes
    *
-   * @access private
    * @param array $attributes
-   * @return void
    */
   private function fill(array $attributes)
   {
@@ -77,11 +73,10 @@ class Model implements \JsonSerializable
   /**
    * Check if the key is fillable
    *
-   * @access public
    * @param string $key
-   * @return boolean
+   * @return bool
    */
-  public function isFillable($key)
+  public function isFillable(string $key): bool
   {
     return in_array($key, $this->fillable);
   }
@@ -89,11 +84,10 @@ class Model implements \JsonSerializable
   /**
    * Get the model's attribute
    *
-   * @access public
    * @param string $key
    * @return mixed
    */
-  public function __get($key)
+  public function __get(string $key)
   {
     return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
   }
@@ -101,13 +95,12 @@ class Model implements \JsonSerializable
   /**
    * Set the model's attribute
    *
-   * @access public
    * @param string $key
    * @param mixed $value
-   * @return void
-   * @throws Exceptions\PinterestException
+   *
+   * @throws PinterestException
    */
-  public function __set($key, $value)
+  public function __set(string $key, $value)
   {
     if ($this->isFillable($key)) {
       $this->attributes[$key] = $value;
@@ -122,7 +115,7 @@ class Model implements \JsonSerializable
    * @param $key
    * @return bool
    */
-  public function __isset($key)
+  public function __isset($key): bool
   {
     return array_key_exists($key, $this->attributes);
   }
@@ -130,10 +123,9 @@ class Model implements \JsonSerializable
   /**
    * Convert the object into something JSON serializable.
    *
-   * @access public
    * @return array
    */
-  public function jsonSerialize()
+  public function jsonSerialize(): array
   {
     return $this->toArray();
   }
@@ -141,10 +133,9 @@ class Model implements \JsonSerializable
   /**
    * Convert the model instance to an array
    *
-   * @access public
    * @return array
    */
-  public function toArray()
+  public function toArray(): array
   {
     $array = array();
 
@@ -158,10 +149,9 @@ class Model implements \JsonSerializable
   /**
    * Convert the model to its string representation
    *
-   * @access public
    * @return string
    */
-  public function __toString()
+  public function __toString(): string
   {
     return $this->toJson();
   }
@@ -169,10 +159,9 @@ class Model implements \JsonSerializable
   /**
    * Convert the model instance to JSON
    *
-   * @access public
    * @return string
    */
-  public function toJson()
+  public function toJson(): string
   {
     return json_encode($this->toArray(), true);
   }

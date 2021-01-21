@@ -10,53 +10,42 @@
 
 namespace DirkGroenen\Pinterest\Auth;
 
-use DirkGroenen\Pinterest\Transport\Request;
+use DirkGroenen\Pinterest\Exceptions\CurlException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Transport\Request;
+use DirkGroenen\Pinterest\Transport\Response;
 
 class PinterestOAuth
 {
-
   /**
    * Pinterest's oauth endpoint
    */
-  const AUTH_HOST = "https://api.pinterest.com/oauth/";
-  /**
-   * The application ID
-   *
-   * @var string
-   */
-  private $client_id;
-  /**
-   * The app secret
-   *
-   * @var string
-   */
-  private $client_secret;
-  /**
-   * Random string indicating the state
-   * to prevent spoofing
-   *
-   * @var void
-   */
-  private $state;
-  /**
-   * A reference to the request instance
-   *
-   * @var Request
-   */
-  private $request;
+  public const AUTH_HOST = "https://api.pinterest.com/oauth/";
 
   /**
-   * Construct
-   *
-   * @param string $client_id
-   * @param string $client_secret
-   * @param Request $request
+   * The application ID
    */
-  public function __construct($client_id, $client_secret, $request)
+  private string $clientId;
+
+  /**
+   * The app secret
+   */
+  private string $clientSecret;
+
+  /**
+   * Random string indicating the state to prevent spoofing
+   */
+  private ?string $state;
+
+  /**
+   * A reference to the request instance
+   */
+  private Request $request;
+
+  public function __construct(string $clientId, string $clientSecret, Request $request)
   {
-    $this->client_id = $client_id;
-    $this->client_secret = $client_secret;
+    $this->clientId = $clientId;
+    $this->clientSecret = $clientSecret;
 
     // Generate and set the state
     $this->state = $this->generateState();
@@ -71,7 +60,7 @@ class PinterestOAuth
    * @access private
    * @return string       random string
    */
-  private function generateState()
+  private function generateState(): string
   {
     return substr(md5(rand()), 0, 7);
   }
@@ -79,23 +68,23 @@ class PinterestOAuth
   /**
    * Returns the login url
    *
-   * @access public
+   * @param string $redirectUri
    * @param array $scopes
-   * @param string $redirect_uri
+   * @param string $responseType
    * @return string
    */
-  public function getLoginUrl($redirect_uri, $scopes = array("read_public"), $response_type = "code")
+  public function getLoginUrl(string $redirectUri, $scopes = ["read_public"], $responseType = "code"): string
   {
-    $queryparams = array(
-      "response_type" => $response_type,
-      "redirect_uri" => $redirect_uri,
-      "client_id" => $this->client_id,
+    $queryParams = [
+      "response_type" => $responseType,
+      "redirect_uri" => $redirectUri,
+      "client_id" => $this->clientId,
       "scope" => implode(",", $scopes),
       "state" => $this->state
-    );
+    ];
 
     // Build url and return it
-    return sprintf("%s?%s", self::AUTH_HOST, http_build_query($queryparams));
+    return sprintf("%s?%s", self::AUTH_HOST, http_build_query($queryParams));
   }
 
   /**
@@ -103,53 +92,49 @@ class PinterestOAuth
    *
    * @return string
    */
-  public function getState()
+  public function getState(): ?string
   {
     return $this->state;
   }
 
   /**
    * Set a state manually
-   *
-   * @param string $state
-   * @return void
+   * @param string|null $state
    */
-  public function setState($state)
+  public function setState(?string $state)
   {
     $this->state = $state;
   }
 
   /**
-   * Change the code for an access_token
+   * Change the code for an access token
    *
    * @param string $code
-   * @return \DirkGroenen\Pinterest\Transport\Response
+   * @return Response
+   *
+   * @throws CurlException|PinterestException
    */
-  public function getOAuthToken($code)
+  public function getOAuthToken(string $code): Response
   {
     // Build data array
-    $data = array(
+    $data = [
       "grant_type" => "authorization_code",
-      "client_id" => $this->client_id,
-      "client_secret" => $this->client_secret,
+      "client_id" => $this->clientId,
+      "client_secret" => $this->clientSecret,
       "code" => $code
-    );
+    ];
 
     // Perform post request
-    $response = $this->request->post("oauth/token", $data);
-
-    return $response;
+    return $this->request->post("oauth/token", $data);
   }
 
   /**
-   * Set the access_token for further requests
+   * Set the access token for further requests
    *
-   * @access public
-   * @param string $access_token
-   * @return void
+   * @param string $accessToken
    */
-  public function setOAuthToken($access_token)
+  public function setOAuthToken(string $accessToken)
   {
-    $this->request->setAccessToken($access_token);
+    $this->request->setAccessToken($accessToken);
   }
 }

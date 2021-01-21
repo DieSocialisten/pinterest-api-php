@@ -13,40 +13,34 @@ namespace DirkGroenen\Pinterest\Tests;
 
 use \DirkGroenen\Pinterest\Pinterest;
 use \DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class PinterestTest extends \PHPUnit\Framework\TestCase
+class PinterestTest extends TestCase
 {
+  private Pinterest $pinterest;
 
   /**
-   * The Pinterest instance
-   *
-   * @var Pinterest
-   */
-  private $pinterest;
-
-  /**
-   * Setup a new instance of the Pinterest class
-   *
-   * @return void
+   * @throws ReflectionException
    */
   public function setUp(): void
   {
-    $curlbuilder = CurlBuilderMock::create($this);
+    $curlBuilder = CurlBuilderMock::create($this);
 
     // Setup Pinterest
-    $this->pinterest = new Pinterest("0", "0", $curlbuilder);
+    $this->pinterest = new Pinterest("0", "0", $curlBuilder);
     $this->pinterest->auth->setOAuthToken("0");
   }
 
   public function testGetRateLimit()
   {
-    $ratelimit = $this->pinterest->getRateLimit();
-    $this->assertEquals($ratelimit, 1000);
+    $rateLimit = $this->pinterest->getRateLimit();
+    $this->assertEquals(1000, $rateLimit);
   }
 
   public function testGetRateLimitRemaining()
   {
-    $ratelimit = $this->pinterest->getRateLimitRemaining();
-    $this->assertEquals($ratelimit, 'unknown');
+    $rateLimitRemaining = $this->pinterest->getRateLimitRemaining();
+    $this->assertEquals('unknown', $rateLimitRemaining);
   }
 }

@@ -11,26 +11,30 @@
 namespace DirkGroenen\Pinterest;
 
 use DirkGroenen\Pinterest\Auth\PinterestOAuth;
+use DirkGroenen\Pinterest\Endpoints\Boards;
+use DirkGroenen\Pinterest\Endpoints\Following;
+use DirkGroenen\Pinterest\Endpoints\Pins;
+use DirkGroenen\Pinterest\Endpoints\Sections;
+use DirkGroenen\Pinterest\Endpoints\Users;
 use DirkGroenen\Pinterest\Utils\CurlBuilder;
 use DirkGroenen\Pinterest\Transport\Request;
 use DirkGroenen\Pinterest\Exceptions\InvalidEndpointException;
 
 /**
- * @property \DirkGroenen\Pinterest\Endpoints\Boards boards
- * @property \DirkGroenen\Pinterest\Endpoints\Following following
- * @property \DirkGroenen\Pinterest\Endpoints\Pins pins
- * @property \DirkGroenen\Pinterest\Endpoints\Users users
- * @property \DirkGroenen\Pinterest\Endpoints\Sections sections
+ * @property Boards boards
+ * @property Following following
+ * @property Pins pins
+ * @property Users users
+ * @property Sections sections
  */
 class Pinterest
 {
-
   /**
    * Reference to authentication class instance
    *
    * @var Auth\PinterestOAuth
    */
-  public $auth;
+  public PinterestOAuth $auth;
 
   /**
    * A reference to the request class which travels
@@ -38,53 +42,53 @@ class Pinterest
    *
    * @var Transport\Request
    */
-  public $request;
+  public Request $request;
 
   /**
    * A array containing the cached endpoints
    *
    * @var array
    */
-  private $cachedEndpoints = [];
+  private array $cachedEndpoints = [];
 
   /**
    * Constructor
    *
-   * @param string $client_id
-   * @param string $client_secret
-   * @param CurlBuilder $curlbuilder
+   * @param string $clientId
+   * @param string $clientSecret
+   * @param CurlBuilder|null $curlBuilder
    */
-  public function __construct($client_id, $client_secret, $curlbuilder = null)
+  public function __construct(string $clientId, string $clientSecret, ?CurlBuilder $curlBuilder = null)
   {
-    if ($curlbuilder == null) {
-      $curlbuilder = new CurlBuilder();
+    if ($curlBuilder == null) {
+      $curlBuilder = new CurlBuilder();
     }
 
     // Create new instance of Transport\Request
-    $this->request = new Request($curlbuilder);
+    $this->request = new Request($curlBuilder);
 
     // Create and set new instance of the OAuth class
-    $this->auth = new PinterestOAuth($client_id, $client_secret, $this->request);
+    $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->request);
   }
 
   /**
    * Get an Pinterest API endpoint
    *
-   * @access public
    * @param string $endpoint
    * @return mixed
-   * @throws Exceptions\InvalidEndpointException
+   * @throws Exceptions\InvalidEndpointException|\ReflectionException
    */
-  public function __get($endpoint)
+  public function __get(string $endpoint)
   {
     $endpoint = strtolower($endpoint);
+
     $class = "\\DirkGroenen\\Pinterest\\Endpoints\\" . ucfirst($endpoint);
 
     // Check if an instance has already been initiated
     if (!isset($this->cachedEndpoints[$endpoint])) {
       // Check endpoint existence
       if (!class_exists($class)) {
-        throw new InvalidEndpointException;
+        throw new InvalidEndpointException();
       }
 
       // Create a reflection of the called class and initialize it
@@ -101,30 +105,34 @@ class Pinterest
   /**
    * Get rate limit from the headers
    * response header may change from X-Ratelimit-Limit to X-RateLimit-Limit
-   * @access public
-   * @return integer
+   *
+   * @return int|string
    */
   public function getRateLimit()
   {
     $header = $this->request->getHeaders();
+
     if (is_array($header)) {
       $header = array_change_key_case($header, CASE_LOWER);
     }
+
     return (isset($header['x-ratelimit-limit']) ? $header['x-ratelimit-limit'] : 1000);
   }
 
   /**
    * Get rate limit remaining from the headers
    * response header may change from X-Ratelimit-Remaining to X-RateLimit-Remaining
-   * @access public
+   *
    * @return mixed
    */
   public function getRateLimitRemaining()
   {
     $header = $this->request->getHeaders();
+
     if (is_array($header)) {
       $header = array_change_key_case($header, CASE_LOWER);
     }
+
     return (isset($header['x-ratelimit-remaining']) ? $header['x-ratelimit-remaining'] : 'unknown');
   }
 }

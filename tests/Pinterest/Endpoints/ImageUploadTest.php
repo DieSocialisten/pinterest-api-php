@@ -12,23 +12,12 @@
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
 use \DirkGroenen\Pinterest\Pinterest;
-use \DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
+use PHPUnit\Framework\TestCase;
 
-class ImageUploadTest extends \PHPUnit\Framework\TestCase
+class ImageUploadTest extends TestCase
 {
+  private Pinterest $pinterest;
 
-  /**
-   * The Pinterest instance
-   *
-   * @var Pinterest
-   */
-  private $pinterest;
-
-  /**
-   * Setup a new instance of the Pinterest class
-   *
-   * @return void
-   */
   public function setUp(): void
   {
     // Setup Pinterest without the curlbuilder mock (since we wan't to test real interaction)

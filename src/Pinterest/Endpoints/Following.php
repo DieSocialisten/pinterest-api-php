@@ -10,64 +10,67 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Models\User;
+use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Collection;
 
 class Following extends Endpoint
 {
-
-
   /**
    * Get the authenticated user's following users
    *
-   * @access public
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function users(array $data = [])
+  public function users(array $data = []): Collection
   {
     $response = $this->request->get("me/following/users/", $data);
+
     return new Collection($this->master, $response, "User");
   }
 
   /**
    * Get the authenticated user's following boards
    *
-   * @access public
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function boards(array $data = [])
+  public function boards(array $data = []): Collection
   {
     $response = $this->request->get("me/following/boards/", $data);
+
     return new Collection($this->master, $response, "Board");
   }
 
   /**
    * Get the authenticated user's following interest
    *
-   * @access public
    * @param array $data
    * @return Collection
-   * @throws Exceptions/PinterestExceptions
+   *
+   * @throws PinterestException|CurlException
    */
-  public function interests(array $data = [])
+  public function interests(array $data = []): Collection
   {
     $response = $this->request->get("me/following/interests/", $data);
+
     return new Collection($this->master, $response, "Interest");
   }
 
   /**
    * Follow a user
    *
-   * @access public
    * @param string $user
-   * @return boolean
-   * @throws Exceptions/PinterestExceptions
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function followUser($user)
+  public function followUser(string $user): bool
   {
     $this->request->post(
       "me/following/users/",
@@ -75,32 +78,36 @@ class Following extends Endpoint
         "user" => $user
       )
     );
+
     return true;
   }
 
   /**
    * Unfollow a user
    *
-   * @access public
    * @param string $user
-   * @return boolean
-   * @throws Exceptions/PinterestExceptions
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function unfollowUser($user)
+  public function unfollowUser(string $user): bool
   {
     $this->request->delete(sprintf("me/following/users/%s/", $user));
+
     return true;
   }
 
   /**
    * Follow a board
    *
-   * @access public
    * @param string $board
-   * @return boolean
-   * @throws Exceptions/PinterestExceptions
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function followBoard($board)
+  public function followBoard(string $board): bool
   {
     $this->request->post(
       "me/following/boards/",
@@ -108,32 +115,36 @@ class Following extends Endpoint
         "board" => $board
       )
     );
+
     return true;
   }
 
   /**
    * Unfollow a board
    *
-   * @access public
-   * @param string $board_id
-   * @return boolean
-   * @throws Exceptions/PinterestExceptions
+   * @param string $boardId
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function unfollowBoard($board_id)
+  public function unfollowBoard(string $boardId): bool
   {
-    $this->request->delete(sprintf("me/following/boards/%s/", $board_id));
+    $this->request->delete(sprintf("me/following/boards/%s/", $boardId));
+
     return true;
   }
 
   /**
    * Follow a board
    *
-   * @access public
    * @param string $interest
-   * @return boolean
-   * @throws Exceptions/PinterestExceptions
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function followInterest($interest)
+  public function followInterest(string $interest): bool
   {
     $this->request->post(
       "me/following/interests/",
@@ -141,20 +152,23 @@ class Following extends Endpoint
         "interest" => $interest
       )
     );
+
     return true;
   }
 
   /**
    * Unfollow an interest
    *
-   * @access public
-   * @param string $interest_id
-   * @return boolean
-   * @throws Exceptions/PinterestExceptions
+   * @param string $interestId
+   * @return bool
+   *
+   * @throws PinterestException
+   * @throws CurlException
    */
-  public function unfollowInterest($interest_id)
+  public function unfollowInterest(string $interestId): bool
   {
-    $this->request->delete(sprintf("me/following/interests/%s/", $interest_id));
+    $this->request->delete(sprintf("me/following/interests/%s/", $interestId));
+
     return true;
   }
 }

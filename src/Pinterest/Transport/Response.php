@@ -16,30 +16,29 @@ use DirkGroenen\Pinterest\Utils\CurlBuilder;
  * @property array $page
  * @property array $data
  * @property string $message
+ * @property string $error
  */
 class Response
 {
-
   /**
    * Contains the raw response
    *
-   * @var string
+   * @var string|array
    */
   private $response;
 
   /**
    * Used curl instance
    *
-   * @var curl
+   * @var CurlBuilder
    */
-  private $curl;
+  private CurlBuilder $curl;
 
   /**
    * Constructor
    *
-   * @param string $response
+   * @param string|array $response
    * @param CurlBuilder $curl
-   * @param curl $curl
    */
   public function __construct($response, CurlBuilder $curl)
   {
@@ -54,11 +53,10 @@ class Response
   /**
    * Decode the string to an array
    *
-   * @access private
    * @param string $response
    * @return array
    */
-  private function decodeString($response)
+  private function decodeString(string $response): array
   {
     return json_decode($response, true);
   }
@@ -66,11 +64,10 @@ class Response
   /**
    * Return the requested key data
    *
-   * @access public
    * @param string $key
    * @return mixed
    */
-  public function __get($key)
+  public function __get(string $key)
   {
     return isset($this->response[$key]) ? $this->response[$key] : [];
   }
@@ -78,23 +75,22 @@ class Response
   /**
    * Return if the key is set
    *
-   * @access public
    * @param string $key
-   * @return boolean
+   * @return bool
    */
-  public function __isset($key)
+  public function __isset(string $key): bool
   {
     return isset($this->response[$key]);
   }
 
   /**
-   * Returns the error message which should normaly
+   * Returns the error message which should normally
    * by located in the response->message key, but can
    * also be localed in the response->error key.
    *
    * @return string
    */
-  public function getMessage()
+  public function getMessage(): string
   {
     return (isset($this->message)) ? $this->message : $this->error;
   }
@@ -102,12 +98,10 @@ class Response
   /**
    * Get the response code from the request
    *
-   * @access public
-   * @return int
+   * @return numeric|string
    */
   public function getResponseCode()
   {
     return $this->curl->getInfo(CURLINFO_HTTP_CODE);
   }
-
 }

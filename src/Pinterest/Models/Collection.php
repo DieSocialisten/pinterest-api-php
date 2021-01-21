@@ -10,53 +10,53 @@
 
 namespace DirkGroenen\Pinterest\Models;
 
+use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
-
-use \DirkGroenen\Pinterest\Pinterest;
-use \DirkGroenen\Pinterest\Transport\Response;
+use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Transport\Response;
 
 class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
 {
-
   /**
    * Stores the pagination object
    *
-   * @var array|boolean
+   * @var array|bool
    */
   public $pagination;
+
   /**
    * The items in the collection
    *
    * @var array
    */
-  private $items = [];
+  private array $items = [];
+
   /**
    * The model of each collection item
    *
    * @var string
    */
-  private $model;
+  private string $model;
+
   /**
    * Instance of Pinterest master class
    *
    * @var Pinterest
    */
-  private $master;
+  private Pinterest $master;
 
   /**
    * Response instance
-   *
-   * @var Response
    */
-  private $response;
+  private ?Response $response;
 
   /**
    * Construct
    *
-   * @access public
    * @param Pinterest $master
    * @param array|Response $items
    * @param string $model
+   *
    * @throws InvalidModelException
    */
   public function __construct(Pinterest $master, $items, $model)
@@ -67,7 +67,7 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
     $this->model = ucfirst(strtolower($model));
 
     if (!class_exists("\\DirkGroenen\\Pinterest\\Models\\" . $this->model)) {
-      throw new InvalidModelException;
+      throw new InvalidModelException();
     }
 
     // Get items and response instance

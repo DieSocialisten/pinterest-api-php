@@ -13,28 +13,22 @@ namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
 use \DirkGroenen\Pinterest\Pinterest;
 use \DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class FollowingTest extends \PHPUnit\Framework\TestCase
+class FollowingTest extends TestCase
 {
+  private Pinterest $pinterest;
 
   /**
-   * The Pinterest instance
-   *
-   * @var Pinterest
-   */
-  private $pinterest;
-
-  /**
-   * Setup a new instance of the Pinterest class
-   *
-   * @return void
+   * @throws ReflectionException
    */
   public function setUp(): void
   {
-    $curlbuilder = CurlBuilderMock::create($this);
+    $curlBuilder = CurlBuilderMock::create($this);
 
     // Setup Pinterest
-    $this->pinterest = new Pinterest("0", "0", $curlbuilder);
+    $this->pinterest = new Pinterest("0", "0", $curlBuilder);
     $this->pinterest->auth->setOAuthToken("0");
   }
 
@@ -100,6 +94,6 @@ class FollowingTest extends \PHPUnit\Framework\TestCase
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Interest", $response->get(0));
-    $this->assertEquals($response->get(0)->id, "932253650197");
+    $this->assertEquals("932253650197", $response->get(0)->id);
   }
 }

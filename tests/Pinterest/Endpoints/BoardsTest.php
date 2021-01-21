@@ -13,28 +13,22 @@ namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
 use \DirkGroenen\Pinterest\Pinterest;
 use \DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class BoardsTest extends \PHPUnit\Framework\TestCase
+class BoardsTest extends TestCase
 {
+  private Pinterest $pinterest;
 
   /**
-   * The Pinterest instance
-   *
-   * @var Pinterest
-   */
-  private $pinterest;
-
-  /**
-   * Setup a new instance of the Pinterest class
-   *
-   * @return void
+   * @throws ReflectionException
    */
   public function setUp(): void
   {
-    $curlbuilder = CurlBuilderMock::create($this);
+    $curlBuilder = CurlBuilderMock::create($this);
 
     // Setup Pinterest
-    $this->pinterest = new Pinterest("0", "0", $curlbuilder);
+    $this->pinterest = new Pinterest("0", "0", $curlBuilder);
     $this->pinterest->auth->setOAuthToken("0");
   }
 
@@ -43,7 +37,7 @@ class BoardsTest extends \PHPUnit\Framework\TestCase
     $response = $this->pinterest->boards->get("503066289565421201");
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
-    $this->assertEquals($response->id, "503066289565421201");
+    $this->assertEquals("503066289565421201", $response->id);
   }
 
   public function testGetWithExtraFields()
@@ -69,7 +63,7 @@ class BoardsTest extends \PHPUnit\Framework\TestCase
     );
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
-    $this->assertEquals($response->id, "503066289565421205");
+    $this->assertEquals("503066289565421205", $response->id);
   }
 
   public function testEdit()
@@ -82,7 +76,7 @@ class BoardsTest extends \PHPUnit\Framework\TestCase
     );
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
-    $this->assertEquals($response->id, "503066289565421205");
+    $this->assertEquals("503066289565421205", $response->id);
   }
 
   public function testDelete()
