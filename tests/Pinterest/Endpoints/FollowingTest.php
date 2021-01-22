@@ -11,27 +11,10 @@
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
-use \DirkGroenen\Pinterest\Pinterest;
-use \DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
-use PHPUnit\Framework\TestCase;
-use ReflectionException;
+use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
 
-class FollowingTest extends TestCase
+class FollowingTest extends PinterestAuthAwareTestCase
 {
-  private Pinterest $pinterest;
-
-  /**
-   * @throws ReflectionException
-   */
-  public function setUp(): void
-  {
-    $curlBuilder = CurlBuilderMock::create($this);
-
-    // Setup Pinterest
-    $this->pinterest = new Pinterest("0", "0", $curlBuilder);
-    $this->pinterest->auth->setOAuthToken("0");
-  }
-
   public function testUsers()
   {
     $response = $this->pinterest->following->users();
