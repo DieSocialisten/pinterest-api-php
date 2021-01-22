@@ -10,10 +10,12 @@
 
 namespace DirkGroenen\Pinterest\Models;
 
+use ArrayIterator;
 use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Transport\Response;
+use ReflectionException;
 
 class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
 {
@@ -57,16 +59,16 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
    * @param array|Response $items
    * @param string $model
    *
-   * @throws InvalidModelException
+   * @throws InvalidModelException|PinterestException
    */
-  public function __construct(Pinterest $master, $items, $model)
+  public function __construct(Pinterest $master, $items, string $model)
   {
     $this->master = $master;
 
     // Create class path
     $this->model = ucfirst(strtolower($model));
 
-    if (!class_exists("\\DirkGroenen\\Pinterest\\Models\\" . $this->model)) {
+    if (!class_exists('\DirkGroenen\Pinterest\Models\\' . $this->model)) {
       throw new InvalidModelException();
     }
 
@@ -74,17 +76,21 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
     if (is_array($items)) {
       $this->response = null;
       $this->items = $items;
+
+    } elseif ($items instanceof Response) {
+      $this->response = $items;
+      $this->items = $items->data;
+
     } else {
-      if ($items instanceof \DirkGroenen\Pinterest\Transport\Response) {
-        $this->response = $items;
-        $this->items = $items->data;
-      } else {
-        throw new PinterestException("$items needs to be an instance of Transport\Response or an array.");
-      }
+      throw new PinterestException("$items needs to be an instance of Transport\Response or an array.");
     }
 
     // Transform the raw collection data to models
-    $this->items = $this->buildCollectionModels($this->items);
+    try {
+      $this->items = $this->buildCollectionModels($this->items);
+    } catch (ReflectionException $e) {
+      throw new InvalidModelException();
+    }
 
     // Add pagination object
     if (isset($this->response->page) && !empty($this->response->page['next'])) {
@@ -97,29 +103,25 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Transform each raw item into a model
    *
-   * @access private
    * @param array $items
    * @return array
+   * @throws ReflectionException
    */
-  private function buildCollectionModels(array $items)
+  private function buildCollectionModels(array $items): array
   {
-    $modelcollection = [];
+    $class = new \ReflectionClass('\DirkGroenen\Pinterest\Models\\' . $this->model);
 
-    foreach ($items as $item) {
-      $class = new \ReflectionClass("\\DirkGroenen\\Pinterest\\Models\\" . $this->model);
-      $modelcollection[] = $class->newInstanceArgs([$this->master, $item]);
-    }
-
-    return $modelcollection;
+    return array_map(function($item) use ($class) {
+      return $class->newInstanceArgs([$this->master, $item]);
+    }, $items);
   }
 
   /**
    * Get all items from the collection
    *
-   * @access public
    * @return array
    */
-  public function all()
+  public function all(): array
   {
     return $this->items;
   }
@@ -127,10 +129,9 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Check if their is a next page available
    *
-   * @access public
-   * @return boolean
+   * @return bool
    */
-  public function hasNextPage()
+  public function hasNextPage(): bool
   {
     return ($this->response != null && isset($this->response->page['next']));
   }
@@ -138,11 +139,10 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Return the item at the given index
    *
-   * @access public
    * @param int $index
-   * @return Model
+   * @return Model|null
    */
-  public function get($index)
+  public function get(int $index): ?Model
   {
     return $this->items[$index];
   }
@@ -150,10 +150,9 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Convert the object into something JSON serializable.
    *
-   * @access public
    * @return array
    */
-  public function jsonSerialize()
+  public function jsonSerialize(): array
   {
     return $this->toArray();
   }
@@ -161,10 +160,9 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Convert the collection to an array
    *
-   * @access public
    * @return array
    */
-  public function toArray()
+  public function toArray(): array
   {
     $items = [];
 
@@ -181,10 +179,9 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Convert the collection to its string representation
    *
-   * @access public
    * @return string
    */
-  public function __toString()
+  public function __toString(): string
   {
     return $this->toJson();
   }
@@ -192,10 +189,9 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Convert the collection to JSON
    *
-   * @access public
    * @return string
    */
-  public function toJson()
+  public function toJson(): string
   {
     return json_encode($this->toArray(), true);
   }
@@ -203,11 +199,10 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Determine if the given item exists.
    *
-   * @access public
    * @param mixed $offset
    * @return bool
    */
-  public function offsetExists($offset)
+  public function offsetExists($offset): bool
   {
     return isset($this->items[$offset]);
   }
@@ -215,7 +210,6 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Get the value for a given offset.
    *
-   * @access public
    * @param mixed $offset
    * @return mixed
    */
@@ -227,10 +221,8 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Set the value for a given offset.
    *
-   * @access public
    * @param mixed $offset
    * @param mixed $value
-   * @return void
    */
   public function offsetSet($offset, $value)
   {
@@ -240,9 +232,7 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   /**
    * Unset the value for a given offset.
    *
-   * @access public
    * @param mixed $offset
-   * @return void
    */
   public function offsetUnset($offset)
   {
@@ -250,14 +240,10 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   }
 
   /**
-   * Make the collection items iteratable
-   *
-   * @access public
    * @return ArrayIterator
    */
-  public function getIterator()
+  public function getIterator(): ArrayIterator
   {
-    return new \ArrayIterator($this->items);
+    return new ArrayIterator($this->items);
   }
-
 }
