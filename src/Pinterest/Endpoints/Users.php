@@ -36,7 +36,6 @@ class Users extends Endpoint
   /**
    * Get the provided user
    *
-   * @access public
    * @param string $username
    * @param array $data
    * @return User

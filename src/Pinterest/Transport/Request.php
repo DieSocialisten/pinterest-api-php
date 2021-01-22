@@ -232,7 +232,6 @@ class Request
   /**
    * Make a delete request to the given endpoint
    *
-   * @access public
    * @param string $endpoint
    * @param array $parameters
    * @return Response

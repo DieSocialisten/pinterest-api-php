@@ -197,7 +197,6 @@ class CurlBuilder
   /**
    * Parse string headers into array
    *
-   * @access private
    * @param string $headers
    * @return array
    */

@@ -57,7 +57,6 @@ class PinterestOAuth
   /**
    * Generates a random string and returns is
    *
-   * @access private
    * @return string       random string
    */
   private function generateState(): string

@@ -51,8 +51,8 @@ class CurlBuilderMock
       ->will($instance->returnSelf());
 
     // Build response file path
-    $responseFilePath = __DIR__ . '/../responses/' . (new \ReflectionClass($instance))->getShortName(
-      ) . '/' . $responseFile[0] . ".json";
+    $responseFilePath = __DIR__ . '/../responses/' . (new \ReflectionClass($instance))->getShortName() . '/' .
+      $responseFile[0] . ".json";
 
     if (file_exists($responseFilePath)) {
       $curlBuilder->expects($instance->once())
