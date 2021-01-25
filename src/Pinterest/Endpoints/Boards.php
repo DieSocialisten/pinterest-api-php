@@ -28,7 +28,8 @@ class Boards extends Endpoint
    */
   public function get(string $boardId, array $data = []): Board
   {
-    $response = $this->request->get(sprintf("boards/%s/", $boardId), $data);
+    $endpoint = sprintf("boards/%s/", $boardId);
+    $response = $this->request->get($endpoint, $data);
 
     return new Board($this->master, $response);
   }
@@ -43,7 +44,8 @@ class Boards extends Endpoint
    */
   public function create(array $data): Board
   {
-    $response = $this->request->post("boards/", $data);
+    $endpoint = "boards/";
+    $response = $this->request->post($endpoint, $data);
 
     return new Board($this->master, $response);
   }
@@ -63,7 +65,8 @@ class Boards extends Endpoint
   {
     $query = (!$fields) ? [] : ["fields" => $fields];
 
-    $response = $this->request->update(sprintf("boards/%s/", $boardId), $data, $query);
+    $endpoint = sprintf("boards/%s/", $boardId);
+    $response = $this->request->update($endpoint, $data, $query);
 
     return new Board($this->master, $response);
   }
@@ -79,7 +82,8 @@ class Boards extends Endpoint
    */
   public function delete(string $boardId): bool
   {
-    $this->request->delete(sprintf("boards/%s/", $boardId));
+    $endpoint = sprintf("boards/%s/", $boardId);
+    $this->request->delete($endpoint);
 
     return true;
   }

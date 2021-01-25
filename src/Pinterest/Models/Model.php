@@ -89,7 +89,7 @@ class Model implements \JsonSerializable
    */
   public function __get(string $key)
   {
-    return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
+    return $this->attributes[$key] ?? null;
   }
 
   /**
@@ -102,11 +102,11 @@ class Model implements \JsonSerializable
    */
   public function __set(string $key, $value)
   {
-    if ($this->isFillable($key)) {
-      $this->attributes[$key] = $value;
-    } else {
+    if (!$this->isFillable($key)) {
       throw new PinterestException(sprintf("%s is not a fillable attribute.", $key));
     }
+
+    $this->attributes[$key] = $value;
   }
 
   /**

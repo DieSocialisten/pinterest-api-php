@@ -11,6 +11,7 @@
 namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Models\Collection;
@@ -29,7 +30,8 @@ class Pins extends Endpoint
    */
   public function get(string $pinId, array $data = []): Pin
   {
-    $response = $this->request->get(sprintf("pins/%s/", $pinId), $data);
+    $endpoint = sprintf("pins/%s/", $pinId);
+    $response = $this->request->get($endpoint, $data);
 
     return new Pin($this->master, $response);
   }
@@ -42,13 +44,14 @@ class Pins extends Endpoint
    * @return Collection
    *
    * @throws PinterestException
-   * @throws CurlException
+   * @throws CurlException|InvalidModelException
    */
   public function fromBoard(string $boardId, array $data = []): Collection
   {
-    $response = $this->request->get(sprintf("boards/%s/pins/", $boardId), $data);
+    $endpoint = sprintf("boards/%s/pins/", $boardId);
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Pin");
+    return new Collection($this->master, $response, Pin::class);
   }
 
   /**
@@ -69,7 +72,8 @@ class Pins extends Endpoint
       }
     }
 
-    $response = $this->request->post("pins/", $data);
+    $endpoint = "pins/";
+    $response = $this->request->post($endpoint, $data);
 
     return new Pin($this->master, $response);
   }
@@ -89,7 +93,8 @@ class Pins extends Endpoint
   {
     $query = (!$fields) ? [] : ["fields" => $fields];
 
-    $response = $this->request->update(sprintf("pins/%s/", $pinId), $data, $query);
+    $endpoint = sprintf("pins/%s/", $pinId);
+    $response = $this->request->update($endpoint, $data, $query);
 
     return new Pin($this->master, $response);
   }
@@ -105,7 +110,8 @@ class Pins extends Endpoint
    */
   public function delete(string $pinId): bool
   {
-    $this->request->delete(sprintf("pins/%s/", $pinId));
+    $endpoint = sprintf("pins/%s/", $pinId);
+    $this->request->delete($endpoint);
 
     return true;
   }

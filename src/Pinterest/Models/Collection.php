@@ -65,10 +65,9 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
   {
     $this->master = $master;
 
-    // Create class path
-    $this->model = ucfirst(strtolower($model));
+    $this->model = $model;
 
-    if (!class_exists('\DirkGroenen\Pinterest\Models\\' . $this->model)) {
+    if (!class_exists($this->model)) {
       throw new InvalidModelException();
     }
 
@@ -109,7 +108,7 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
    */
   private function buildCollectionModels(array $items): array
   {
-    $class = new \ReflectionClass('\DirkGroenen\Pinterest\Models\\' . $this->model);
+    $class = new \ReflectionClass($this->model);
 
     return array_map(function($item) use ($class) {
       return $class->newInstanceArgs([$this->master, $item]);

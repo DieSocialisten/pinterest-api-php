@@ -21,5 +21,4 @@ class Board extends Model
    * @var array
    */
   protected array $fillable = ["id", "name", "url", "description", "creator", "created_at", "counts", "image"];
-
 }

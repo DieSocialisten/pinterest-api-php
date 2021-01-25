@@ -11,7 +11,10 @@
 namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Models\Board;
+use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Models\User;
 use DirkGroenen\Pinterest\Models\Collection;
 
@@ -28,7 +31,8 @@ class Users extends Endpoint
    */
   public function me(array $data = []): User
   {
-    $response = $this->request->get("me/", $data);
+    $endpoint = "me/";
+    $response = $this->request->get($endpoint, $data);
 
     return new User($this->master, $response);
   }
@@ -45,7 +49,8 @@ class Users extends Endpoint
    */
   public function find(string $username, array $data = []): User
   {
-    $response = $this->request->get(sprintf("users/%s/", $username), $data);
+    $endpoint = sprintf("users/%s/", $username);
+    $response = $this->request->get($endpoint, $data);
 
     return new User($this->master, $response);
   }
@@ -55,13 +60,14 @@ class Users extends Endpoint
    *
    * @param array $data
    * @return Collection
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function getMePins(array $data = []): Collection
   {
-    $response = $this->request->get("me/pins/", $data);
+    $endpoint = "me/pins/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Pin");
+    return new Collection($this->master, $response, Pin::class);
   }
 
   /**
@@ -71,14 +77,15 @@ class Users extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function searchMePins(string $query, array $data = []): Collection
   {
     $data["query"] = $query;
-    $response = $this->request->get("me/search/pins/", $data);
+    $endpoint = "me/search/pins/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Pin");
+    return new Collection($this->master, $response, Pin::class);
   }
 
   /**
@@ -88,14 +95,15 @@ class Users extends Endpoint
    * @param array $data
    * @return Collection
    * @throws PinterestException
-   * @throws CurlException
+   * @throws CurlException|InvalidModelException
    */
   public function searchMeBoards(string $query, array $data = []): Collection
   {
     $data["query"] = $query;
-    $response = $this->request->get("me/search/boards/", $data);
+    $endpoint = "me/search/boards/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Board");
+    return new Collection($this->master, $response, Board::class);
   }
 
   /**
@@ -104,13 +112,14 @@ class Users extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function getMeBoards(array $data = []): Collection
   {
-    $response = $this->request->get("me/boards/", $data);
+    $endpoint = "me/boards/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Board");
+    return new Collection($this->master, $response, Board::class);
   }
 
   /**
@@ -119,13 +128,14 @@ class Users extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function getMeLikes(array $data = []): Collection
   {
-    $response = $this->request->get("me/likes/", $data);
+    $endpoint = "me/likes/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Pin");
+    return new Collection($this->master, $response, Pin::class);
   }
 
   /**
@@ -134,13 +144,14 @@ class Users extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function getMeFollowers(array $data = []): Collection
   {
-    $response = $this->request->get("me/followers/", $data);
+    $endpoint = "me/followers/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "User");
+    return new Collection($this->master, $response, User::class);
   }
 
 }

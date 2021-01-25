@@ -11,8 +11,12 @@
 namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Models\Collection;
+use DirkGroenen\Pinterest\Models\Interest;
+use DirkGroenen\Pinterest\Models\User;
 
 class Following extends Endpoint
 {
@@ -22,13 +26,14 @@ class Following extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function users(array $data = []): Collection
   {
-    $response = $this->request->get("me/following/users/", $data);
+    $endpoint = "me/following/users/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "User");
+    return new Collection($this->master, $response, User::class);
   }
 
   /**
@@ -37,13 +42,14 @@ class Following extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function boards(array $data = []): Collection
   {
-    $response = $this->request->get("me/following/boards/", $data);
+    $endpoint = "me/following/boards/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Board");
+    return new Collection($this->master, $response, Board::class);
   }
 
   /**
@@ -52,13 +58,14 @@ class Following extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException|CurlException|InvalidModelException
    */
   public function interests(array $data = []): Collection
   {
-    $response = $this->request->get("me/following/interests/", $data);
+    $endpoint = "me/following/interests/";
+    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, "Interest");
+    return new Collection($this->master, $response, Interest::class);
   }
 
   /**
@@ -72,12 +79,8 @@ class Following extends Endpoint
    */
   public function followUser(string $user): bool
   {
-    $this->request->post(
-      "me/following/users/",
-      array(
-        "user" => $user
-      )
-    );
+    $endpoint = "me/following/users/";
+    $this->request->post($endpoint, ["user" => $user]);
 
     return true;
   }
@@ -93,7 +96,8 @@ class Following extends Endpoint
    */
   public function unfollowUser(string $user): bool
   {
-    $this->request->delete(sprintf("me/following/users/%s/", $user));
+    $endpoint = sprintf("me/following/users/%s/", $user);
+    $this->request->delete($endpoint);
 
     return true;
   }
@@ -109,12 +113,8 @@ class Following extends Endpoint
    */
   public function followBoard(string $board): bool
   {
-    $this->request->post(
-      "me/following/boards/",
-      array(
-        "board" => $board
-      )
-    );
+    $endpoint = "me/following/boards/";
+    $this->request->post($endpoint, ["board" => $board]);
 
     return true;
   }
@@ -130,7 +130,8 @@ class Following extends Endpoint
    */
   public function unfollowBoard(string $boardId): bool
   {
-    $this->request->delete(sprintf("me/following/boards/%s/", $boardId));
+    $endpoint = sprintf("me/following/boards/%s/", $boardId);
+    $this->request->delete($endpoint);
 
     return true;
   }
@@ -146,12 +147,8 @@ class Following extends Endpoint
    */
   public function followInterest(string $interest): bool
   {
-    $this->request->post(
-      "me/following/interests/",
-      array(
-        "interest" => $interest
-      )
-    );
+    $endpoint = "me/following/interests/";
+    $this->request->post($endpoint, ["interest" => $interest]);
 
     return true;
   }
@@ -167,7 +164,8 @@ class Following extends Endpoint
    */
   public function unfollowInterest(string $interestId): bool
   {
-    $this->request->delete(sprintf("me/following/interests/%s/", $interestId));
+    $endpoint = sprintf("me/following/interests/%s/", $interestId);
+    $this->request->delete($endpoint);
 
     return true;
   }
