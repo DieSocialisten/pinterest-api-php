@@ -16,7 +16,6 @@ use DirkGroenen\Pinterest\Endpoints\Following;
 use DirkGroenen\Pinterest\Endpoints\Pins;
 use DirkGroenen\Pinterest\Endpoints\Sections;
 use DirkGroenen\Pinterest\Endpoints\Users;
-use DirkGroenen\Pinterest\Loggers\ErrorLoggerInterface;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Utils\CurlBuilder;
 use DirkGroenen\Pinterest\Transport\Request;
@@ -52,8 +51,6 @@ class Pinterest
    * @var array
    */
   private array $cachedEndpoints = [];
-
-  private ?ErrorLoggerInterface $errorLogger = null;
 
   private ?RequestLoggerInterface $requestLogger = null;
 
@@ -142,22 +139,6 @@ class Pinterest
     return (isset($header['x-ratelimit-remaining']) ? $header['x-ratelimit-remaining'] : 'unknown');
   }
 
-  public function setErrorLogger(?ErrorLoggerInterface $errorLogger): Pinterest
-  {
-    $this->errorLogger = $errorLogger;
-
-    return $this;
-  }
-
-  public function logError(array $data)
-  {
-    if (!$this->errorLogger) {
-      return;
-    }
-
-    $this->errorLogger->log($data);
-  }
-
   public function setRequestLogger(?RequestLoggerInterface $requestLogger): Pinterest
   {
     $this->requestLogger = $requestLogger;
@@ -165,12 +146,12 @@ class Pinterest
     return $this;
   }
 
-  public function logRequest(array $data)
+  public function logRequest(string $endpoint, array $payload)
   {
     if (!$this->requestLogger) {
       return;
     }
 
-    $this->requestLogger->log($data);
+    $this->requestLogger->log($endpoint, $payload);
   }
 }

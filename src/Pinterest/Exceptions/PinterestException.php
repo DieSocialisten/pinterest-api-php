@@ -10,7 +10,34 @@
 
 namespace DirkGroenen\Pinterest\Exceptions;
 
+use Throwable;
+
 class PinterestException extends \Exception
 {
+  private string $endpoint;
+  private array $payload;
 
+  public function __construct($message = "", $code = 0, Throwable $previous = null, string $endpoint = '', array $payload = [])
+  {
+    parent::__construct($message, $code, $previous);
+
+    $this->endpoint = $endpoint;
+    $this->payload = $payload;
+  }
+
+  /**
+   * @return string
+   */
+  public function getEndpoint(): string
+  {
+    return $this->endpoint;
+  }
+
+  /**
+   * @return array
+   */
+  public function getPayload(): array
+  {
+    return $this->payload;
+  }
 }

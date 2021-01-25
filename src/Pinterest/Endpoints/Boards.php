@@ -10,7 +10,6 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\CurlException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Board;
 
@@ -24,12 +23,18 @@ class Boards extends Endpoint
    * @return Board
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function get(string $boardId, array $data = []): Board
   {
     $endpoint = sprintf("boards/%s/", $boardId);
-    $response = $this->request->get($endpoint, $data);
+
+    $this->master->logRequest($endpoint, $data);
+
+    try {
+      $response = $this->request->get($endpoint, $data);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint, $data);
+    }
 
     return new Board($this->master, $response);
   }
@@ -40,12 +45,19 @@ class Boards extends Endpoint
    * @param array $data
    * @return Board
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException
    */
   public function create(array $data): Board
   {
     $endpoint = "boards/";
-    $response = $this->request->post($endpoint, $data);
+
+    $this->master->logRequest($endpoint, $data);
+
+    try {
+      $response = $this->request->post($endpoint, $data);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint, $data);
+    }
 
     return new Board($this->master, $response);
   }
@@ -59,14 +71,19 @@ class Boards extends Endpoint
    * @return Board
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function edit(string $boardId, array $data, $fields = null): Board
   {
     $query = (!$fields) ? [] : ["fields" => $fields];
-
     $endpoint = sprintf("boards/%s/", $boardId);
-    $response = $this->request->update($endpoint, $data, $query);
+
+    $this->master->logRequest($endpoint, $data);
+
+    try {
+      $response = $this->request->update($endpoint, $data, $query);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint, $data);
+    }
 
     return new Board($this->master, $response);
   }
@@ -78,12 +95,18 @@ class Boards extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function delete(string $boardId): bool
   {
     $endpoint = sprintf("boards/%s/", $boardId);
-    $this->request->delete($endpoint);
+
+    $this->master->logRequest($endpoint, ['boardId' => $boardId]);
+
+    try {
+      $this->request->delete($endpoint);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }

@@ -10,8 +10,6 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\CurlException;
-use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Models\Collection;
@@ -26,14 +24,20 @@ class Following extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException|InvalidModelException
+   * @throws PinterestException
    */
   public function users(array $data = []): Collection
   {
     $endpoint = "me/following/users/";
-    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, User::class);
+    try {
+      $response = $this->request->get($endpoint, $data);
+
+      return new Collection($this->master, $response, User::class);
+
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint, $data);
+    }
   }
 
   /**
@@ -42,14 +46,20 @@ class Following extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException|InvalidModelException
+   * @throws PinterestException
    */
   public function boards(array $data = []): Collection
   {
     $endpoint = "me/following/boards/";
-    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, Board::class);
+    try {
+      $response = $this->request->get($endpoint, $data);
+
+      return new Collection($this->master, $response, Board::class);
+
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint, $data);
+    }
   }
 
   /**
@@ -58,14 +68,20 @@ class Following extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException|CurlException|InvalidModelException
+   * @throws PinterestException
    */
   public function interests(array $data = []): Collection
   {
     $endpoint = "me/following/interests/";
-    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, Interest::class);
+    try {
+      $response = $this->request->get($endpoint, $data);
+
+      return new Collection($this->master, $response, Interest::class);
+
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint, $data);
+    }
   }
 
   /**
@@ -75,12 +91,16 @@ class Following extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function followUser(string $user): bool
   {
     $endpoint = "me/following/users/";
-    $this->request->post($endpoint, ["user" => $user]);
+
+    try {
+      $this->request->post($endpoint, ["user" => $user]);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }
@@ -92,12 +112,16 @@ class Following extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function unfollowUser(string $user): bool
   {
     $endpoint = sprintf("me/following/users/%s/", $user);
-    $this->request->delete($endpoint);
+
+    try {
+      $this->request->delete($endpoint);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }
@@ -109,12 +133,16 @@ class Following extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function followBoard(string $board): bool
   {
     $endpoint = "me/following/boards/";
-    $this->request->post($endpoint, ["board" => $board]);
+
+    try {
+      $this->request->post($endpoint, ["board" => $board]);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }
@@ -126,12 +154,16 @@ class Following extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function unfollowBoard(string $boardId): bool
   {
     $endpoint = sprintf("me/following/boards/%s/", $boardId);
-    $this->request->delete($endpoint);
+
+    try {
+      $this->request->delete($endpoint);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }
@@ -143,12 +175,16 @@ class Following extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function followInterest(string $interest): bool
   {
     $endpoint = "me/following/interests/";
-    $this->request->post($endpoint, ["interest" => $interest]);
+
+    try {
+      $this->request->post($endpoint, ["interest" => $interest]);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }
@@ -160,12 +196,16 @@ class Following extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function unfollowInterest(string $interestId): bool
   {
     $endpoint = sprintf("me/following/interests/%s/", $interestId);
-    $this->request->delete($endpoint);
+
+    try {
+      $this->request->delete($endpoint);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }

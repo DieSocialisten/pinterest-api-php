@@ -10,8 +10,6 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\CurlException;
-use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Models\Collection;
@@ -26,12 +24,16 @@ class Pins extends Endpoint
    * @return Pin
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function get(string $pinId, array $data = []): Pin
   {
     $endpoint = sprintf("pins/%s/", $pinId);
-    $response = $this->request->get($endpoint, $data);
+
+    try {
+      $response = $this->request->get($endpoint, $data);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return new Pin($this->master, $response);
   }
@@ -44,14 +46,18 @@ class Pins extends Endpoint
    * @return Collection
    *
    * @throws PinterestException
-   * @throws CurlException|InvalidModelException
    */
   public function fromBoard(string $boardId, array $data = []): Collection
   {
     $endpoint = sprintf("boards/%s/pins/", $boardId);
-    $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->master, $response, Pin::class);
+    try {
+      $response = $this->request->get($endpoint, $data);
+
+      return new Collection($this->master, $response, Pin::class);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
   }
 
   /**
@@ -60,7 +66,7 @@ class Pins extends Endpoint
    * @param array $data
    * @return Pin
    *
-   * @throws PinterestException|CurlException
+   * @throws PinterestException
    */
   public function create(array $data): Pin
   {
@@ -73,7 +79,12 @@ class Pins extends Endpoint
     }
 
     $endpoint = "pins/";
-    $response = $this->request->post($endpoint, $data);
+
+    try {
+      $response = $this->request->post($endpoint, $data);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return new Pin($this->master, $response);
   }
@@ -87,14 +98,18 @@ class Pins extends Endpoint
    * @return Pin
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function edit(string $pinId, array $data, $fields = null): Pin
   {
     $query = (!$fields) ? [] : ["fields" => $fields];
 
     $endpoint = sprintf("pins/%s/", $pinId);
-    $response = $this->request->update($endpoint, $data, $query);
+
+    try {
+      $response = $this->request->update($endpoint, $data, $query);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return new Pin($this->master, $response);
   }
@@ -106,12 +121,16 @@ class Pins extends Endpoint
    * @return bool
    *
    * @throws PinterestException
-   * @throws CurlException
    */
   public function delete(string $pinId): bool
   {
     $endpoint = sprintf("pins/%s/", $pinId);
-    $this->request->delete($endpoint);
+
+    try {
+      $this->request->delete($endpoint);
+    } catch (\Exception $e) {
+      throw $this->createPinterestException($e, $endpoint);
+    }
 
     return true;
   }

@@ -6,5 +6,5 @@ namespace DirkGroenen\Pinterest\Loggers;
 
 interface RequestLoggerInterface
 {
-  public function log(array $data): void;
+  public function log(string $endpoint, array $payload): void;
 }
