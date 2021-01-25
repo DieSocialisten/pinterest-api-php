@@ -15,18 +15,20 @@ use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
 
 class BoardsTest extends PinterestAuthAwareTestCase
 {
+  private const BOARD_ID = '503066289565421201';
+
   public function testGet()
   {
-    $response = $this->pinterest->boards->get("503066289565421201");
+    $response = $this->pinterest->boards->get(self::BOARD_ID);
 
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
-    $this->assertEquals("503066289565421201", $response->id);
+    $this->assertEquals(self::BOARD_ID, $response->id);
   }
 
   public function testGetWithExtraFields()
   {
     $response = $this->pinterest->boards->get(
-      "503066289565421201",
+      self::BOARD_ID,
       array(
         "fields" => "url,description,creator,counts"
       )
@@ -52,7 +54,7 @@ class BoardsTest extends PinterestAuthAwareTestCase
   public function testEdit()
   {
     $response = $this->pinterest->boards->edit(
-      "503066289565421201",
+      self::BOARD_ID,
       array(
         "name" => "Test board from API"
       )

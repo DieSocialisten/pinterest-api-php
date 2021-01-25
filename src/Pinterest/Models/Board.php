@@ -10,6 +10,9 @@
 
 namespace DirkGroenen\Pinterest\Models;
 
+/**
+ * @property string id
+ */
 class Board extends Model
 {
   /**
