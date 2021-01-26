@@ -11,6 +11,7 @@
 namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Exceptions\PinterestExceptionsFactory;
 use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Models\Collection;
 use DirkGroenen\Pinterest\Models\Interest;
@@ -36,7 +37,7 @@ class Following extends Endpoint
       return new Collection($this->master, $response, User::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint, $data);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint, $data);
     }
   }
 
@@ -58,7 +59,7 @@ class Following extends Endpoint
       return new Collection($this->master, $response, Board::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint, $data);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint, $data);
     }
   }
 
@@ -80,7 +81,7 @@ class Following extends Endpoint
       return new Collection($this->master, $response, Interest::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint, $data);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint, $data);
     }
   }
 
@@ -99,7 +100,7 @@ class Following extends Endpoint
     try {
       $this->request->post($endpoint, ["user" => $user]);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;
@@ -120,7 +121,7 @@ class Following extends Endpoint
     try {
       $this->request->delete($endpoint);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;
@@ -141,7 +142,7 @@ class Following extends Endpoint
     try {
       $this->request->post($endpoint, ["board" => $board]);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;
@@ -162,7 +163,7 @@ class Following extends Endpoint
     try {
       $this->request->delete($endpoint);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;
@@ -183,7 +184,7 @@ class Following extends Endpoint
     try {
       $this->request->post($endpoint, ["interest" => $interest]);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;
@@ -204,7 +205,7 @@ class Following extends Endpoint
     try {
       $this->request->delete($endpoint);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;

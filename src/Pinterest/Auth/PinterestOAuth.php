@@ -10,8 +10,7 @@
 
 namespace DirkGroenen\Pinterest\Auth;
 
-use DirkGroenen\Pinterest\Exceptions\CurlException;
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Transport\Request;
 use DirkGroenen\Pinterest\Transport\Response;
 
@@ -111,7 +110,7 @@ class PinterestOAuth
    * @param string $code
    * @return Response
    *
-   * @throws CurlException|PinterestException
+   * @throws HttpClientException
    */
   public function getOAuthToken(string $code): Response
   {

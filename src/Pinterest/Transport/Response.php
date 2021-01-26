@@ -10,8 +10,6 @@
 
 namespace DirkGroenen\Pinterest\Transport;
 
-use DirkGroenen\Pinterest\Utils\CurlBuilder;
-
 /**
  * @property array $page
  * @property array $data
@@ -23,31 +21,13 @@ class Response
   /**
    * Contains the raw response
    *
-   * @var string|array
+   * @var array
    */
-  private $response;
+  private array $responseData;
 
-  /**
-   * Used curl instance
-   *
-   * @var CurlBuilder
-   */
-  private CurlBuilder $curl;
-
-  /**
-   * Constructor
-   *
-   * @param string|array $response
-   * @param CurlBuilder $curl
-   */
-  public function __construct($response, CurlBuilder $curl)
+  public function __construct(string $json)
   {
-    $this->response = $response;
-    $this->curl = $curl;
-
-    if (is_string($response)) {
-      $this->response = $this->decodeString($response);
-    }
+    $this->responseData = $this->decodeString($json);
   }
 
   /**
@@ -69,7 +49,7 @@ class Response
    */
   public function __get(string $key)
   {
-    return isset($this->response[$key]) ? $this->response[$key] : [];
+    return isset($this->responseData[$key]) ? $this->responseData[$key] : [];
   }
 
   /**
@@ -80,7 +60,7 @@ class Response
    */
   public function __isset(string $key): bool
   {
-    return isset($this->response[$key]);
+    return isset($this->responseData[$key]);
   }
 
   /**
@@ -92,16 +72,6 @@ class Response
    */
   public function getMessage(): string
   {
-    return (isset($this->message)) ? $this->message : $this->error;
-  }
-
-  /**
-   * Get the response code from the request
-   *
-   * @return numeric|string
-   */
-  public function getResponseCode()
-  {
-    return $this->curl->getInfo(CURLINFO_HTTP_CODE);
+    return isset($this->message) ? $this->message : $this->error;
   }
 }

@@ -10,9 +10,12 @@
 
 namespace DirkGroenen\Pinterest\Transport;
 
-use DirkGroenen\Pinterest\Utils\CurlBuilder;
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
-use DirkGroenen\Pinterest\Exceptions\CurlException;
+use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Psr7\Message;
+use GuzzleHttp\RequestOptions;
+use GuzzleHttp\Exception\RequestException;
 
 class Request
 {
@@ -31,27 +34,15 @@ class Request
   private string $host = "https://api.pinterest.com/v3/";
 
   /**
-   * Instance of the CurlBuilder class
-   *
-   * @var CurlBuilder
+   * @var Client
    */
-  private CurlBuilder $curlBuilder;
+  private Client $httpClient;
 
-  /**
-   * Array with the headers from the last request
-   *
-   * @var array
-   */
-  private $headers;
+  private ?\GuzzleHttp\Psr7\Response $lastHttpResponse = null;
 
-  /**
-   * Constructor
-   *
-   * @param CurlBuilder $curlBuilder
-   */
-  public function __construct(CurlBuilder $curlBuilder)
+  public function __construct(Client $httpClient)
   {
-    $this->curlBuilder = $curlBuilder;
+    $this->httpClient = $httpClient;
   }
 
   /**
@@ -71,7 +62,7 @@ class Request
    * @param array $parameters
    * @return Response
    *
-   * @throws PinterestException|CurlException
+   * @throws HttpClientException
    */
   public function get(string $endpoint, array $parameters = []): Response
   {
@@ -93,7 +84,7 @@ class Request
    * @param array $headers
    * @return Response
    *
-   * @throws CurlException|PinterestException
+   * @throws HttpClientException
    */
   public function execute(string $method, string $apiCall, array $parameters = array(), $headers = array()): Response
   {
@@ -107,98 +98,43 @@ class Request
       );
     }
 
-    // Force cURL to not send Expect header to workaround bug with Akamai CDN not handling
-    // this type of requests correctly
-    $headers = array_merge(
-      $headers,
-      array(
-        "Expect:",
-      )
-    );
+    try {
+      $httpResponse = $this->httpClient->request(
+        $method,
+        $apiCall,
+        [
+          RequestOptions::HEADERS => $headers,
+          RequestOptions::CONNECT_TIMEOUT => 20,
+          RequestOptions::TIMEOUT => 90,
+          RequestOptions::VERIFY => false,
 
-    // Setup CURL
-    $ch = $this->curlBuilder->create();
-
-    // Set default options
-    $ch->setOptions(
-      array(
-        CURLOPT_URL => $apiCall,
-        CURLOPT_HTTPHEADER => $headers,
-        CURLOPT_CONNECTTIMEOUT => 20,
-        CURLOPT_TIMEOUT => 90,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_SSL_VERIFYHOST => false,
-        CURLOPT_HEADER => false,
-        CURLINFO_HEADER_OUT => true
-      )
-    );
-
-    switch ($method) {
-      case 'POST':
-        $ch->setOptions(
-          array(
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POST => count($parameters),
-            CURLOPT_POSTFIELDS => $parameters
-          )
-        );
-
-        if (!class_exists('\CURLFile') && defined('CURLOPT_SAFE_UPLOAD')) {
-          $ch->setOption(CURLOPT_SAFE_UPLOAD, false);
-        } elseif (class_exists('\CURLFile') && defined('CURLOPT_SAFE_UPLOAD')) {
-          $ch->setOption(CURLOPT_SAFE_UPLOAD, true);
-        }
-
-        break;
-      case 'DELETE':
-        $ch->setOption(CURLOPT_CUSTOMREQUEST, "DELETE");
-        break;
-      case 'PATCH':
-        $ch->setOptions(
-          array(
-            CURLOPT_CUSTOMREQUEST => "PATCH",
-            CURLOPT_POST => count($parameters),
-            CURLOPT_POSTFIELDS => $parameters
-          )
-        );
-        break;
-      default:
-        $ch->setOption(CURLOPT_CUSTOMREQUEST, "GET");
-        break;
-    }
-
-    // Execute request and catch response
-    $response_data = $ch->execute();
-
-    if ($response_data === false && !$ch->hasErrors()) {
-      throw new CurlException("Error: Curl request failed");
-
-    } elseif ($ch->hasErrors()) {
-      throw new PinterestException(
-        'Error: execute() - cURL error: ' . $ch->getErrors(), $ch->getErrorNumber()
+          'curl' => [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => false,
+            CURLINFO_HEADER_OUT => true
+          ]
+        ]
       );
+    } catch (RequestException $e) {
+      /** @see https://docs.guzzlephp.org/en/stable/quickstart.html#exceptions */
+
+      $requestMessage = Message::toString($e->getRequest());
+      $responseMessage = $e->hasResponse() ? Message::toString($e->getResponse()) : '';
+
+      throw new HttpClientException('Error: request failed', 0, $e, $requestMessage, $responseMessage);
+
+    } catch (GuzzleException $e) {
+      throw new HttpClientException('Error: request failed', 0, $e);
     }
 
-    // Initiate the response
-    $response = new Response($response_data, $ch);
+    $this->lastHttpResponse = $httpResponse;
 
-    // Check the response code
-    if ($response->getResponseCode() >= 400) {
-      throw new PinterestException(
-        'Pinterest error (code: ' . $response->getResponseCode() . ') with message: ' . $response->getMessage(),
-        $response->getResponseCode()
-      );
-    }
+    return new Response((string)$this->lastHttpResponse->getBody());
+  }
 
-    // Get headers from last request
-    $this->headers = $ch->getHeaders();
-
-    // Close curl resource
-    $ch->close();
-
-    // Return the response
-    return $response;
+  public function getLastHttpResponse(): ?\GuzzleHttp\Psr7\Response
+  {
+    return $this->lastHttpResponse;
   }
 
   /**
@@ -208,7 +144,7 @@ class Request
    * @param array $parameters
    * @return Response
    *
-   * @throws CurlException|PinterestException
+   * @throws HttpClientException
    */
   public function post(string $endpoint, array $parameters = array()): Response
   {
@@ -222,7 +158,7 @@ class Request
    * @param array $parameters
    * @return Response
    *
-   * @throws CurlException|PinterestException
+   * @throws HttpClientException
    */
   public function put(string $endpoint, array $parameters = array()): Response
   {
@@ -236,7 +172,7 @@ class Request
    * @param array $parameters
    * @return Response
    *
-   * @throws CurlException|PinterestException
+   * @throws HttpClientException
    */
   public function delete(string $endpoint, array $parameters = array()): Response
   {
@@ -251,7 +187,7 @@ class Request
    * @param array $queryParameters
    * @return Response
    *
-   * @throws CurlException|PinterestException
+   * @throws HttpClientException
    */
   public function update(string $endpoint, array $parameters = array(), array $queryParameters = array()): Response
   {
@@ -262,15 +198,5 @@ class Request
     }
 
     return $this->execute("PATCH", sprintf("%s%s", $this->host, $path), $parameters);
-  }
-
-  /**
-   * Return the headers from the last request
-   *
-   * @return array
-   */
-  public function getHeaders()
-  {
-    return $this->headers;
   }
 }

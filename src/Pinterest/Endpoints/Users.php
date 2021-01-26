@@ -11,6 +11,7 @@
 namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Exceptions\PinterestExceptionsFactory;
 use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Models\User;
@@ -34,7 +35,7 @@ class Users extends Endpoint
     try {
       $response = $this->request->get($endpoint, $data);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return new User($this->master, $response);
@@ -56,7 +57,7 @@ class Users extends Endpoint
     try {
       $response = $this->request->get($endpoint, $data);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return new User($this->master, $response);
@@ -79,7 +80,7 @@ class Users extends Endpoint
       return new Collection($this->master, $response, Pin::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -103,7 +104,7 @@ class Users extends Endpoint
       return new Collection($this->master, $response, Pin::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -126,7 +127,7 @@ class Users extends Endpoint
       return new Collection($this->master, $response, Board::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -148,7 +149,7 @@ class Users extends Endpoint
       return new Collection($this->master, $response, Board::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -170,7 +171,7 @@ class Users extends Endpoint
       return new Collection($this->master, $response, Pin::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -192,7 +193,7 @@ class Users extends Endpoint
       return new Collection($this->master, $response, User::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 

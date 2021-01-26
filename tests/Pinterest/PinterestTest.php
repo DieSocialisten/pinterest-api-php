@@ -11,8 +11,6 @@
 
 namespace DirkGroenen\Pinterest\Tests;
 
-use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
-
 class PinterestTest extends PinterestAuthAwareTestCase
 {
   public function testGetRateLimit()

@@ -17,9 +17,9 @@ use DirkGroenen\Pinterest\Endpoints\Pins;
 use DirkGroenen\Pinterest\Endpoints\Sections;
 use DirkGroenen\Pinterest\Endpoints\Users;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
-use DirkGroenen\Pinterest\Utils\CurlBuilder;
 use DirkGroenen\Pinterest\Transport\Request;
 use DirkGroenen\Pinterest\Exceptions\InvalidEndpointException;
+use GuzzleHttp\Client;
 
 /**
  * @property Boards boards
@@ -59,16 +59,16 @@ class Pinterest
    *
    * @param string $clientId
    * @param string $clientSecret
-   * @param CurlBuilder|null $curlBuilder
+   * @param ?Client $httpClient
    */
-  public function __construct(string $clientId, string $clientSecret, ?CurlBuilder $curlBuilder = null)
+  public function __construct(string $clientId, string $clientSecret, ?Client $httpClient = null)
   {
-    if ($curlBuilder == null) {
-      $curlBuilder = new CurlBuilder();
+    if ($httpClient == null) {
+      $httpClient = new Client();
     }
 
     // Create new instance of Transport\Request
-    $this->request = new Request($curlBuilder);
+    $this->request = new Request($httpClient);
 
     // Create and set new instance of the OAuth class
     $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->request);
@@ -105,6 +105,19 @@ class Pinterest
     return $this->cachedEndpoints[$endpoint];
   }
 
+  private function getHeaderValueOrUseFallback(string $headerName, $fallbackValue = null)
+  {
+    $lastResponse = $this->request->getLastHttpResponse();
+
+    if (!$lastResponse) {
+      return $fallbackValue;
+    }
+
+    return $lastResponse->hasHeader($headerName)
+      ? $lastResponse->getHeaderLine($headerName)
+      : $fallbackValue;
+  }
+
   /**
    * Get rate limit from the headers
    * response header may change from X-Ratelimit-Limit to X-RateLimit-Limit
@@ -113,30 +126,18 @@ class Pinterest
    */
   public function getRateLimit()
   {
-    $header = $this->request->getHeaders();
-
-    if (is_array($header)) {
-      $header = array_change_key_case($header, CASE_LOWER);
-    }
-
-    return (isset($header['x-ratelimit-limit']) ? $header['x-ratelimit-limit'] : 1000);
+    return $this->getHeaderValueOrUseFallback('x-ratelimit-limit', 1000);
   }
 
   /**
    * Get rate limit remaining from the headers
    * response header may change from X-Ratelimit-Remaining to X-RateLimit-Remaining
    *
-   * @return mixed
+   * @return string
    */
-  public function getRateLimitRemaining()
+  public function getRateLimitRemaining(): string
   {
-    $header = $this->request->getHeaders();
-
-    if (is_array($header)) {
-      $header = array_change_key_case($header, CASE_LOWER);
-    }
-
-    return (isset($header['x-ratelimit-remaining']) ? $header['x-ratelimit-remaining'] : 'unknown');
+    return $this->getHeaderValueOrUseFallback('x-ratelimit-remaining', 'unknown');
   }
 
   public function setRequestLogger(?RequestLoggerInterface $requestLogger): Pinterest

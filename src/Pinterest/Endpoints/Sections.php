@@ -11,6 +11,7 @@
 namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Exceptions\PinterestExceptionsFactory;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Models\Section;
 use DirkGroenen\Pinterest\Models\Collection;
@@ -33,7 +34,7 @@ class Sections extends Endpoint
     try {
       $response = $this->request->put($endpoint, $data);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return new Section($this->master, ['id' => $response->data]);
@@ -67,7 +68,7 @@ class Sections extends Endpoint
       );
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -90,7 +91,7 @@ class Sections extends Endpoint
       return new Collection($this->master, $response, Pin::class);
 
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -109,7 +110,7 @@ class Sections extends Endpoint
     try {
       $this->request->delete($endpoint);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;

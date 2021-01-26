@@ -11,10 +11,7 @@
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
-use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
-use DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
-use ReflectionException;
 
 class ModelTest extends PinterestAuthAwareTestCase
 {

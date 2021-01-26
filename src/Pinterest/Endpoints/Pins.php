@@ -11,6 +11,7 @@
 namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Exceptions\PinterestExceptionsFactory;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Models\Collection;
 
@@ -32,7 +33,7 @@ class Pins extends Endpoint
     try {
       $response = $this->request->get($endpoint, $data);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return new Pin($this->master, $response);
@@ -56,7 +57,7 @@ class Pins extends Endpoint
 
       return new Collection($this->master, $response, Pin::class);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
   }
 
@@ -83,7 +84,7 @@ class Pins extends Endpoint
     try {
       $response = $this->request->post($endpoint, $data);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return new Pin($this->master, $response);
@@ -108,7 +109,7 @@ class Pins extends Endpoint
     try {
       $response = $this->request->update($endpoint, $data, $query);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return new Pin($this->master, $response);
@@ -129,7 +130,7 @@ class Pins extends Endpoint
     try {
       $this->request->delete($endpoint);
     } catch (\Exception $e) {
-      throw $this->createPinterestException($e, $endpoint);
+      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
     }
 
     return true;

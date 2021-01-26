@@ -10,7 +10,6 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
 use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Transport\Request;
 
@@ -24,13 +23,5 @@ class Endpoint
   {
     $this->request = $request;
     $this->master = $master;
-  }
-
-  protected static function createPinterestException(
-    \Exception $e,
-    string $endpoint,
-    array $payload = []
-  ): PinterestException {
-    return new PinterestException($e->getMessage(), $e->getCode(), $e->getPrevious(), $endpoint, $payload);
   }
 }

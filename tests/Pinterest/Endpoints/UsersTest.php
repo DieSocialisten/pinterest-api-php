@@ -13,7 +13,7 @@ namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
 use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
 
-class UsersTest extends \DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase
+class UsersTest extends PinterestAuthAwareTestCase
 {
   public function testMe()
   {
