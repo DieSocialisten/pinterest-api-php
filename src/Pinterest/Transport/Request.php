@@ -28,7 +28,7 @@ class Request
    *
    * @var string
    */
-  private string $host = "https://api.pinterest.com/v1/";
+  private string $host = "https://api.pinterest.com/v3/";
 
   /**
    * Instance of the CurlBuilder class

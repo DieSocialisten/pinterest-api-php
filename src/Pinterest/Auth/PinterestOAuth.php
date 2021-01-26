@@ -20,7 +20,7 @@ class PinterestOAuth
   /**
    * Pinterest's oauth endpoint
    */
-  public const AUTH_HOST = "https://api.pinterest.com/oauth/";
+  public const AUTH_HOST = "https://www.pinterest.com/oauth/";
 
   /**
    * The application ID
@@ -72,7 +72,7 @@ class PinterestOAuth
    * @param string $responseType
    * @return string
    */
-  public function getLoginUrl(string $redirectUri, $scopes = ["read_public"], $responseType = "code"): string
+  public function getLoginUrl(string $redirectUri, $scopes = ["read_users"], $responseType = "code"): string
   {
     $queryParams = [
       "response_type" => $responseType,
@@ -123,8 +123,7 @@ class PinterestOAuth
       "code" => $code
     ];
 
-    // Perform post request
-    return $this->request->post("oauth/token", $data);
+    return $this->request->put("oauth/access_token/", $data);
   }
 
   /**
