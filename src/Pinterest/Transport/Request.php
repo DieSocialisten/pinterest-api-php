@@ -13,9 +13,9 @@ namespace DirkGroenen\Pinterest\Transport;
 use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\RequestOptions;
-use GuzzleHttp\Exception\RequestException;
 
 class Request
 {
@@ -56,23 +56,12 @@ class Request
   }
 
   /**
-   * Make a get request to the given endpoint
-   *
-   * @param string $endpoint
-   * @param array $parameters
-   * @return Response
-   *
-   * @throws HttpClientException
+   * @param string $apiCall
+   * @return string
    */
-  public function get(string $endpoint, array $parameters = []): Response
+  private function buildFullApiCallUrl(string $apiCall): string
   {
-    if (!empty($parameters)) {
-      $path = sprintf("%s?%s", $endpoint, http_build_query($parameters));
-    } else {
-      $path = $endpoint;
-    }
-
-    return $this->execute("GET", sprintf("%s%s", $this->host, $path));
+    return $this->host . $apiCall;
   }
 
   /**
@@ -80,41 +69,38 @@ class Request
    *
    * @param string $method
    * @param string $apiCall
-   * @param array $parameters
-   * @param array $headers
+   * @param array $options
    * @return Response
    *
    * @throws HttpClientException
    */
-  public function execute(string $method, string $apiCall, array $parameters = array(), $headers = array()): Response
+  public function execute(string $method, string $apiCall, array $options = array()): Response
   {
     // Check if the access token needs to be added
-    if ($this->accessToken != null) {
-      $headers = array_merge(
-        $headers,
-        array(
-          "Authorization: Bearer " . $this->accessToken,
-        )
-      );
-    }
+    $headers = $this->accessToken != null
+      ? ["Authorization: Bearer " . $this->accessToken]
+      : [];
+
+    $effectiveOptions = array_merge(
+      [
+        RequestOptions::HEADERS => $headers,
+        RequestOptions::CONNECT_TIMEOUT => 20,
+        RequestOptions::TIMEOUT => 90,
+        RequestOptions::VERIFY => false,
+
+        // TODO leftovers from previous CURL client, need to fine-tune them and left only needed:
+        'curl' => [
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_HEADER => false,
+          CURLINFO_HEADER_OUT => true
+        ]
+      ],
+      $options
+    );
 
     try {
-      $httpResponse = $this->httpClient->request(
-        $method,
-        $apiCall,
-        [
-          RequestOptions::HEADERS => $headers,
-          RequestOptions::CONNECT_TIMEOUT => 20,
-          RequestOptions::TIMEOUT => 90,
-          RequestOptions::VERIFY => false,
+      $httpResponse = $this->httpClient->request($method, $apiCall, $effectiveOptions);
 
-          'curl' => [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
-            CURLINFO_HEADER_OUT => true
-          ]
-        ]
-      );
     } catch (RequestException $e) {
       /** @see https://docs.guzzlephp.org/en/stable/quickstart.html#exceptions */
 
@@ -122,7 +108,6 @@ class Request
       $responseMessage = $e->hasResponse() ? Message::toString($e->getResponse()) : '';
 
       throw new HttpClientException('Error: request failed', 0, $e, $requestMessage, $responseMessage);
-
     } catch (GuzzleException $e) {
       throw new HttpClientException('Error: request failed', 0, $e);
     }
@@ -138,6 +123,26 @@ class Request
   }
 
   /**
+   * Make a get request to the given endpoint
+   *
+   * @param string $endpoint
+   * @param array $queryParameters
+   * @return Response
+   *
+   * @throws HttpClientException
+   */
+  public function get(string $endpoint, array $queryParameters = []): Response
+  {
+    $options = [];
+
+    if (!empty($queryParameters)) {
+      $options = [RequestOptions::QUERY => $queryParameters];
+    }
+
+    return $this->execute("GET", $this->buildFullApiCallUrl($endpoint), $options);
+  }
+
+  /**
    * Make a post request to the given endpoint
    *
    * @param string $endpoint
@@ -148,7 +153,13 @@ class Request
    */
   public function post(string $endpoint, array $parameters = array()): Response
   {
-    return $this->execute("POST", sprintf("%s%s", $this->host, $endpoint), $parameters);
+    $options = [];
+
+    if (!empty($parameters)) {
+      $options = [RequestOptions::FORM_PARAMS => $parameters];
+    }
+
+    return $this->execute("POST", $this->buildFullApiCallUrl($endpoint), $options);
   }
 
   /**
@@ -162,21 +173,26 @@ class Request
    */
   public function put(string $endpoint, array $parameters = array()): Response
   {
-    return $this->execute("PUT", sprintf("%s%s", $this->host, $endpoint), $parameters);
+    $options = [];
+
+    if (!empty($parameters)) {
+      $options = [RequestOptions::FORM_PARAMS => $parameters];
+    }
+
+    return $this->execute("PUT", $this->buildFullApiCallUrl($endpoint), $options);
   }
 
   /**
    * Make a delete request to the given endpoint
    *
    * @param string $endpoint
-   * @param array $parameters
    * @return Response
    *
    * @throws HttpClientException
    */
-  public function delete(string $endpoint, array $parameters = array()): Response
+  public function delete(string $endpoint): Response
   {
-    return $this->execute("DELETE", sprintf("%s%s", $this->host, $endpoint) . "/", $parameters);
+    return $this->execute("DELETE", $this->buildFullApiCallUrl($endpoint));
   }
 
   /**
@@ -191,12 +207,16 @@ class Request
    */
   public function update(string $endpoint, array $parameters = array(), array $queryParameters = array()): Response
   {
-    if (!empty($queryParameters)) {
-      $path = sprintf("%s?%s", $endpoint, http_build_query($queryParameters));
-    } else {
-      $path = $endpoint;
+    $options = [];
+
+    if (!empty($parameters)) {
+      $options = [RequestOptions::FORM_PARAMS => $parameters];
     }
 
-    return $this->execute("PATCH", sprintf("%s%s", $this->host, $path), $parameters);
+    if (!empty($queryParameters)) {
+      $options = [RequestOptions::QUERY => $queryParameters];
+    }
+
+    return $this->execute("PATCH", $this->buildFullApiCallUrl($endpoint), $options);
   }
 }
