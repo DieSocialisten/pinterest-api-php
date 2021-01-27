@@ -37,37 +37,4 @@ class BoardsTest extends PinterestAuthAwareTestCase
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
     $this->assertTrue(isset($response->creator['first_name']));
   }
-
-  public function testCreate()
-  {
-    $response = $this->pinterest->boards->create(
-      array(
-        "name" => "Test board from API",
-        "description" => "Test Board From API Test"
-      )
-    );
-
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
-    $this->assertEquals("503066289565421205", $response->id);
-  }
-
-  public function testEdit()
-  {
-    $response = $this->pinterest->boards->edit(
-      self::BOARD_ID,
-      array(
-        "name" => "Test board from API"
-      )
-    );
-
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
-    $this->assertEquals("503066289565421205", $response->id);
-  }
-
-  public function testDelete()
-  {
-    $response = $this->pinterest->boards->delete("503066289565421205");
-
-    $this->assertTrue($response);
-  }
 }

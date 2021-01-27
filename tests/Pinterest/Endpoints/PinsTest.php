@@ -30,38 +30,4 @@ class PinsTest extends PinterestAuthAwareTestCase
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
     $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response->get(0));
   }
-
-  public function testCreate()
-  {
-    $response = $this->pinterest->pins->create(
-      array(
-        "note" => "Test pin from API wrapper",
-        "image_url" => "https://download.unsplash.com/photo-1438216983993-cdcd7dea84ce",
-        "board" => "503066289565421201"
-      )
-    );
-
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response);
-    $this->assertEquals("503066220854919983", $response->id);
-  }
-
-  public function testEdit()
-  {
-    $response = $this->pinterest->pins->edit(
-      "503066220854919983",
-      array(
-        "note" => "Test pin from API wrapper - update"
-      )
-    );
-
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response);
-    $this->assertEquals("503066220854919983", $response->id);
-  }
-
-  public function testDelete()
-  {
-    $response = $this->pinterest->pins->delete("503066220854919983");
-
-    $this->assertTrue($response);
-  }
 }
