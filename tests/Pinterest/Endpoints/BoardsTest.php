@@ -11,6 +11,7 @@
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
+use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
 
 class BoardsTest extends PinterestAuthAwareTestCase
@@ -21,7 +22,7 @@ class BoardsTest extends PinterestAuthAwareTestCase
   {
     $response = $this->pinterest->boards->get(self::BOARD_ID);
 
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
+    $this->assertInstanceOf(Board::class, $response);
     $this->assertEquals(self::BOARD_ID, $response->id);
   }
 
@@ -34,7 +35,7 @@ class BoardsTest extends PinterestAuthAwareTestCase
       )
     );
 
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Board", $response);
+    $this->assertInstanceOf(Board::class, $response);
     $this->assertTrue(isset($response->creator['first_name']));
   }
 }

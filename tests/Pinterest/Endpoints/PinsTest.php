@@ -11,6 +11,8 @@
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
+use DirkGroenen\Pinterest\Models\Collection;
+use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
 
 class PinsTest extends PinterestAuthAwareTestCase
@@ -19,7 +21,7 @@ class PinsTest extends PinterestAuthAwareTestCase
   {
     $response = $this->pinterest->pins->get("181692166190246650");
 
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response);
+    $this->assertInstanceOf(Pin::class, $response);
     $this->assertEquals("181692166190246650", $response->id);
   }
 
@@ -27,7 +29,7 @@ class PinsTest extends PinterestAuthAwareTestCase
   {
     $response = $this->pinterest->pins->fromBoard("503066289565421201");
 
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response->get(0));
+    $this->assertInstanceOf(Collection::class, $response);
+    $this->assertInstanceOf(Pin::class, $response->get(0));
   }
 }
