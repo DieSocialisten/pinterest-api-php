@@ -11,59 +11,63 @@
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
+use DirkGroenen\Pinterest\Models\Collection;
+use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
 
 class CollectionTest extends PinterestAuthAwareTestCase
 {
+  private const ID_DOESNT_MATTER = '123';
+
   /**
-   * @responsefile    interestsPageOne
+   * @responsefile pinsFromBoard
    */
   public function testIfCollectionAllReturnsItems()
   {
-    $response = $this->pinterest->following->interests();
+    $response = $this->pinterest->pins->fromBoard(self::ID_DOESNT_MATTER);
 
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
+    $this->assertInstanceOf(Collection::class, $response);
     $this->assertTrue(is_array($response->all()));
   }
 
   /**
-   * @responsefile    interestsPageOne
+   * @responsefile pinsFromBoard
    */
-  public function testIfCollectionGetReturnsCorrectAlbum()
+  public function testIfCollectionGetReturnsCorrectPin()
   {
-    $response = $this->pinterest->following->interests();
+    $response = $this->pinterest->pins->fromBoard(self::ID_DOESNT_MATTER);
 
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
-    $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Interest", $response->get(1));
-    $this->assertEquals("955147773988", $response->get(1)->id);
+    $this->assertInstanceOf(Collection::class, $response);
+    $this->assertInstanceOf(Pin::class, $response->get(1));
+    $this->assertEquals("503066220854919488", $response->get(1)->id);
   }
 
   /**
-   * @responsefile    interestsPageOne
+   * @responsefile pinsFromBoard
    */
   public function testIfCollectionHasNextPage()
   {
-    $response = $this->pinterest->following->interests();
+    $response = $this->pinterest->pins->fromBoard(self::ID_DOESNT_MATTER);
 
     $this->assertTrue($response->hasNextPage());
   }
 
   /**
-   * @responsefile    interestsPageOne
+   * @responsefile pinsFromBoard
    */
   public function testIfCollectionDecodesToJson()
   {
-    $response = $this->pinterest->following->interests();
+    $response = $this->pinterest->pins->fromBoard(self::ID_DOESNT_MATTER);
 
     $this->assertTrue(is_string($response->toJson()));
   }
 
   /**
-   * @responsefile    interestsPageOne
+   * @responsefile pinsFromBoard
    */
   public function testIfCollectionDecodesToArray()
   {
-    $response = $this->pinterest->following->interests();
+    $response = $this->pinterest->pins->fromBoard(self::ID_DOESNT_MATTER);
 
     $this->assertTrue(is_array($response->toArray()));
   }
