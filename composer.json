@@ -1,21 +1,16 @@
 {
-    "name": "dirkgroenen/pinterest-api-php",
-    "description": "PHP Wrapper for the official Pinterest API",
+    "name": "diesocialisten/pinterest-api-php",
+    "description": "A PHP wrapper for the official Pinterest API v3 tailored to walls.io needs. Fork of dirkgroenen/pinterest-api-php",
     "authors": [
         {
             "name": "Dirk Groenen",
             "email": "dirk@bitlabs.nl",
             "homepage": "http://dirkgroenen.nl",
-            "role": "Creator/Developer"
+            "role": "Original Creator/Developer"
         }
     ],
     "license": "Apache-2.0",
     "type": "library",
-    "keywords": [
-        "api",
-        "wrapper",
-        "pinterest"
-    ],
     "require": {
         "php": ">=7.4",
         "guzzlehttp/guzzle": "^7.0"
