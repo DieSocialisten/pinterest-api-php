@@ -102,7 +102,7 @@ class Request
       $httpResponse = $this->httpClient->request($method, $apiCall, $effectiveOptions);
 
     } catch (RequestException $e) {
-      /** @see https://docs.guzzlephp.org/en/stable/quickstart.html#exceptions */
+      /** @see https://docs.guzzlephp.org/en/6.5/quickstart.html#exceptions */
 
       $requestMessage = Message::toString($e->getRequest());
       $responseMessage = $e->hasResponse() ? Message::toString($e->getResponse()) : '';
