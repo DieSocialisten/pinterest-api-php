@@ -17,11 +17,11 @@ class Endpoint
 {
   protected Request $request;
 
-  protected Pinterest $master;
+  protected Pinterest $parentPinterest;
 
-  public function __construct(Request $request, Pinterest $master)
+  public function __construct(Request $request, Pinterest $pinterest)
   {
     $this->request = $request;
-    $this->master = $master;
+    $this->parentPinterest = $pinterest;
   }
 }

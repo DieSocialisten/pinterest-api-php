@@ -10,12 +10,8 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
-use DirkGroenen\Pinterest\Exceptions\PinterestExceptionsFactory;
-use DirkGroenen\Pinterest\Models\Board;
-use DirkGroenen\Pinterest\Models\Pin;
+use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Models\User;
-use DirkGroenen\Pinterest\Models\Collection;
 
 class Users extends Endpoint
 {
@@ -26,18 +22,15 @@ class Users extends Endpoint
    * @param array $data
    * @return User
    *
-   * @throws PinterestException
+   * @throws HttpClientException
    */
   public function me(array $data = []): User
   {
     $endpoint = "me/";
 
-    try {
-      $response = $this->request->get($endpoint, $data);
-    } catch (\Exception $e) {
-      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
-    }
+    $this->parentPinterest->logRequest($endpoint, $data);
+    $response = $this->request->get($endpoint, $data);
 
-    return new User($this->master, $response);
+    return new User($this->parentPinterest, $response);
   }
 }

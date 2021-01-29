@@ -10,11 +10,12 @@
 
 namespace DirkGroenen\Pinterest\Models;
 
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
 use DirkGroenen\Pinterest\Transport\Response;
 use DirkGroenen\Pinterest\Pinterest;
+use JsonSerializable;
 
-class Model implements \JsonSerializable
+class Model implements JsonSerializable
 {
   /**
    * The model's attributes
@@ -31,21 +32,19 @@ class Model implements \JsonSerializable
   protected array $fillable = [];
 
   /**
-   * Instance of the master Pinterest class
-   *
    * @var Pinterest
    */
-  protected Pinterest $master;
+  protected Pinterest $parentPinterest;
 
   /**
    * Create a new model instance
    *
-   * @param Pinterest $master
+   * @param Pinterest $pinterest
    * @param mixed $modelData
    */
-  public function __construct(Pinterest $master, $modelData = null)
+  public function __construct(Pinterest $pinterest, $modelData = null)
   {
-    $this->master = $master;
+    $this->parentPinterest = $pinterest;
 
     // Fill the model
     if (is_array($modelData)) {
@@ -98,12 +97,12 @@ class Model implements \JsonSerializable
    * @param string $key
    * @param mixed $value
    *
-   * @throws PinterestException
+   * @throws InvalidResponseException
    */
   public function __set(string $key, $value)
   {
     if (!$this->isFillable($key)) {
-      throw new PinterestException(sprintf("%s is not a fillable attribute.", $key));
+      throw new InvalidResponseException(sprintf("%s is not a fillable attribute.", $key));
     }
 
     $this->attributes[$key] = $value;

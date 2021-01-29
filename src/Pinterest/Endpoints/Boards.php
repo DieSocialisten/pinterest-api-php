@@ -10,8 +10,7 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
-use DirkGroenen\Pinterest\Exceptions\PinterestExceptionsFactory;
+use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Models\Board;
 
 class Boards extends Endpoint
@@ -23,20 +22,15 @@ class Boards extends Endpoint
    * @param array $data
    * @return Board
    *
-   * @throws PinterestException
+   * @throws HttpClientException
    */
   public function get(string $boardId, array $data = []): Board
   {
     $endpoint = sprintf("boards/%s/", $boardId);
 
-    $this->master->logRequest($endpoint, $data);
+    $this->parentPinterest->logRequest($endpoint, $data);
+    $response = $this->request->get($endpoint, $data);
 
-    try {
-      $response = $this->request->get($endpoint, $data);
-    } catch (\Exception $e) {
-      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint, $data);
-    }
-
-    return new Board($this->master, $response);
+    return new Board($this->parentPinterest, $response);
   }
 }

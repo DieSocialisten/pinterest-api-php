@@ -12,21 +12,18 @@ namespace DirkGroenen\Pinterest;
 
 use DirkGroenen\Pinterest\Auth\PinterestOAuth;
 use DirkGroenen\Pinterest\Endpoints\Boards;
-use DirkGroenen\Pinterest\Endpoints\Following;
 use DirkGroenen\Pinterest\Endpoints\Pins;
-use DirkGroenen\Pinterest\Endpoints\Sections;
 use DirkGroenen\Pinterest\Endpoints\Users;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Transport\Request;
 use DirkGroenen\Pinterest\Exceptions\InvalidEndpointException;
 use GuzzleHttp\Client;
+use ReflectionClass;
 
 /**
  * @property Boards boards
- * @property Following following
  * @property Pins pins
  * @property Users users
- * @property Sections sections
  */
 class Pinterest
 {
@@ -96,7 +93,7 @@ class Pinterest
 
       // Create a reflection of the called class and initialize it
       // with a reference to the request class
-      $ref = new \ReflectionClass($class);
+      $ref = new ReflectionClass($class);
       $obj = $ref->newInstanceArgs([$this->request, $this]);
 
       $this->cachedEndpoints[$endpoint] = $obj;
@@ -105,7 +102,7 @@ class Pinterest
     return $this->cachedEndpoints[$endpoint];
   }
 
-  private function getHeaderValueOrUseFallback(string $headerName, $fallbackValue = null)
+  private function getHeaderValueOrUseFallback(string $headerName, $fallbackValue = null): ?string
   {
     $lastResponse = $this->request->getLastHttpResponse();
 

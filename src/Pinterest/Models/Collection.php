@@ -10,14 +10,18 @@
 
 namespace DirkGroenen\Pinterest\Models;
 
+use ArrayAccess;
 use ArrayIterator;
 use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
+use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
 use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Transport\Response;
+use IteratorAggregate;
+use JsonSerializable;
+use ReflectionClass;
 use ReflectionException;
 
-class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
+class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
 {
   /**
    * Stores the pagination object
@@ -59,7 +63,7 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
    * @param array|Response $items
    * @param string $model
    *
-   * @throws InvalidModelException|PinterestException
+   * @throws InvalidModelException|InvalidResponseException
    */
   public function __construct(Pinterest $master, $items, string $model)
   {
@@ -81,7 +85,7 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
       $this->items = $items->data;
 
     } else {
-      throw new PinterestException("$items needs to be an instance of Transport\Response or an array.");
+      throw new InvalidResponseException("$items needs to be an instance of Transport\Response or an array.");
     }
 
     // Transform the raw collection data to models
@@ -108,7 +112,7 @@ class Collection implements \JsonSerializable, \ArrayAccess, \IteratorAggregate
    */
   private function buildCollectionModels(array $items): array
   {
-    $class = new \ReflectionClass($this->model);
+    $class = new ReflectionClass($this->model);
 
     return array_map(function($item) use ($class) {
       return $class->newInstanceArgs([$this->master, $item]);

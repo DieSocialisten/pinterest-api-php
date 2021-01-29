@@ -16,6 +16,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\RequestOptions;
+use Psr\Http\Message\ResponseInterface;
 
 class Request
 {
@@ -38,7 +39,7 @@ class Request
    */
   private Client $httpClient;
 
-  private ?\GuzzleHttp\Psr7\Response $lastHttpResponse = null;
+  private ?ResponseInterface $lastHttpResponse = null;
 
   public function __construct(Client $httpClient)
   {
@@ -108,6 +109,7 @@ class Request
       $responseMessage = $e->hasResponse() ? Message::toString($e->getResponse()) : '';
 
       throw new HttpClientException('Error: request failed', 0, $e, $requestMessage, $responseMessage);
+
     } catch (GuzzleException $e) {
       throw new HttpClientException('Error: request failed', 0, $e);
     }
@@ -117,7 +119,7 @@ class Request
     return new Response((string)$this->lastHttpResponse->getBody());
   }
 
-  public function getLastHttpResponse(): ?\GuzzleHttp\Psr7\Response
+  public function getLastHttpResponse(): ?ResponseInterface
   {
     return $this->lastHttpResponse;
   }
@@ -180,43 +182,5 @@ class Request
     }
 
     return $this->execute("PUT", $this->buildFullApiCallUrl($endpoint), $options);
-  }
-
-  /**
-   * Make a delete request to the given endpoint
-   *
-   * @param string $endpoint
-   * @return Response
-   *
-   * @throws HttpClientException
-   */
-  public function delete(string $endpoint): Response
-  {
-    return $this->execute("DELETE", $this->buildFullApiCallUrl($endpoint));
-  }
-
-  /**
-   * Make an update request to the given endpoint
-   *
-   * @param string $endpoint
-   * @param array $parameters
-   * @param array $queryParameters
-   * @return Response
-   *
-   * @throws HttpClientException
-   */
-  public function update(string $endpoint, array $parameters = array(), array $queryParameters = array()): Response
-  {
-    $options = [];
-
-    if (!empty($parameters)) {
-      $options = [RequestOptions::FORM_PARAMS => $parameters];
-    }
-
-    if (!empty($queryParameters)) {
-      $options = [RequestOptions::QUERY => $queryParameters];
-    }
-
-    return $this->execute("PATCH", $this->buildFullApiCallUrl($endpoint), $options);
   }
 }

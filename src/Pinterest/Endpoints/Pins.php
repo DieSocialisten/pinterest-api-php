@@ -10,10 +10,11 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\PinterestException;
-use DirkGroenen\Pinterest\Exceptions\PinterestExceptionsFactory;
-use DirkGroenen\Pinterest\Models\Pin;
+use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
+use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
 use DirkGroenen\Pinterest\Models\Collection;
+use DirkGroenen\Pinterest\Models\Pin;
 
 class Pins extends Endpoint
 {
@@ -24,19 +25,16 @@ class Pins extends Endpoint
    * @param array $data
    * @return Pin
    *
-   * @throws PinterestException
+   * @throws HttpClientException
    */
   public function get(string $pinId, array $data = []): Pin
   {
     $endpoint = sprintf("pins/%s/", $pinId);
 
-    try {
-      $response = $this->request->get($endpoint, $data);
-    } catch (\Exception $e) {
-      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
-    }
+    $this->parentPinterest->logRequest($endpoint, $data);
+    $response = $this->request->get($endpoint, $data);
 
-    return new Pin($this->master, $response);
+    return new Pin($this->parentPinterest, $response);
   }
 
   /**
@@ -46,18 +44,15 @@ class Pins extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestException
+   * @throws HttpClientException|InvalidModelException|InvalidResponseException
    */
   public function fromBoard(string $boardId, array $data = []): Collection
   {
     $endpoint = sprintf("boards/%s/pins/", $boardId);
 
-    try {
-      $response = $this->request->get($endpoint, $data);
+    $this->parentPinterest->logRequest($endpoint, $data);
+    $response = $this->request->get($endpoint, $data);
 
-      return new Collection($this->master, $response, Pin::class);
-    } catch (\Exception $e) {
-      throw PinterestExceptionsFactory::createFromCurrentException($e, $endpoint);
-    }
+    return new Collection($this->parentPinterest, $response, Pin::class);
   }
 }

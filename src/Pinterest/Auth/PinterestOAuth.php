@@ -54,9 +54,10 @@ class PinterestOAuth
   }
 
   /**
-   * Generates a random string and returns is
+   * Generates a random string and returns.
+   * "State" in Pinterest API considered as a CSRF protection token.
    *
-   * @return string       random string
+   * @return string
    */
   private function generateState(): string
   {
@@ -107,19 +108,23 @@ class PinterestOAuth
   /**
    * Change the code for an access token
    *
+   * @see https://developers.pinterest.com/docs/redoc/pinner_app/#section/User-Authorization/Exchange-the-code-for-an-access-token
+   *
    * @param string $code
+   * @param string $redirectUri
    * @return Response
    *
    * @throws HttpClientException
    */
-  public function getOAuthToken(string $code): Response
+  public function getOAuthToken(string $code, string $redirectUri): Response
   {
     // Build data array
     $data = [
       "grant_type" => "authorization_code",
       "client_id" => $this->clientId,
       "client_secret" => $this->clientSecret,
-      "code" => $code
+      "code" => $code,
+      "redirect_uri" => $redirectUri,
     ];
 
     return $this->request->put("oauth/access_token/", $data);

@@ -10,8 +10,6 @@
 
 namespace DirkGroenen\Pinterest\Models;
 
-use DirkGroenen\Pinterest\Endpoints\Boards;
-
 class User extends Model
 {
   /**
