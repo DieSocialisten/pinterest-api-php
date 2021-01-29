@@ -29,12 +29,12 @@ class Pins extends Endpoint
    */
   public function get(string $pinId, array $data = []): Pin
   {
-    $endpoint = sprintf("pins/%s/", $pinId);
+    $endpoint = "pins/{$pinId}/";
 
     $this->parentPinterest->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
-    return new Pin($this->parentPinterest, $response);
+    return new Pin($response);
   }
 
   /**
@@ -48,11 +48,11 @@ class Pins extends Endpoint
    */
   public function fromBoard(string $boardId, array $data = []): Collection
   {
-    $endpoint = sprintf("boards/%s/pins/", $boardId);
+    $endpoint = "boards/{$boardId}/pins/";
 
     $this->parentPinterest->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
-    return new Collection($this->parentPinterest, $response, Pin::class);
+    return new Collection($response, Pin::class);
   }
 }

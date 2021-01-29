@@ -11,8 +11,8 @@
 namespace DirkGroenen\Pinterest\Auth;
 
 use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use DirkGroenen\Pinterest\Models\AccessToken;
 use DirkGroenen\Pinterest\Transport\Request;
-use DirkGroenen\Pinterest\Transport\Response;
 
 class PinterestOAuth
 {
@@ -32,7 +32,8 @@ class PinterestOAuth
   private string $clientSecret;
 
   /**
-   * Random string indicating the state to prevent spoofing
+   * "State" in Pinterest API considered as a CSRF protection token.
+   * By default generated "randomly" in this lib.
    */
   private ?string $state;
 
@@ -54,9 +55,6 @@ class PinterestOAuth
   }
 
   /**
-   * Generates a random string and returns.
-   * "State" in Pinterest API considered as a CSRF protection token.
-   *
    * @return string
    */
   private function generateState(): string
@@ -98,6 +96,7 @@ class PinterestOAuth
 
   /**
    * Set a state manually
+   *
    * @param string|null $state
    */
   public function setState(?string $state)
@@ -106,19 +105,16 @@ class PinterestOAuth
   }
 
   /**
-   * Change the code for an access token
-   *
    * @see https://developers.pinterest.com/docs/redoc/pinner_app/#section/User-Authorization/Exchange-the-code-for-an-access-token
    *
    * @param string $code
    * @param string $redirectUri
-   * @return Response
+   * @return AccessToken
    *
    * @throws HttpClientException
    */
-  public function getOAuthToken(string $code, string $redirectUri): Response
+  public function exchangeCodeForAccessToken(string $code, string $redirectUri): AccessToken
   {
-    // Build data array
     $data = [
       "grant_type" => "authorization_code",
       "client_id" => $this->clientId,
@@ -127,7 +123,9 @@ class PinterestOAuth
       "redirect_uri" => $redirectUri,
     ];
 
-    return $this->request->put("oauth/access_token/", $data);
+    $response = $this->request->put("oauth/access_token/", $data);
+
+    return new AccessToken($response);
   }
 
   /**
@@ -135,8 +133,8 @@ class PinterestOAuth
    *
    * @param string $accessToken
    */
-  public function setOAuthToken(string $accessToken)
+  public function setAccessTokenValue(string $accessToken)
   {
-    $this->request->setAccessToken($accessToken);
+    $this->request->setAccessTokenValue($accessToken);
   }
 }

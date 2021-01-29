@@ -28,11 +28,9 @@ use ReflectionClass;
 class Pinterest
 {
   /**
-   * Reference to authentication class instance
-   *
    * @var Auth\PinterestOAuth
    */
-  public PinterestOAuth $auth;
+  private PinterestOAuth $auth;
 
   /**
    * A reference to the request class which travels
@@ -43,8 +41,6 @@ class Pinterest
   public Request $request;
 
   /**
-   * A array containing the cached endpoints
-   *
    * @var array
    */
   private array $cachedEndpoints = [];
@@ -52,8 +48,6 @@ class Pinterest
   private ?RequestLoggerInterface $requestLogger = null;
 
   /**
-   * Constructor
-   *
    * @param string $clientId
    * @param string $clientSecret
    * @param ?Client $httpClient
@@ -151,5 +145,13 @@ class Pinterest
     }
 
     $this->requestLogger->log($endpoint, $payload);
+  }
+
+  /**
+   * @return PinterestOAuth
+   */
+  public function getAuthComponent(): PinterestOAuth
+  {
+    return $this->auth;
   }
 }

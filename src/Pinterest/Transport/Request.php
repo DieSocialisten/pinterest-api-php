@@ -25,7 +25,7 @@ class Request
    *
    * @var string|null
    */
-  protected ?string $accessToken = null;
+  protected ?string $accessTokenValue = null;
 
   /**
    * Host to make the calls to
@@ -51,9 +51,9 @@ class Request
    *
    * @param string $token
    */
-  public function setAccessToken(string $token)
+  public function setAccessTokenValue(string $token)
   {
-    $this->accessToken = $token;
+    $this->accessTokenValue = $token;
   }
 
   /**
@@ -78,8 +78,8 @@ class Request
   public function execute(string $method, string $apiCall, array $options = array()): Response
   {
     // Check if the access token needs to be added
-    $headers = $this->accessToken != null
-      ? ["Authorization: Bearer " . $this->accessToken]
+    $headers = $this->accessTokenValue != null
+      ? ["Authorization: Bearer " . $this->accessTokenValue]
       : [];
 
     $effectiveOptions = array_merge(

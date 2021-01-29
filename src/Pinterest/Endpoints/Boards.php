@@ -26,11 +26,11 @@ class Boards extends Endpoint
    */
   public function get(string $boardId, array $data = []): Board
   {
-    $endpoint = sprintf("boards/%s/", $boardId);
+    $endpoint = "boards/{$boardId}/";
 
     $this->parentPinterest->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
-    return new Board($this->parentPinterest, $response);
+    return new Board($response);
   }
 }

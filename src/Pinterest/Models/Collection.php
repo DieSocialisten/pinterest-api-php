@@ -14,12 +14,9 @@ use ArrayAccess;
 use ArrayIterator;
 use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
-use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Transport\Response;
 use IteratorAggregate;
 use JsonSerializable;
-use ReflectionClass;
-use ReflectionException;
 
 class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
 {
@@ -45,13 +42,6 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
   private string $model;
 
   /**
-   * Instance of Pinterest master class
-   *
-   * @var Pinterest
-   */
-  private Pinterest $master;
-
-  /**
    * Response instance
    */
   private ?Response $response;
@@ -59,16 +49,13 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
   /**
    * Construct
    *
-   * @param Pinterest $master
    * @param array|Response $items
    * @param string $model
    *
    * @throws InvalidModelException|InvalidResponseException
    */
-  public function __construct(Pinterest $master, $items, string $model)
+  public function __construct($items, string $model)
   {
-    $this->master = $master;
-
     $this->model = $model;
 
     if (!class_exists($this->model)) {
@@ -89,11 +76,7 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
     }
 
     // Transform the raw collection data to models
-    try {
-      $this->items = $this->buildCollectionModels($this->items);
-    } catch (ReflectionException $e) {
-      throw new InvalidModelException();
-    }
+    $this->items = $this->buildCollectionModels($this->items);
 
     // Add pagination object
     if (isset($this->response->page) && !empty($this->response->page['next'])) {
@@ -107,15 +90,12 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
    * Transform each raw item into a model
    *
    * @param array $items
-   * @return array
-   * @throws ReflectionException
+   * @return Model[]
    */
   private function buildCollectionModels(array $items): array
   {
-    $class = new ReflectionClass($this->model);
-
-    return array_map(function($item) use ($class) {
-      return $class->newInstanceArgs([$this->master, $item]);
+    return array_map(function($item) {
+      return new $this->model($item);
     }, $items);
   }
 

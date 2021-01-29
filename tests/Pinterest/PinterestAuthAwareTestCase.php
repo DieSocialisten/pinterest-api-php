@@ -19,6 +19,6 @@ abstract class PinterestAuthAwareTestCase extends TestCase
     $httpClient = HttpClientMockFactory::create($this);
 
     $this->pinterest = new Pinterest("0", "0", $httpClient);
-    $this->pinterest->auth->setOAuthToken("0");
+    $this->pinterest->getAuthComponent()->setAccessTokenValue("0");
   }
 }

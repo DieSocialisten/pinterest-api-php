@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace DirkGroenen\Pinterest\Models;
 
 /**
- * @property string id
+ * @property string access_token
  */
-class Board extends Model
+class AccessToken extends Model
 {
   protected function getAttributesToFill(): array
   {
-    return ["id", "name", "url", "description", "creator", "created_at", "counts", "image"];
+    return [
+      'access_token'
+    ];
   }
 }

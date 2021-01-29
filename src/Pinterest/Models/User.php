@@ -12,22 +12,19 @@ namespace DirkGroenen\Pinterest\Models;
 
 class User extends Model
 {
-  /**
-   * The available object keys
-   *
-   * @var array
-   */
-  protected array $fillable = [
-    "id",
-    "username",
-    "first_name",
-    "last_name",
-    "bio",
-    "created_at",
-    "counts",
-    "image",
-    "url",
-    "account_type"
-  ];
-
+  protected function getAttributesToFill(): array
+  {
+    return [
+      "id",
+      "username",
+      "first_name",
+      "last_name",
+      "bio",
+      "created_at",
+      "counts",
+      "image",
+      "url",
+      "account_type"
+    ];
+  }
 }

@@ -31,6 +31,6 @@ class Users extends Endpoint
     $this->parentPinterest->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
-    return new User($this->parentPinterest, $response);
+    return new User($response);
   }
 }
