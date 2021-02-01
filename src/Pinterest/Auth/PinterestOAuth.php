@@ -11,11 +11,15 @@
 namespace DirkGroenen\Pinterest\Auth;
 
 use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
+use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Models\AccessToken;
 use DirkGroenen\Pinterest\Transport\Request;
 
 class PinterestOAuth
 {
+  use RequestLoggerAwareTrait;
+
   /**
    * Pinterest's oauth endpoint
    */
@@ -42,7 +46,7 @@ class PinterestOAuth
    */
   private Request $request;
 
-  public function __construct(string $clientId, string $clientSecret, Request $request)
+  public function __construct(string $clientId, string $clientSecret, Request $request, ?RequestLoggerInterface $requestLogger = null)
   {
     $this->clientId = $clientId;
     $this->clientSecret = $clientSecret;
@@ -52,6 +56,10 @@ class PinterestOAuth
 
     // Set request instance
     $this->request = $request;
+
+    if ($requestLogger) {
+      $this->setRequestLogger($requestLogger);
+    }
   }
 
   /**
@@ -123,7 +131,9 @@ class PinterestOAuth
       "redirect_uri" => $redirectUri,
     ];
 
-    $response = $this->request->put("oauth/access_token/", $data);
+    $endpoint = "oauth/access_token/";
+    $this->logRequest($endpoint, $data);
+    $response = $this->request->put($endpoint, $data);
 
     return new AccessToken($response);
   }

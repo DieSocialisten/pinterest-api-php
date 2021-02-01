@@ -10,18 +10,22 @@
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
+use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Transport\Request;
 
 class Endpoint
 {
+  use RequestLoggerAwareTrait;
+
   protected Request $request;
 
-  protected Pinterest $parentPinterest;
-
-  public function __construct(Request $request, Pinterest $pinterest)
+  public function __construct(Request $request, ?RequestLoggerInterface $requestLogger)
   {
     $this->request = $request;
-    $this->parentPinterest = $pinterest;
+
+    if ($requestLogger) {
+      $this->setRequestLogger($requestLogger);
+    }
   }
 }

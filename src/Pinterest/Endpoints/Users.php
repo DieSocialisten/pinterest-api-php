@@ -28,7 +28,7 @@ class Users extends Endpoint
   {
     $endpoint = "me/";
 
-    $this->parentPinterest->logRequest($endpoint, $data);
+    $this->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
     return new User($response);

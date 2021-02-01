@@ -31,7 +31,7 @@ class Pins extends Endpoint
   {
     $endpoint = "pins/{$pinId}/";
 
-    $this->parentPinterest->logRequest($endpoint, $data);
+    $this->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
     return new Pin($response);
@@ -50,7 +50,7 @@ class Pins extends Endpoint
   {
     $endpoint = "boards/{$boardId}/pins/";
 
-    $this->parentPinterest->logRequest($endpoint, $data);
+    $this->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
     return new Collection($response, Pin::class);

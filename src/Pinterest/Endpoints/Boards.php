@@ -28,7 +28,7 @@ class Boards extends Endpoint
   {
     $endpoint = "boards/{$boardId}/";
 
-    $this->parentPinterest->logRequest($endpoint, $data);
+    $this->logRequest($endpoint, $data);
     $response = $this->request->get($endpoint, $data);
 
     return new Board($response);

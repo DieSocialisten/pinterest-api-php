@@ -12,13 +12,13 @@ namespace DirkGroenen\Pinterest;
 
 use DirkGroenen\Pinterest\Auth\PinterestOAuth;
 use DirkGroenen\Pinterest\Endpoints\Boards;
+use DirkGroenen\Pinterest\Endpoints\Endpoint;
 use DirkGroenen\Pinterest\Endpoints\Pins;
 use DirkGroenen\Pinterest\Endpoints\Users;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Transport\Request;
 use DirkGroenen\Pinterest\Exceptions\InvalidEndpointException;
 use GuzzleHttp\Client;
-use ReflectionClass;
 
 /**
  * @property Boards boards
@@ -45,52 +45,53 @@ class Pinterest
    */
   private array $cachedEndpoints = [];
 
-  private ?RequestLoggerInterface $requestLogger = null;
+  /**
+   * @var RequestLoggerInterface|null
+   */
+  private ?RequestLoggerInterface $requestLogger;
 
   /**
    * @param string $clientId
    * @param string $clientSecret
    * @param ?Client $httpClient
+   * @param RequestLoggerInterface|null $requestLogger
    */
-  public function __construct(string $clientId, string $clientSecret, ?Client $httpClient = null)
+  public function __construct(
+    string $clientId,
+    string $clientSecret,
+    ?Client $httpClient = null,
+    ?RequestLoggerInterface $requestLogger = null
+  )
   {
     if ($httpClient == null) {
       $httpClient = new Client();
     }
 
-    // Create new instance of Transport\Request
     $this->request = new Request($httpClient);
 
-    // Create and set new instance of the OAuth class
     $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->request);
+
+    $this->requestLogger = $requestLogger;
   }
 
   /**
    * Get an Pinterest API endpoint
    *
    * @param string $endpoint
-   * @return mixed
-   * @throws Exceptions\InvalidEndpointException|\ReflectionException
+   * @return Endpoint
+   *
+   * @throws InvalidEndpointException
    */
-  public function __get(string $endpoint)
+  public function __get(string $endpoint): Endpoint
   {
-    $endpoint = strtolower($endpoint);
+    $endpointClassname = "\\DirkGroenen\\Pinterest\\Endpoints\\" . ucfirst(strtolower($endpoint));
 
-    $class = "\\DirkGroenen\\Pinterest\\Endpoints\\" . ucfirst($endpoint);
-
-    // Check if an instance has already been initiated
     if (!isset($this->cachedEndpoints[$endpoint])) {
-      // Check endpoint existence
-      if (!class_exists($class)) {
+      if (!class_exists($endpointClassname)) {
         throw new InvalidEndpointException();
       }
 
-      // Create a reflection of the called class and initialize it
-      // with a reference to the request class
-      $ref = new ReflectionClass($class);
-      $obj = $ref->newInstanceArgs([$this->request, $this]);
-
-      $this->cachedEndpoints[$endpoint] = $obj;
+      $this->cachedEndpoints[$endpoint] = new $endpointClassname($this->request, $this->requestLogger);
     }
 
     return $this->cachedEndpoints[$endpoint];
@@ -129,22 +130,6 @@ class Pinterest
   public function getRateLimitRemaining(): string
   {
     return $this->getHeaderValueOrUseFallback('x-ratelimit-remaining', 'unknown');
-  }
-
-  public function setRequestLogger(?RequestLoggerInterface $requestLogger): Pinterest
-  {
-    $this->requestLogger = $requestLogger;
-
-    return $this;
-  }
-
-  public function logRequest(string $endpoint, array $payload)
-  {
-    if (!$this->requestLogger) {
-      return;
-    }
-
-    $this->requestLogger->log($endpoint, $payload);
   }
 
   /**
