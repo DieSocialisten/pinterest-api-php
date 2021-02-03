@@ -11,8 +11,23 @@
 
 namespace DirkGroenen\Pinterest\Tests;
 
-class PinterestTest extends PinterestAuthAwareTestCase
+use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
+
+class PinterestTest extends TestCase
 {
+  private Pinterest $pinterest;
+
+  /**
+   * @throws ReflectionException
+   */
+  public function setUp(): void
+  {
+    $this->pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+  }
+
   public function testGetRateLimit()
   {
     $rateLimit = $this->pinterest->getRateLimit();

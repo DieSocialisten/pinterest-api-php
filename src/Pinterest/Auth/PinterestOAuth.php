@@ -15,6 +15,7 @@ use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Models\AccessToken;
 use DirkGroenen\Pinterest\Transport\Request;
+use DirkGroenen\Pinterest\Transport\Response;
 
 class PinterestOAuth
 {
@@ -132,10 +133,10 @@ class PinterestOAuth
     ];
 
     $endpoint = "oauth/access_token/";
-    $this->logRequest($endpoint, $data);
-    $response = $this->request->put($endpoint, $data);
+    $this->logViaRequestLogger($endpoint, $data);
+    $responseBody = $this->request->put($endpoint, $data);
 
-    return new AccessToken($response);
+    return new AccessToken(Response::createFromJson($responseBody));
   }
 
   /**

@@ -71,11 +71,11 @@ class Request
    * @param string $method
    * @param string $apiCall
    * @param array $options
-   * @return Response
+   * @return string
    *
    * @throws HttpClientException
    */
-  public function execute(string $method, string $apiCall, array $options = array()): Response
+  public function execute(string $method, string $apiCall, array $options = array()): string
   {
     // Check if the access token needs to be added
     $headers = $this->accessTokenValue != null
@@ -116,7 +116,7 @@ class Request
 
     $this->lastHttpResponse = $httpResponse;
 
-    return new Response((string)$this->lastHttpResponse->getBody());
+    return (string)$this->lastHttpResponse->getBody();
   }
 
   public function getLastHttpResponse(): ?ResponseInterface
@@ -129,11 +129,11 @@ class Request
    *
    * @param string $endpoint
    * @param array $queryParameters
-   * @return Response
+   * @return string
    *
    * @throws HttpClientException
    */
-  public function get(string $endpoint, array $queryParameters = []): Response
+  public function get(string $endpoint, array $queryParameters = []): string
   {
     $options = [];
 
@@ -149,11 +149,11 @@ class Request
    *
    * @param string $endpoint
    * @param array $parameters
-   * @return Response
+   * @return string
    *
    * @throws HttpClientException
    */
-  public function post(string $endpoint, array $parameters = array()): Response
+  public function post(string $endpoint, array $parameters = array()): string
   {
     $options = [];
 
@@ -169,11 +169,11 @@ class Request
    *
    * @param string $endpoint
    * @param array $parameters
-   * @return Response
+   * @return string
    *
    * @throws HttpClientException
    */
-  public function put(string $endpoint, array $parameters = array()): Response
+  public function put(string $endpoint, array $parameters = array()): string
   {
     $options = [];
 

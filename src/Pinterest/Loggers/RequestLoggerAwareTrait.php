@@ -8,21 +8,26 @@ trait RequestLoggerAwareTrait
 {
   private ?RequestLoggerInterface $requestLogger = null;
 
-  public function setRequestLogger(?RequestLoggerInterface $requestLogger): RequestLoggerAwareTrait
+  public function setRequestLogger(?RequestLoggerInterface $requestLogger)
   {
     $this->requestLogger = $requestLogger;
-
-    return $this;
   }
 
-  public function logRequest(string $endpoint, array $payload)
+  public function logViaRequestLogger(string $endpoint, array $payload)
   {
     if (!$this->requestLogger) {
       return;
     }
 
-    // remove sensitive data:
-    unset($payload['client_id'], $payload['client_secret']);
+    // mask sensitive data before storing it somewhere:
+
+    if (isset($payload['client_id'])) {
+      $payload['client_id'] = '***';
+    }
+
+    if (isset($payload['client_secret'])) {
+      $payload['client_secret'] = '***';
+    }
 
     $this->requestLogger->log($endpoint, $payload);
   }

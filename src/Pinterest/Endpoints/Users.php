@@ -12,10 +12,10 @@ namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Models\User;
+use DirkGroenen\Pinterest\Transport\Response;
 
 class Users extends Endpoint
 {
-
   /**
    * Get the current user
    *
@@ -28,9 +28,9 @@ class Users extends Endpoint
   {
     $endpoint = "me/";
 
-    $this->logRequest($endpoint, $data);
-    $response = $this->request->get($endpoint, $data);
+    $this->logViaRequestLogger($endpoint, $data);
+    $responseBody = $this->request->get($endpoint, $data);
 
-    return new User($response);
+    return new User(Response::createFromJson($responseBody));
   }
 }

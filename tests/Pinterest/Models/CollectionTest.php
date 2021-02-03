@@ -9,15 +9,28 @@
  * file that was distributed with this source code.
  */
 
-namespace DirkGroenen\Pinterest\Tests\Endpoints;
+namespace DirkGroenen\Pinterest\Tests\Models;
 
 use DirkGroenen\Pinterest\Models\Collection;
 use DirkGroenen\Pinterest\Models\Pin;
-use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
+use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class CollectionTest extends PinterestAuthAwareTestCase
+class CollectionTest extends TestCase
 {
   private const ID_DOESNT_MATTER = '123';
+
+  private Pinterest $pinterest;
+
+  /**
+   * @throws ReflectionException
+   */
+  public function setUp(): void
+  {
+    $this->pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+  }
 
   /**
    * @responsefile pinsFromBoard

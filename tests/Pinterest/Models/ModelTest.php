@@ -9,12 +9,25 @@
  * file that was distributed with this source code.
  */
 
-namespace DirkGroenen\Pinterest\Tests\Endpoints;
+namespace DirkGroenen\Pinterest\Tests\Models;
 
-use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
+use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class ModelTest extends PinterestAuthAwareTestCase
+class ModelTest extends TestCase
 {
+  private Pinterest $pinterest;
+
+  /**
+   * @throws ReflectionException
+   */
+  public function setUp(): void
+  {
+    $this->pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+  }
+
   /**
    * @responsefile    pin
    */

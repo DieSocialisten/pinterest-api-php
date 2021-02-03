@@ -53,14 +53,14 @@ class Pinterest
   /**
    * @param string $clientId
    * @param string $clientSecret
-   * @param ?Client $httpClient
    * @param RequestLoggerInterface|null $requestLogger
+   * @param ?Client $httpClient
    */
   public function __construct(
     string $clientId,
     string $clientSecret,
-    ?Client $httpClient = null,
-    ?RequestLoggerInterface $requestLogger = null
+    ?RequestLoggerInterface $requestLogger = null,
+    ?Client $httpClient = null
   )
   {
     if ($httpClient == null) {
@@ -68,9 +68,7 @@ class Pinterest
     }
 
     $this->request = new Request($httpClient);
-
     $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->request);
-
     $this->requestLogger = $requestLogger;
   }
 

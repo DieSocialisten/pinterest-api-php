@@ -13,10 +13,23 @@ namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
 use DirkGroenen\Pinterest\Models\Collection;
 use DirkGroenen\Pinterest\Models\Pin;
-use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
+use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class PinsTest extends PinterestAuthAwareTestCase
+class PinsTest extends TestCase
 {
+  private Pinterest $pinterest;
+
+  /**
+   * @throws ReflectionException
+   */
+  public function setUp(): void
+  {
+    $this->pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+  }
+
   public function testGet()
   {
     $response = $this->pinterest->pins->get("181692166190246650");

@@ -12,11 +12,24 @@
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
 use DirkGroenen\Pinterest\Models\Board;
-use DirkGroenen\Pinterest\Tests\PinterestAuthAwareTestCase;
+use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class BoardsTest extends PinterestAuthAwareTestCase
+class BoardsTest extends TestCase
 {
   private const BOARD_ID = '503066289565421201';
+
+  private Pinterest $pinterest;
+
+  /**
+   * @throws ReflectionException
+   */
+  public function setUp(): void
+  {
+    $this->pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+  }
 
   public function testGet()
   {

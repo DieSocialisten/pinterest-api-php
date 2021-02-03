@@ -12,6 +12,7 @@ namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Models\Board;
+use DirkGroenen\Pinterest\Transport\Response;
 
 class Boards extends Endpoint
 {
@@ -28,9 +29,9 @@ class Boards extends Endpoint
   {
     $endpoint = "boards/{$boardId}/";
 
-    $this->logRequest($endpoint, $data);
-    $response = $this->request->get($endpoint, $data);
+    $this->logViaRequestLogger($endpoint, $data);
+    $responseBody = $this->request->get($endpoint, $data);
 
-    return new Board($response);
+    return new Board(Response::createFromJson($responseBody));
   }
 }

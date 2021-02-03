@@ -15,7 +15,9 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 
 class HttpClientMockFactory
 {
@@ -25,13 +27,13 @@ class HttpClientMockFactory
    *
    * @throws ReflectionException
    */
-  public static function create(TestCase $instance): Client
+  public static function parseAnnotationsAndCreate(TestCase $instance): Client
   {
-    $reflection = new \ReflectionMethod($instance, $instance->getName());
+    $reflection = new ReflectionMethod($instance, $instance->getName());
     $docBlock = $reflection->getDocComment();
 
-    $responseFile = self::parseDocBlock($docBlock, '@responsefile');
-    $responseCode = self::parseDocBlock($docBlock, '@responsecode');
+    $responseFile = self::parseAnnotationsTag($docBlock, '@responsefile');
+    $responseCode = self::parseAnnotationsTag($docBlock, '@responsecode');
 
     if (empty($responseCode)) {
       $responseCode = [201];
@@ -42,7 +44,7 @@ class HttpClientMockFactory
     }
 
     // Build response file path
-    $responseFilePath = __DIR__ . '/../responses/' . (new \ReflectionClass($instance))->getShortName() . '/' .
+    $responseFilePath = __DIR__ . '/../responses/' . (new ReflectionClass($instance))->getShortName() . '/' .
       $responseFile[0] . ".json";
 
     if (file_exists($responseFilePath)) {
@@ -67,7 +69,7 @@ class HttpClientMockFactory
    *
    * @return array
    */
-  private static function parseDocBlock(string $docBlock, string $tag): array
+  private static function parseAnnotationsTag(string $docBlock, string $tag): array
   {
     $matches = array();
 
