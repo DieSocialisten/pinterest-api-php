@@ -11,7 +11,7 @@ class HttpClientException extends \Exception
   private string $requestMessage;
   private string $responseMessage;
 
-  public function __construct($message = "", $code = 0, Throwable $previous = null, string $requestMessage = '', string $responseMessage = '')
+  public function __construct($message = '', $code = 0, Throwable $previous = null, string $requestMessage = '', string $responseMessage = '')
   {
     parent::__construct($message, $code, $previous);
 

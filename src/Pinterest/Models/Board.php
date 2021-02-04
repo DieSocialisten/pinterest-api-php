@@ -11,6 +11,6 @@ class Board extends Model
 {
   protected function getAttributesToFill(): array
   {
-    return ["id", "name", "url", "description", "creator", "created_at", "counts", "image"];
+    return ['id', 'name', 'url', 'description', 'creator', 'created_at', 'counts', 'image'];
   }
 }

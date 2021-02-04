@@ -66,7 +66,7 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
       $this->items = $items->data;
 
     } else {
-      throw new InvalidResponseException("$items needs to be an instance of Transport\Response or an array.");
+      throw new InvalidResponseException('$items needs to be an instance of Transport\Response or an array.');
     }
 
     // Transform the raw collection data to models
@@ -148,8 +148,8 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
     }
 
     return array(
-      "data" => $items,
-      "page" => $this->pagination
+      'data' => $items,
+      'page' => $this->pagination
     );
   }
 

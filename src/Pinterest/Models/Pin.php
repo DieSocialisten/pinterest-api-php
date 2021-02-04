@@ -9,20 +9,20 @@ class Pin extends Model
   protected function getAttributesToFill(): array
   {
     return [
-      "id",
-      "link",
-      "url",
-      "creator",
-      "board",
-      "created_at",
-      "note",
-      "color",
-      "counts",
-      "media",
-      "attribution",
-      "image",
-      "metadata",
-      "original_link"
+      'id',
+      'link',
+      'url',
+      'creator',
+      'board',
+      'created_at',
+      'note',
+      'color',
+      'counts',
+      'media',
+      'attribution',
+      'image',
+      'metadata',
+      'original_link'
     ];
   }
 }

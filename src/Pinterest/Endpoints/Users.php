@@ -20,7 +20,7 @@ class Users extends Endpoint
    */
   public function me(array $data = []): User
   {
-    $endpoint = "me/";
+    $endpoint = 'me/';
 
     $this->logViaRequestLogger($endpoint, $data);
     $responseBody = $this->request->get($endpoint, $data);

@@ -18,7 +18,7 @@ class PinterestOAuth
   /**
    * Pinterest's oauth endpoint
    */
-  public const AUTH_HOST = "https://www.pinterest.com/oauth/";
+  public const AUTH_HOST = 'https://www.pinterest.com/oauth/';
 
   /**
    * The application ID
@@ -65,17 +65,17 @@ class PinterestOAuth
    * @param string $responseType
    * @return string
    */
-  public function getLoginUrl(string $redirectUri, $scopes = ["read_users"], $responseType = "code"): string
+  public function getLoginUrl(string $redirectUri, $scopes = ['read_users'], $responseType = 'code'): string
   {
     $queryParams = [
-      "response_type" => $responseType,
-      "redirect_uri" => $redirectUri,
-      "client_id" => $this->clientId,
-      "scope" => implode(",", $scopes),
-      "state" => $this->state
+      'response_type' => $responseType,
+      'redirect_uri' => $redirectUri,
+      'client_id' => $this->clientId,
+      'scope' => implode(',', $scopes),
+      'state' => $this->state
     ];
 
-    return sprintf("%s?%s", self::AUTH_HOST, http_build_query($queryParams));
+    return sprintf('%s?%s', self::AUTH_HOST, http_build_query($queryParams));
   }
 
   /**
@@ -110,14 +110,14 @@ class PinterestOAuth
   public function exchangeCodeForAccessToken(string $code, string $redirectUri): AccessToken
   {
     $data = [
-      "grant_type" => "authorization_code",
-      "client_id" => $this->clientId,
-      "client_secret" => $this->clientSecret,
-      "code" => $code,
-      "redirect_uri" => $redirectUri,
+      'grant_type' => 'authorization_code',
+      'client_id' => $this->clientId,
+      'client_secret' => $this->clientSecret,
+      'code' => $code,
+      'redirect_uri' => $redirectUri,
     ];
 
-    $endpoint = "oauth/access_token/";
+    $endpoint = 'oauth/access_token/';
     $this->logViaRequestLogger($endpoint, $data);
     $responseBody = $this->request->put($endpoint, $data);
 

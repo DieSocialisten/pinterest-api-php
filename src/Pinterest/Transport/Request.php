@@ -26,7 +26,7 @@ class Request
    *
    * @var string
    */
-  private string $host = "https://api.pinterest.com/v3/";
+  private string $host = 'https://api.pinterest.com/v3/';
 
   /**
    * @var Client
@@ -73,7 +73,7 @@ class Request
   {
     // Check if the access token needs to be added
     $headers = $this->accessTokenValue != null
-      ? ["Authorization: Bearer " . $this->accessTokenValue]
+      ? ['Authorization: Bearer ' . $this->accessTokenValue]
       : [];
 
     $effectiveOptions = array_merge(
@@ -135,7 +135,7 @@ class Request
       $options = [RequestOptions::QUERY => $queryParameters];
     }
 
-    return $this->execute("GET", $this->buildFullApiCallUrl($endpoint), $options);
+    return $this->execute('GET', $this->buildFullApiCallUrl($endpoint), $options);
   }
 
   /**
@@ -155,7 +155,7 @@ class Request
       $options = [RequestOptions::FORM_PARAMS => $parameters];
     }
 
-    return $this->execute("POST", $this->buildFullApiCallUrl($endpoint), $options);
+    return $this->execute('POST', $this->buildFullApiCallUrl($endpoint), $options);
   }
 
   /**
@@ -175,6 +175,6 @@ class Request
       $options = [RequestOptions::FORM_PARAMS => $parameters];
     }
 
-    return $this->execute("PUT", $this->buildFullApiCallUrl($endpoint), $options);
+    return $this->execute('PUT', $this->buildFullApiCallUrl($endpoint), $options);
   }
 }
