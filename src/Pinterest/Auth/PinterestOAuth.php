@@ -1,12 +1,6 @@
 <?php
-/**
- * Copyright 2015 Dirk Groenen
- *
- * (c) Dirk Groenen <dirk@bitlabs.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Auth;
 
@@ -42,9 +36,6 @@ class PinterestOAuth
    */
   private ?string $state;
 
-  /**
-   * A reference to the request instance
-   */
   private Request $request;
 
   public function __construct(string $clientId, string $clientSecret, Request $request, ?RequestLoggerInterface $requestLogger = null)
@@ -52,10 +43,8 @@ class PinterestOAuth
     $this->clientId = $clientId;
     $this->clientSecret = $clientSecret;
 
-    // Generate and set the state
     $this->state = $this->generateState();
 
-    // Set request instance
     $this->request = $request;
 
     if ($requestLogger) {
@@ -63,12 +52,9 @@ class PinterestOAuth
     }
   }
 
-  /**
-   * @return string
-   */
   private function generateState(): string
   {
-    return substr(md5(rand()), 0, 7);
+    return substr(md5((string)rand()), 0, 7);
   }
 
   /**
@@ -89,7 +75,6 @@ class PinterestOAuth
       "state" => $this->state
     ];
 
-    // Build url and return it
     return sprintf("%s?%s", self::AUTH_HOST, http_build_query($queryParams));
   }
 

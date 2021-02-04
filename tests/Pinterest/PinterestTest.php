@@ -31,7 +31,7 @@ class PinterestTest extends TestCase
   public function testGetRateLimit()
   {
     $rateLimit = $this->pinterest->getRateLimit();
-    $this->assertEquals(1000, $rateLimit);
+    $this->assertEquals('1000', $rateLimit);
   }
 
   public function testGetRateLimitRemaining()

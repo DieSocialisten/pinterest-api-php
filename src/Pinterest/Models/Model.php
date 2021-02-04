@@ -1,12 +1,6 @@
 <?php
-/**
- * Copyright 2015 Dirk Groenen
- *
- * (c) Dirk Groenen <dirk@bitlabs.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Models;
 
@@ -146,6 +140,6 @@ abstract class Model implements JsonSerializable
    */
   public function toJson(): string
   {
-    return json_encode($this->toArray(), true);
+    return json_encode($this->toArray());
   }
 }
