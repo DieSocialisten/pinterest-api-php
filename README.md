@@ -4,6 +4,8 @@ Fork of dirkgroenen/pinterest-api-php
 
 Reference - https://github.com/dirkgroenen/pinterest-api-php
 
+Pinterest dev docs (login required) - https://developers.pinterest.com/docs/redoc/pinner_app/
+
 ### Changes
 
 1. Support of Pinterest API v3
