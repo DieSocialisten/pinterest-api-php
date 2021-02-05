@@ -12,7 +12,7 @@ use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 
-class Request
+class RequestMaker
 {
   /**
    * Access token
@@ -65,11 +65,11 @@ class Request
    * @param string $method
    * @param string $apiCall
    * @param array $options
-   * @return string
+   * @return ResponseInterface
    *
    * @throws HttpClientException
    */
-  public function execute(string $method, string $apiCall, array $options = array()): string
+  private function execute(string $method, string $apiCall, array $options = array()): ResponseInterface
   {
     // Check if the access token needs to be added
     $headers = $this->accessTokenValue != null
@@ -82,8 +82,9 @@ class Request
         RequestOptions::CONNECT_TIMEOUT => 20,
         RequestOptions::TIMEOUT => 90,
         RequestOptions::VERIFY => false,
+        RequestOptions::HTTP_ERRORS => true,
 
-        // TODO leftovers from previous CURL client, need to fine-tune them and left only needed:
+        // Leftovers from "original" (non-forked lib) CURL client implementation:
         'curl' => [
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_HEADER => false,
@@ -92,6 +93,8 @@ class Request
       ],
       $options
     );
+
+    $this->lastHttpResponse = null;
 
     try {
       $httpResponse = $this->httpClient->request($method, $apiCall, $effectiveOptions);
@@ -110,7 +113,7 @@ class Request
 
     $this->lastHttpResponse = $httpResponse;
 
-    return (string)$this->lastHttpResponse->getBody();
+    return $this->lastHttpResponse;
   }
 
   public function getLastHttpResponse(): ?ResponseInterface
@@ -123,11 +126,11 @@ class Request
    *
    * @param string $endpoint
    * @param array $queryParameters
-   * @return string
+   * @return ResponseInterface
    *
    * @throws HttpClientException
    */
-  public function get(string $endpoint, array $queryParameters = []): string
+  public function get(string $endpoint, array $queryParameters = []): ResponseInterface
   {
     $options = [];
 
@@ -143,11 +146,11 @@ class Request
    *
    * @param string $endpoint
    * @param array $parameters
-   * @return string
+   * @return ResponseInterface
    *
    * @throws HttpClientException
    */
-  public function post(string $endpoint, array $parameters = array()): string
+  public function post(string $endpoint, array $parameters = array()): ResponseInterface
   {
     $options = [];
 
@@ -163,11 +166,11 @@ class Request
    *
    * @param string $endpoint
    * @param array $parameters
-   * @return string
+   * @return ResponseInterface
    *
    * @throws HttpClientException
    */
-  public function put(string $endpoint, array $parameters = array()): string
+  public function put(string $endpoint, array $parameters = array()): ResponseInterface
   {
     $options = [];
 

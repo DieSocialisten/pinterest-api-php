@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Transport;
 
-use GuzzleHttp\Exception\InvalidArgumentException;
-
 /**
  * @property array $page
  * @property array $data
@@ -19,22 +17,9 @@ class Response
    */
   private array $responseData;
 
-  private function __construct(array $responseData)
+  public function __construct(array $responseData)
   {
     $this->responseData = $responseData;
-  }
-
-  /**
-   * @param string $json
-   * @return Response
-   *
-   * @throws InvalidArgumentException
-   */
-  public static function createFromJson(string $json): Response
-  {
-    $responseData = \GuzzleHttp\json_decode($json, true);
-
-    return new Response($responseData);
   }
 
   /**

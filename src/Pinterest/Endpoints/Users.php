@@ -6,7 +6,7 @@ namespace DirkGroenen\Pinterest\Endpoints;
 
 use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Models\User;
-use DirkGroenen\Pinterest\Transport\Response;
+use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
 class Users extends Endpoint
 {
@@ -23,8 +23,8 @@ class Users extends Endpoint
     $endpoint = 'me/';
 
     $this->logViaRequestLogger($endpoint, $data);
-    $responseBody = $this->request->get($endpoint, $data);
+    $httpResponse = $this->request->get($endpoint, $data);
 
-    return new User(Response::createFromJson($responseBody));
+    return new User(ResponseFactory::createFromJson($httpResponse));
   }
 }

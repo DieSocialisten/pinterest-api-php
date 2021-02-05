@@ -8,8 +8,8 @@ use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Models\AccessToken;
-use DirkGroenen\Pinterest\Transport\Request;
-use DirkGroenen\Pinterest\Transport\Response;
+use DirkGroenen\Pinterest\Transport\RequestMaker;
+use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
 class PinterestOAuth
 {
@@ -36,16 +36,20 @@ class PinterestOAuth
    */
   private ?string $state;
 
-  private Request $request;
+  private RequestMaker $requestMaker;
 
-  public function __construct(string $clientId, string $clientSecret, Request $request, ?RequestLoggerInterface $requestLogger = null)
-  {
+  public function __construct(
+    string $clientId,
+    string $clientSecret,
+    RequestMaker $requestMaker,
+    ?RequestLoggerInterface $requestLogger = null
+  ) {
     $this->clientId = $clientId;
     $this->clientSecret = $clientSecret;
 
     $this->state = $this->generateState();
 
-    $this->request = $request;
+    $this->requestMaker = $requestMaker;
 
     if ($requestLogger) {
       $this->setRequestLogger($requestLogger);
@@ -119,9 +123,9 @@ class PinterestOAuth
 
     $endpoint = 'oauth/access_token/';
     $this->logViaRequestLogger($endpoint, $data);
-    $responseBody = $this->request->put($endpoint, $data);
+    $httpResponse = $this->requestMaker->put($endpoint, $data);
 
-    return new AccessToken(Response::createFromJson($responseBody));
+    return new AccessToken(ResponseFactory::createFromJson($httpResponse));
   }
 
   /**
@@ -131,6 +135,6 @@ class PinterestOAuth
    */
   public function setAccessTokenValue(string $accessToken)
   {
-    $this->request->setAccessTokenValue($accessToken);
+    $this->requestMaker->setAccessTokenValue($accessToken);
   }
 }

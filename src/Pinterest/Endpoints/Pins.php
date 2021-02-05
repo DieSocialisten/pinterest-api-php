@@ -9,7 +9,7 @@ use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
 use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
 use DirkGroenen\Pinterest\Models\Collection;
 use DirkGroenen\Pinterest\Models\Pin;
-use DirkGroenen\Pinterest\Transport\Response;
+use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
 class Pins extends Endpoint
 {
@@ -27,9 +27,9 @@ class Pins extends Endpoint
     $endpoint = "pins/{$pinId}/";
 
     $this->logViaRequestLogger($endpoint, $data);
-    $responseBody = $this->request->get($endpoint, $data);
+    $httpResponse = $this->request->get($endpoint, $data);
 
-    return new Pin(Response::createFromJson($responseBody));
+    return new Pin(ResponseFactory::createFromJson($httpResponse));
   }
 
   /**
@@ -46,8 +46,8 @@ class Pins extends Endpoint
     $endpoint = "boards/{$boardId}/pins/";
 
     $this->logViaRequestLogger($endpoint, $data);
-    $responseBody = $this->request->get($endpoint, $data);
+    $httpResponse = $this->request->get($endpoint, $data);
 
-    return new Collection(Response::createFromJson($responseBody), Pin::class);
+    return new Collection(ResponseFactory::createFromJson($httpResponse), Pin::class);
   }
 }

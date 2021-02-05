@@ -10,7 +10,7 @@ use DirkGroenen\Pinterest\Endpoints\Endpoint;
 use DirkGroenen\Pinterest\Endpoints\Pins;
 use DirkGroenen\Pinterest\Endpoints\Users;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
-use DirkGroenen\Pinterest\Transport\Request;
+use DirkGroenen\Pinterest\Transport\RequestMaker;
 use DirkGroenen\Pinterest\Exceptions\InvalidEndpointException;
 use GuzzleHttp\Client;
 
@@ -30,9 +30,9 @@ class Pinterest
    * A reference to the request class which travels
    * through the application
    *
-   * @var Transport\Request
+   * @var Transport\RequestMaker
    */
-  public Request $request;
+  private RequestMaker $requestMaker;
 
   /**
    * @var array
@@ -61,8 +61,8 @@ class Pinterest
       $httpClient = new Client();
     }
 
-    $this->request = new Request($httpClient);
-    $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->request);
+    $this->requestMaker = new RequestMaker($httpClient);
+    $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->requestMaker, $requestLogger);
     $this->requestLogger = $requestLogger;
   }
 
@@ -83,7 +83,7 @@ class Pinterest
         throw new InvalidEndpointException();
       }
 
-      $this->cachedEndpoints[$endpoint] = new $endpointClassname($this->request, $this->requestLogger);
+      $this->cachedEndpoints[$endpoint] = new $endpointClassname($this->requestMaker, $this->requestLogger);
     }
 
     return $this->cachedEndpoints[$endpoint];
@@ -91,7 +91,7 @@ class Pinterest
 
   private function getHeaderValueOrUseFallback(string $headerName, ?string $fallbackValue): ?string
   {
-    $lastResponse = $this->request->getLastHttpResponse();
+    $lastResponse = $this->requestMaker->getLastHttpResponse();
 
     if (!$lastResponse) {
       return $fallbackValue;

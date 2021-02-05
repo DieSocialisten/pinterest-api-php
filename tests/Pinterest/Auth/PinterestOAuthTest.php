@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Tests\Auth;
 
-use DirkGroenen\Pinterest\Auth\PinterestOAuth;
 use DirkGroenen\Pinterest\Exceptions\HttpClientException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
-use DirkGroenen\Pinterest\Transport\Request;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -58,8 +56,10 @@ class PinterestOAuthTest extends TestCase
 
   /**
    * @test
+   * @responsefile oauth-access_token
    *
    * @throws HttpClientException
+   * @throws ReflectionException
    */
   public function shouldUseRequestLoggerWhenExchangesCodeForToken()
   {
@@ -79,11 +79,7 @@ class PinterestOAuthTest extends TestCase
         ]
       );
 
-    $requestMock = $this->createMock(Request::class);
-    $requestMock->method('put')->willReturn('{}');
-
-    $pinterestOAuth = new PinterestOAuth('doesnt matter', 'doesnt matter too', $requestMock, $loggerMock);
-
-    $pinterestOAuth->exchangeCodeForAccessToken('my-code', 'https://example.com');
+    $pinterest = PinterestMockFactory::createLoggerAwarePinterestMock($this, $loggerMock);
+    $pinterest->getAuthComponent()->exchangeCodeForAccessToken('my-code', 'https://example.com');
   }
 }

@@ -1,0 +1,423 @@
+Success,0,200
+Invalid parameters,1,400
+Authentication failed,2,401
+Authorization failed,3,401
+Authentication level invalid,4,401
+Method not allowed,5,405
+Not authorized,6,401
+Access denied,7,401
+Limit exceeded,8,429
+Event blocked,9,429
+Bookmark not found,10,404
+Api method not found,11,404
+Server error,12,500
+Api down,13,502
+Api restarting,13,599
+Spam content,14,401
+Validation error,15,400
+Request timeout,16,408
+Email verification required,17,412
+Captcha required,18,412
+User in safe mode,19,401
+Login required,20,412
+Service unavailable,21,503
+Bookmark page size exceeds maximum,22,400
+Upgrade required,23,401
+User not found,30,404
+User already exists,31,409
+User follow failure,32,403
+User follow failure blocked,33,403
+User follow failure blocking,34,403
+User unban denied,35,403
+User ban denied,36,403
+Board not found , 40 , 404 ,Category not found , 41 , 404 ,
+Board follow failure,42,403
+Board follow failure blocked,43,403
+Board follow failure blocking,44,403
+Private board limit,45,404
+Collaborator invite not found,46,404
+Collaborator invite already exists,47,403
+Collaborator invites exceeded limit,48,403
+Collaborator invite failed,49,403
+Pin not found,50,404
+Invite code redemption count exceeded,51,409
+Invite code spam user,52,403
+Private board not allowed,53,403
+Pin tag not found,56,404
+Overlapping pin tag,57,400
+Domain not found,70,404
+Domain verification failure,71,403
+Login bad password try google login,76,401
+Login bad password try facebook login,77,401
+Login bad password,78,401
+Login bad email,79,401
+Login bad password or email,80,401
+Login token invalid,81,401
+Login deactivated user,82,401
+Login policy violation user,83,401
+Login voluntarily deactivated user,84,401
+Login bad password ask reset,85,401
+Login panicked user,86,401
+Login soft banned user,87,401
+Login hard banned user,88,401
+Login soft banned user new,89,401
+Invalid username,90,400
+Email already taken , 91 , 409 ,Username already taken , 92 , 409 ,
+Underage register attempt,93,409
+Username suggestion failure,94,409
+Invalid email,95,400
+Invalid board name,96,400
+Phone number already taken,97,409
+App accounts access token invalid,98,409
+Login password not created,99,401
+Invalid network access token,100,400
+Account already linked,101,400
+Facebook link not found,102,404
+Twitter link not found,103,404
+Facebook connection error,104,400
+Facebook account not linked,105,404
+Twitter account not linked,106,404
+Google account not linked,107,404
+Yahoo account not linked,108,404
+Microsoft account not linked,109,404
+Find friends try again,110,200
+Eu missing age register attempt,111,400
+Dropbox account not linked,112,404
+Instagram account already linked by you,113,400
+Comment not found,120,404
+Comment text too long,121,404
+Provider not found,131,404
+Endpoint invalid,132,400
+Embed exception,133,400
+Partner already exists,140,409
+Partner not found,141,409
+Partner create failed,142,409
+Task expired,150,400
+Task failed,151,400
+Task running , 152 , 200 ,Website verified , 160 , 400 ,
+Website unverifiable,161,400
+Recent search delete failed,162,404
+Website already exists,163,400
+Consumer not found,170,404
+Consumer name taken,171,400
+Consumer developer already added,172,400
+Consumer developer not found,173,404
+Apple link not found,179,404
+Gplus account not linked,180,400
+Gplus connection error,181,400
+Gplus link not found,182,404
+Instagram connection error,183,503
+Instagram link not found,184,400
+User already linked instagram,185,400
+Youtube connection error,186,503
+Youtube link not found,187,400
+User already linked youtube,188,400
+Etsy connection error,189,503
+User experiences retrieval failed,190,500
+Etsy link not found,191,400
+User already linked etsy,192,400
+Etsy store doesnt exist,193,400
+Invalid network request token,194,400
+Instagram account already linked,195,400
+Youtube account already linked,196,400
+Etsy account already linked,197,400
+User store data retrieval failed,198,503
+Apple account not linked,199,400
+Repin failure,200,403
+Repin failure blocked,201,403
+Repin failure blocking,202,403
+Cannot repin removable pin , 203 , 403 ,Nux feed not ready , 220 , 200 ,
+Pin comment failure,230,403
+Pin comment failure blocked,231,403
+Pin comment failure blocking,232,403
+Pin image too small,233,403
+Pin image download timeout,234,408
+Pin invalid image,235,403
+Pin image not found,236,404
+Pin image too big,237,403
+Bulk move pins failure,238,403
+Pin cinematic content type not supported,239,403
+Conversation not found,240,404
+Conversation create failed,241,409
+Conversation user limit,242,400
+Conversation model authorization error,243,400
+Message send failed,244,400
+Conversation message not found,245,404
+Contact request not found,246,404
+Bulk contact request decline failed,247,403
+Data viewer resource not found,250,404
+Pin share failure,260,403
+Board share failure,261,403
+User share failure,262,403
+Pin image too large,263,403
+Pin image upload blocked,264,403
+Pin cinematic video content type not supported,265,403
+Pin messenger attachment id error,266,500
+Place not found,270,404
+Foursquare client error,271,400
+Foursquare server error,272,500
+Place conflict,273,409
+Place create failed,274,409
+Oauth access denied , 280 , 403 ,Oauth unsupported response type , 281 , 400 ,
+Oauth invalid scope,282,400
+Oauth invalid grant,283,401
+Push feed invalid request,301,400
+Interest not found,330,404
+Pinpick not found,350,404
+Jira api error,360,400
+Invite url generation error,400,400
+Shipping detail not found,600,404
+Shipping detail api error,601,403
+Shipping detail action blocked,602,403
+Payment method not found,606,404
+Payment method api error,607,403
+Payment method action blocked,608,403
+Feed partner not authorized,612,403
+Cart not found,613,404
+Cart api error,614,403
+Cart action blocked,615,403
+Cart request submitted,616,408
+Cart timestamp expired,617,403
+Titled cart api error,618,403
+User card action blocked,619,403
+Shipping detail verification failed,626,403
+User card not found,630,404
+User card api error,631,403
+Billing detail api error,641,403
+Merchant not found,650,404
+Merchant api error,651,403
+Merchant action blocked,652,403
+Merchant invalid client,653,403
+Merchant account ineligible,654,403
+Shop collection not found,655,404
+Shop section not found , 656 , 404 ,Merchant metadata not found , 657 , 404 ,
+Shopping bag not found,658,404
+Incentive api error,661,403
+Product api error,671,403
+Product not found,672,404
+Merchant feed already exists,673,409
+Internal product feed query error,674,500
+Product feed not found error,675,404
+Feed profile not found,676,404
+Bulk delete failed,701,403
+Bulk move failed,702,403
+Bulk repin failed,703,403
+Bulk pin limit exceeded,704,403
+Board merge limit exceeded,705,403
+Section merge limit exceeded,706,403
+Invite code not found,820,404
+Invite experiment invalid,821,400
+Invite type invalid,822,400
+Invite code invalid,823,500
+Session not found,851,404
+Session logged out,852,404
+Session already exists,853,404
+Configuration not found,860,404
+Sitemap not whitelisted,871,401
+Sitemap board name taken,872,409
+Url scheme not supported,873,400
+Aggregated pin data not found,880,404
+Aggregated image data not found,881,404
+User did it data not found,882,404
+Aggregated comment not found,883,404
+Did it react blocked,884,403
+Aggregated comment disable permission error,886,403
+Did it disable permission error , 887 , 403 ,Explore tab story not found , 891 , 404 ,
+Explore tab block not found,892,404
+Explore article not found,893,404
+Explore section not found,894,404
+Created,900,201
+Csr not found,901,404
+Reader content not found,916,404
+Email unsuppression failed,917,400
+Clear cache failed,918,400
+App id not whitelisted,921,401
+Business user id not whitelisted,922,401
+No content,950,204
+Pinner list not found,1000,404
+User list not found,1001,404
+Targeting attribute not found,1002,404
+Preview service connection failed,1100,500
+Preview key not found,1101,404
+Preview request failed,1102,500
+Preview request denied,1103,401
+Reporting token not found,1104,400
+Reporting job still processing,1105,202
+Ads image scraper timeout,1106,408
+Ads image scraper job not found,1107,404
+Ads image scraper still processing,1108,202
+Ads image scraper unknown failure,1109,500
+Acl policy not found,1110,404
+Acl delete error,1111,500
+Ads keyword planner missing data,1112,404
+Advertiser exp backend error,1113,500
+Ads invalid notification event message,1114,400
+Entities batch job not found,1115,404
+Ads audience sizing pinner list not found,1116,400
+Ads audience sizing customer lists not allowed , 1117 , 400 ,User list bad input , 1118 , 422 ,
+Reporting job failure,1120,500
+Cancel job failure,1121,500
+Reporting job retry failure,1122,500
+Invalid acl policy,1123,500
+Reporting request too large,1124,413
+Invalid phone number,1200,400
+Login mfa required,1201,401
+Login mfa token invalid,1202,401
+Mfa connection error,1203,400
+Mfa token invalid,1204,400
+Invalid google open id token,1300,400
+Invalid google open id email,1301,400
+Invalid apple id token,1400,400
+Invalid address,1401,400
+Login bad password try apple login,1402,401
+Advertiser access not authorized,1902,403
+News not found,2011,404
+Board section not found,2031,404
+Board section create error,2032,500
+Board section add pins error,2033,500
+Board section create section limit reached error,2034,400
+Board section title exists error,2035,400
+Quiz not found,2041,404
+Endpoint deprecated,2051,410
+Missing coordinates,2100,400
+Product already tagged,2101,400
+Archive board not allowed error,2130,403
+Community not found,2140,404
+Community post not found,2141,404
+Community comment not found,2142,404
+Community item react blocked,2143,403
+Community invite create not allowed , 2144 , 403 ,Community invite delete not allowed , 2145 , 403 ,
+Community invite accept not allowed,2146,403
+Community invite decline not allowed,2147,403
+Community external invite not found,2148,404
+Community external invite accept not allowed,2149,403
+Community ban not allowed,2150,403
+Audience not found,2151,404
+Board action blocked by delete error,2171,500
+Board action blocked by move error,2172,500
+Board action blocked by other error,2173,500
+Unsupported board template error,2174,500
+Creator profiles you love max num reached,2291,403
+Creator profiles you love duplicate user,2292,403
+Creator profiles you love not found,2293,404
+Creator profile cover source id missing,2294,400
+Community unban not allowed,2311,403
+Community joins not allowed,2312,403
+Community reads not allowed,2313,403
+Community posts not allowed,2314,403
+Community sticky post not allowed,2315,403
+Community update not allowed,2316,403
+Community already exists error,2317,403
+Community ban leader not allowed,2318,403
+Community promote to moderator error,2319,403
+Hf prefetch not allowed,2320,200
+Community demote from moderator error,2321,403
+Set community super moderators error,2322,403
+Community view banned users not allowed,2323,403
+Community super moderator required,2324,403
+Community invite limit exceeded,2325,400
+Community cannot be deleted,2326,400
+Community create limit exceeded,2327,400
+Community cannot post pins from own domain error , 2328 , 400 ,Community rule title required , 2329 , 400 ,
+Board activity not found,2330,404
+Board activity comment not found,2331,404
+Board activity react blocked,2332,403
+Same device id error,2341,400
+Verification code error,2342,400
+Missing device id error,2343,400
+Ideas card not found,2351,404
+Asset mgr backend error,2361,500
+Aggregated comment force hide permission error,2370,403
+Did it force hide permission error,2371,403
+Aggregated comment force hide failed error,2372,400
+Did it force hide failed error,2373,400
+Ats routing error,2374,500
+Ats user data retrieval error,2375,500
+Ats zendesk ticket submission error,2376,500
+Ats zendesk file upload error,2377,500
+Carousel image different ratios error,2378,400
+Carousel invalid number of slots error,2380,400
+Scheduled pin not found,2381,404
+Scheduled pin invalid,2382,404
+Scheduled pin permission error,2383,403
+Scheduled pin incorrect timestamp,2384,400
+Scheduled pin create max limit reached,2385,400
+Salesforce api error,2391,500
+Ads manager preference not found error,2392,404
+Ads manager preference already exists error,2393,422
+Story pin validation error,2401,400
+Story pin creation error,2402,500
+Story pin not found,2403,404
+Story pin cover page update error,2404,400
+Story pin edit permission error,2405,403
+Story pin image retrieval error , 2406 , 400 ,Story pin template type update error , 2407 , 400 ,
+Story pin font not found,2408,404
+Story pin is not editable error,2409,400
+Name contain reserved word,2501,400
+Name contains email error,2502,400
+Name contains injection string error,2503,400
+Commentable model not found,2511,404
+Base comment not found,2512,404
+Comment react blocked,2513,403
+Collage pin not found,2601,404
+Pin reaction failure,2611,403
+Reaction failure blocked,2612,403
+Reaction failure blocking,2613,403
+Product group name already exists,2621,400
+Product group filters already exists,2622,400
+Product group validation error,2623,400
+Too many linked business accounts,2624,403
+Merchant disapproved,2625,403
+Merchant under review,2626,403
+Product group not found error,2627,404
+Product group unfeatureable error,2628,400
+Rss feed already exists,2631,409
+Rss feed not found,2632,404
+Rss feed fetch failed,2633,400
+Rss feed parse failed,2634,400
+Rss feed unknown format,2635,400
+Rss feed domain not claimed,2636,400
+Ad entities tree too large,2641,400
+Csv feed not found,2642,404
+Csv feed fetch failed,2643,400
+Csv feed parse failed,2644,400
+Csv feed domain not claimed,2645,400
+Invalid camera search request input , 2651 , 400 ,Camera search upload failed , 2652 , 500 ,
+Anket api error,2661,500
+Virtual try on no metadata found,2671,404
+Virtual try on no root pin id found,2672,404
+Virtual try on invalid type,2673,400
+Place save not found,2681,404
+Place rec not found,2682,404
+Place recommender not found,2683,404
+Place recommender name not found,2684,404
+Place category not found,2685,404
+Partner country sanctioned,2691,403
+Feedback post slack message error,2692,500
+Feedback type unsupported,2693,400
+Local content area not found,2694,404
+Marketing offer claim error,2695,500
+Sos elastic search error,2696,400
+Sos elastic search service error,2697,500
+Marketing offer get details error,2698,500
+Use case not found,2699,404
+Sos search error,2700,400
+Instagram invalid auth feed,2701,401
+Instagram fetch feed failed,2702,400
+Instagram feed already exists,2703,409
+Instagram feed not found,2704,404
+Lead scoring error,2711,500
+Sfdc login error,2721,500
+Sfdc lead invalid parameter,2722,500
+Verified merchant already exists,2723,409
+Verified merchant not found,2724,404
+Verified merchant create failed,2725,500
+Verified merchant country cannot create,2726,401
+Brand survey not found,2727,404
+Brand survey create failed , 2728 , 500 ,Brand survey update failed , 2729 , 500 ,
+Business hub card status update failed,2731,500
+Board note not found,2741,404
+Board note component not found,2742,404
+Business relationship already exists,2751,400
+Business relationship not found,2752,404
+Today article not found,2753,404
