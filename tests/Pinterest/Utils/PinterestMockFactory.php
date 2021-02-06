@@ -20,7 +20,7 @@ class PinterestMockFactory
   {
     $httpClient = HttpClientMockFactory::parseAnnotationsAndCreate($testCase);
 
-    $pinterest = new Pinterest("0", "0", null, $httpClient);
+    $pinterest = new Pinterest("0", "0", $httpClient);
     $pinterest->getAuthComponent()->setAccessTokenValue("0");
 
     return $pinterest;
@@ -36,10 +36,8 @@ class PinterestMockFactory
     TestCase $testCase,
     RequestLoggerInterface $requestLogger
   ): Pinterest {
-    $httpClient = HttpClientMockFactory::parseAnnotationsAndCreate($testCase);
-
-    $pinterest = new Pinterest("0", "0", $requestLogger, $httpClient);
-    $pinterest->getAuthComponent()->setAccessTokenValue("0");
+    $pinterest = self::createDefaultPinterestMock($testCase);
+    $pinterest->setRequestLogger($requestLogger);
 
     return $pinterest;
   }

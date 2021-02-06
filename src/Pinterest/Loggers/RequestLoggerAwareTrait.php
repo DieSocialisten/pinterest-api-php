@@ -29,6 +29,6 @@ trait RequestLoggerAwareTrait
       $payload['client_secret'] = '***';
     }
 
-    $this->requestLogger->log($endpoint, $payload);
+    $this->requestLogger->logRequest($endpoint, $payload);
   }
 }

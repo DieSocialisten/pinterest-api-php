@@ -17,9 +17,6 @@ class Endpoint
   public function __construct(RequestMaker $request, ?RequestLoggerInterface $requestLogger)
   {
     $this->request = $request;
-
-    if ($requestLogger) {
-      $this->setRequestLogger($requestLogger);
-    }
+    $this->setRequestLogger($requestLogger);
   }
 }

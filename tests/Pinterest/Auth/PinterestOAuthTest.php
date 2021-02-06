@@ -67,7 +67,7 @@ class PinterestOAuthTest extends TestCase
 
     $loggerMock
       ->expects($this->once())
-      ->method('log')
+      ->method('logRequest')
       ->with(
         'oauth/access_token/',
         [

@@ -20,12 +20,7 @@ class User extends Model
       'username',
       'first_name',
       'last_name',
-      'bio',
-      'created_at',
-      'counts',
       'image',
-      'url',
-      'account_type'
     ];
   }
 }

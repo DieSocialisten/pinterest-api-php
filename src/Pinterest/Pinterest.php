@@ -42,18 +42,16 @@ class Pinterest
   /**
    * @var RequestLoggerInterface|null
    */
-  private ?RequestLoggerInterface $requestLogger;
+  private ?RequestLoggerInterface $requestLogger = null;
 
   /**
    * @param string $clientId
    * @param string $clientSecret
-   * @param RequestLoggerInterface|null $requestLogger
    * @param ?Client $httpClient
    */
   public function __construct(
     string $clientId,
     string $clientSecret,
-    ?RequestLoggerInterface $requestLogger = null,
     ?Client $httpClient = null
   )
   {
@@ -62,8 +60,18 @@ class Pinterest
     }
 
     $this->requestMaker = new RequestMaker($httpClient);
-    $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->requestMaker, $requestLogger);
+    $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->requestMaker);
+  }
+
+  public function setRequestLogger(?RequestLoggerInterface $requestLogger = null)
+  {
     $this->requestLogger = $requestLogger;
+    $this->auth->setRequestLogger($requestLogger);
+
+    /** @var Endpoint $endpoint */
+    foreach ($this->cachedEndpoints as $endpoint) {
+      $endpoint->setRequestLogger($requestLogger);
+    }
   }
 
   /**
