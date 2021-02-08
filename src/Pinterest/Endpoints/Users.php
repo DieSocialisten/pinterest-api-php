@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\User;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
@@ -16,7 +16,7 @@ class Users extends Endpoint
    * @param array $data
    * @return User
    *
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    */
   public function me(array $data = []): User
   {

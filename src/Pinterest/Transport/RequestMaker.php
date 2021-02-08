@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Transport;
 
-use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 
@@ -67,7 +66,7 @@ class RequestMaker
    * @param array $options
    * @return ResponseInterface
    *
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    */
   private function execute(string $method, string $apiCall, array $options = array()): ResponseInterface
   {
@@ -102,13 +101,10 @@ class RequestMaker
     } catch (RequestException $e) {
       /** @see https://docs.guzzlephp.org/en/6.5/quickstart.html#exceptions */
 
-      $requestMessage = Message::toString($e->getRequest());
-      $responseMessage = $e->hasResponse() ? Message::toString($e->getResponse()) : '';
-
-      throw new HttpClientException('Error: request failed', 0, $e, $requestMessage, $responseMessage);
+      throw new PinterestRequestException('Request failed', 0, $e, $e->getRequest(), $e->getResponse());
 
     } catch (GuzzleException $e) {
-      throw new HttpClientException('Error: request failed', 0, $e);
+      throw new PinterestRequestException('Request failed with message: ' . $e->getMessage(), 0, $e);
     }
 
     $this->lastHttpResponse = $httpResponse;
@@ -128,7 +124,7 @@ class RequestMaker
    * @param array $queryParameters
    * @return ResponseInterface
    *
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    */
   public function get(string $endpoint, array $queryParameters = []): ResponseInterface
   {
@@ -148,7 +144,7 @@ class RequestMaker
    * @param array $parameters
    * @return ResponseInterface
    *
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    */
   public function post(string $endpoint, array $parameters = array()): ResponseInterface
   {
@@ -168,7 +164,7 @@ class RequestMaker
    * @param array $parameters
    * @return ResponseInterface
    *
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    */
   public function put(string $endpoint, array $parameters = array()): ResponseInterface
   {

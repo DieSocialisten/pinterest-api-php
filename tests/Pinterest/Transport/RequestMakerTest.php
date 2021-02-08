@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Tests\Transport;
 
-use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Transport\RequestMaker;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -21,7 +21,7 @@ class RequestMakerTest extends TestCase
    * @param $response
    * @param $exceptionToRaise
    *
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    */
   public function shouldRaiseAnExceptionInCaseOfAPIError($response, $exceptionToRaise)
   {
@@ -55,12 +55,12 @@ class RequestMakerTest extends TestCase
 
       'Error 400' => [
         $response => new Response(400, [], ''),
-        $exceptionToRaise => HttpClientException::class,
+        $exceptionToRaise => PinterestRequestException::class,
       ],
 
       'Error 500' => [
         $response => new Response(500, [], ''),
-        $exceptionToRaise => HttpClientException::class,
+        $exceptionToRaise => PinterestRequestException::class,
       ],
     ];
   }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Tests\Auth;
 
-use DirkGroenen\Pinterest\Exceptions\HttpClientException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ class PinterestOAuthTest extends TestCase
   /**
    * @test
    * @responsefile oauth-access_token
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    * @throws ReflectionException
    */
   public function shouldGetAccessTokenAfterExchange()
@@ -58,7 +58,7 @@ class PinterestOAuthTest extends TestCase
    * @test
    * @responsefile oauth-access_token
    *
-   * @throws HttpClientException
+   * @throws PinterestRequestException
    * @throws ReflectionException
    */
   public function shouldUseRequestLoggerWhenExchangesCodeForToken()

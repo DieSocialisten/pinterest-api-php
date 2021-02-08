@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Transport\RequestMaker;
 
-class Endpoint
+class Endpoint implements RequestLoggerAwareInterface
 {
   use RequestLoggerAwareTrait;
 
