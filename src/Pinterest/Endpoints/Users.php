@@ -13,17 +13,16 @@ class Users extends Endpoint
   /**
    * Get the current user
    *
-   * @param array $data
    * @return User
    *
    * @throws PinterestRequestException
    */
-  public function me(array $data = []): User
+  public function me(): User
   {
     $endpoint = 'me/';
 
-    $this->logViaRequestLogger($endpoint, $data);
-    $httpResponse = $this->request->get($endpoint, $data);
+    $this->logViaRequestLogger($endpoint);
+    $httpResponse = $this->request->get($endpoint);
 
     return new User(ResponseFactory::createFromJson($httpResponse));
   }

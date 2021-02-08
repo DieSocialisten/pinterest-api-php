@@ -13,7 +13,7 @@ trait RequestLoggerAwareTrait
     $this->requestLogger = $requestLogger;
   }
 
-  public function logViaRequestLogger(string $endpoint, array $payload)
+  public function logViaRequestLogger(string $endpoint, array $payload = [])
   {
     if (!$this->requestLogger) {
       return;

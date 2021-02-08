@@ -7,9 +7,8 @@ namespace DirkGroenen\Pinterest\Models;
 /**
  * @property mixed|null id
  * @property mixed|null username
- * @property mixed|null first_name
- * @property mixed|null last_name
- * @property mixed|null image
+ * @property mixed|null full_name
+ * @property mixed|null image_small_url
  */
 class User extends Model
 {
@@ -18,9 +17,8 @@ class User extends Model
     return [
       'id',
       'username',
-      'first_name',
-      'last_name',
-      'image',
+      'full_name',
+      'image_small_url',
     ];
   }
 }

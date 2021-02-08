@@ -1,8 +1,22 @@
 {
+  "status": "success",
+  "code": 0,
   "data": {
-    "url": "https://www.pinterest.com/dirkgroenen/",
-    "first_name": "Dirk ",
-    "last_name": "Groenen",
-    "id": "503066358284560467"
-  }
+    "board_count": 2,
+    "id": "734368420396834766",
+    "image_xlarge_url": "https://s.pinimg.com/images/user/default_444.png",
+    "about": "",
+    "follower_count": 0,
+    "full_name": "Vladimir Pwalls",
+    "image_medium_url": "https://s.pinimg.com/images/user/default_150.png",
+    "image_large_url": "https://s.pinimg.com/images/user/default_280.png",
+    "pin_count": 3,
+    "created_at": "Fri, 22 Jan 2021 14:34:18 +0000",
+    "image_small_url": "https://s.pinimg.com/images/user/default_60.png",
+    "username": "vladimirpwalls",
+    "profile_url": "https://www.pinterest.com/vladimirpwalls/",
+    "following_count": 5
+  },
+  "message": "ok",
+  "endpoint_name": "v3_get_user_handler"
 }

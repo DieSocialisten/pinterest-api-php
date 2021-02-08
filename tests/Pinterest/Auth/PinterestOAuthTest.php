@@ -6,6 +6,7 @@ namespace DirkGroenen\Pinterest\Tests\Auth;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
+use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -18,7 +19,7 @@ class PinterestOAuthTest extends TestCase
    */
   public function shouldHaveRandomStateRightAfterCreation()
   {
-    $pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+    $pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
 
     $state = $pinterest->getAuthComponent()->getState();
 
@@ -31,7 +32,7 @@ class PinterestOAuthTest extends TestCase
    */
   public function shouldKeepStateOnceReceiveIt()
   {
-    $pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+    $pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
 
     $state = '123';
     $pinterest->getAuthComponent()->setState($state);
@@ -47,7 +48,7 @@ class PinterestOAuthTest extends TestCase
    */
   public function shouldGetAccessTokenAfterExchange()
   {
-    $pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+    $pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
 
     $accessToken = $pinterest->getAuthComponent()->exchangeCodeForAccessToken('my-code', 'https://example.com');
 
@@ -81,5 +82,22 @@ class PinterestOAuthTest extends TestCase
 
     $pinterest = PinterestMockFactory::createLoggerAwarePinterestMock($this, $loggerMock);
     $pinterest->getAuthComponent()->exchangeCodeForAccessToken('my-code', 'https://example.com');
+  }
+
+  /**
+   * @test
+   */
+  public function shouldBuildLoginUrl()
+  {
+    $expectedUrl = 'https://www.pinterest.com/oauth/?response_type=code&redirect_uri=https%3A%2F%2Fdev-app.daniele.eu.ngrok.io%2Fpinterest_auth%2Fcallback_access_token&client_id=123&scope=read_users&state=ae361bd';
+
+    $pinterest = new Pinterest("123", "456", null);
+    $pinterest->getAuthComponent()->setState('ae361bd');
+
+    $actualUrl = $pinterest->getAuthComponent()->getLoginUrl(
+      'https://dev-app.daniele.eu.ngrok.io/pinterest_auth/callback_access_token'
+    );
+
+    self::assertEquals($expectedUrl, $actualUrl);
   }
 }

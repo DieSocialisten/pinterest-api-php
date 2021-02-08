@@ -19,14 +19,18 @@ class UsersTest extends TestCase
    */
   public function setUp(): void
   {
-    $this->pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+    $this->pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
   }
 
   public function testMe()
   {
-    $response = $this->pinterest->users->me();
+    $user = $this->pinterest->users->me();
 
-    $this->assertInstanceOf(User::class, $response);
-    $this->assertEquals("503066358284560467", $response->id);
+    $this->assertInstanceOf(User::class, $user);
+
+    $this->assertEquals("734368420396834766", $user->id);
+    $this->assertEquals("vladimirpwalls", $user->username);
+    $this->assertEquals("Vladimir Pwalls", $user->full_name);
+    $this->assertEquals("https://s.pinimg.com/images/user/default_60.png", $user->image_small_url);
   }
 }

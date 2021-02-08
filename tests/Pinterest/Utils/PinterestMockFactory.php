@@ -16,7 +16,7 @@ class PinterestMockFactory
    * @return Pinterest
    * @throws ReflectionException
    */
-  public static function createDefaultPinterestMock(TestCase $testCase): Pinterest
+  public static function parseAnnotationsAndCreatePinterestMock(TestCase $testCase): Pinterest
   {
     $httpClient = HttpClientMockFactory::parseAnnotationsAndCreate($testCase);
 
@@ -36,7 +36,7 @@ class PinterestMockFactory
     TestCase $testCase,
     RequestLoggerInterface $requestLogger
   ): Pinterest {
-    $pinterest = self::createDefaultPinterestMock($testCase);
+    $pinterest = self::parseAnnotationsAndCreatePinterestMock($testCase);
     $pinterest->setRequestLogger($requestLogger);
 
     return $pinterest;

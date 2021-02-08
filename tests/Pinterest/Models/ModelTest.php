@@ -18,7 +18,7 @@ class ModelTest extends TestCase
    */
   public function setUp(): void
   {
-    $this->pinterest = PinterestMockFactory::createDefaultPinterestMock($this);
+    $this->pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
   }
 
   /**
