@@ -74,7 +74,7 @@ class RequestMaker implements RequestLoggerAwareInterface
   {
     // Check if the access token needs to be added
     $headers = $this->accessTokenValue != null
-      ? ['Authorization: Bearer ' . $this->accessTokenValue]
+      ? ['Authorization' => 'Bearer ' . $this->accessTokenValue]
       : [];
 
     $effectiveOptions = array_merge(

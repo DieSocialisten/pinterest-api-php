@@ -72,7 +72,7 @@ class PinterestOAuthTest extends TestCase
       ->with(
         'https://api.pinterest.com/v3/oauth/access_token/',
         [
-          'headers' => ['Authorization: Bearer 0'],
+          'headers' => ['Authorization' => 'Bearer 0'],
           'connect_timeout' => 20,
           'timeout' => 90,
           'verify' => false,
