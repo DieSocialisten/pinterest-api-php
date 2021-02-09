@@ -14,18 +14,16 @@ use Psr\Http\Message\ResponseInterface;
 class RequestMaker
 {
   /**
+   * @var string
+   */
+  private const API_BASE_URL = 'https://api.pinterest.com/v3/';
+
+  /**
    * Access token
    *
    * @var string|null
    */
   protected ?string $accessTokenValue = null;
-
-  /**
-   * Host to make the calls to
-   *
-   * @var string
-   */
-  private string $host = 'https://api.pinterest.com/v3/';
 
   /**
    * @var Client
@@ -53,22 +51,22 @@ class RequestMaker
    * @param string $apiCall
    * @return string
    */
-  private function buildFullApiCallUrl(string $apiCall): string
+  public static function buildFullUrlToEndpoint(string $apiCall): string
   {
-    return $this->host . $apiCall;
+    return self::API_BASE_URL . $apiCall;
   }
 
   /**
    * Execute the http request
    *
    * @param string $method
-   * @param string $apiCall
+   * @param string $fullUrlToEndpoint
    * @param array $options
    * @return ResponseInterface
    *
    * @throws PinterestRequestException
    */
-  private function execute(string $method, string $apiCall, array $options = array()): ResponseInterface
+  private function execute(string $method, string $fullUrlToEndpoint, array $options = array()): ResponseInterface
   {
     // Check if the access token needs to be added
     $headers = $this->accessTokenValue != null
@@ -96,7 +94,7 @@ class RequestMaker
     $this->lastHttpResponse = null;
 
     try {
-      $httpResponse = $this->httpClient->request($method, $apiCall, $effectiveOptions);
+      $httpResponse = $this->httpClient->request($method, $fullUrlToEndpoint, $effectiveOptions);
 
     } catch (RequestException $e) {
       /** @see https://docs.guzzlephp.org/en/6.5/quickstart.html#exceptions */
@@ -120,13 +118,13 @@ class RequestMaker
   /**
    * Make a get request to the given endpoint
    *
-   * @param string $endpoint
+   * @param string $fullUrlToEndpoint
    * @param array $queryParameters
    * @return ResponseInterface
    *
    * @throws PinterestRequestException
    */
-  public function get(string $endpoint, array $queryParameters = []): ResponseInterface
+  public function get(string $fullUrlToEndpoint, array $queryParameters = []): ResponseInterface
   {
     $options = [];
 
@@ -134,19 +132,19 @@ class RequestMaker
       $options = [RequestOptions::QUERY => $queryParameters];
     }
 
-    return $this->execute('GET', $this->buildFullApiCallUrl($endpoint), $options);
+    return $this->execute('GET', $fullUrlToEndpoint, $options);
   }
 
   /**
    * Make a post request to the given endpoint
    *
-   * @param string $endpoint
+   * @param string $fullUrlToEndpoint
    * @param array $parameters
    * @return ResponseInterface
    *
    * @throws PinterestRequestException
    */
-  public function post(string $endpoint, array $parameters = array()): ResponseInterface
+  public function post(string $fullUrlToEndpoint, array $parameters = array()): ResponseInterface
   {
     $options = [];
 
@@ -154,19 +152,19 @@ class RequestMaker
       $options = [RequestOptions::FORM_PARAMS => $parameters];
     }
 
-    return $this->execute('POST', $this->buildFullApiCallUrl($endpoint), $options);
+    return $this->execute('POST', $fullUrlToEndpoint, $options);
   }
 
   /**
    * Make a put request to the given endpoint
    *
-   * @param string $endpoint
+   * @param string $fullUrlToEndpoint
    * @param array $parameters
    * @return ResponseInterface
    *
    * @throws PinterestRequestException
    */
-  public function put(string $endpoint, array $parameters = array()): ResponseInterface
+  public function put(string $fullUrlToEndpoint, array $parameters = array()): ResponseInterface
   {
     $options = [];
 
@@ -174,6 +172,6 @@ class RequestMaker
       $options = [RequestOptions::FORM_PARAMS => $parameters];
     }
 
-    return $this->execute('PUT', $this->buildFullApiCallUrl($endpoint), $options);
+    return $this->execute('PUT', $fullUrlToEndpoint, $options);
   }
 }

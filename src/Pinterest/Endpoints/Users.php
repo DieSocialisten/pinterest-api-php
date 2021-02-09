@@ -7,6 +7,7 @@ namespace DirkGroenen\Pinterest\Endpoints;
 use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\User;
+use DirkGroenen\Pinterest\Transport\RequestMaker;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
 class Users extends Endpoint
@@ -20,7 +21,7 @@ class Users extends Endpoint
    */
   public function me(): User
   {
-    $endpoint = 'me/';
+    $endpoint = RequestMaker::buildFullUrlToEndpoint("users/me/");
 
     $this->logViaRequestLogger($endpoint);
     $httpResponse = $this->request->get($endpoint);

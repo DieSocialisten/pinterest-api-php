@@ -70,7 +70,7 @@ class PinterestOAuthTest extends TestCase
       ->expects($this->once())
       ->method('logRequest')
       ->with(
-        'oauth/access_token/',
+        'https://api.pinterest.com/v3/oauth/access_token/',
         [
           "grant_type" => "authorization_code",
           "code" => 'my-code',

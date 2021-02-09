@@ -7,6 +7,7 @@ namespace DirkGroenen\Pinterest\Endpoints;
 use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\Board;
+use DirkGroenen\Pinterest\Transport\RequestMaker;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
 class Boards extends Endpoint
@@ -22,7 +23,7 @@ class Boards extends Endpoint
    */
   public function get(string $boardId, array $data = []): Board
   {
-    $endpoint = "boards/{$boardId}/";
+    $endpoint = RequestMaker::buildFullUrlToEndpoint("boards/{$boardId}/");
 
     $this->logViaRequestLogger($endpoint, $data);
     $httpResponse = $this->request->get($endpoint, $data);

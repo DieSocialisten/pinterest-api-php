@@ -17,10 +17,7 @@ class PinterestOAuth implements RequestLoggerAwareInterface
 {
   use RequestLoggerAwareTrait;
 
-  /**
-   * Pinterest's oauth endpoint
-   */
-  public const AUTH_HOST = 'https://www.pinterest.com/oauth/';
+  private const OAUTH_ENDPOINT = 'https://www.pinterest.com/oauth/';
 
   /**
    * The application ID
@@ -81,7 +78,7 @@ class PinterestOAuth implements RequestLoggerAwareInterface
       'state' => $this->state
     ];
 
-    return sprintf('%s?%s', self::AUTH_HOST, http_build_query($queryParams));
+    return sprintf('%s?%s', self::OAUTH_ENDPOINT, http_build_query($queryParams));
   }
 
   /**
@@ -123,7 +120,7 @@ class PinterestOAuth implements RequestLoggerAwareInterface
       'redirect_uri' => $redirectUri,
     ];
 
-    $endpoint = 'oauth/access_token/';
+    $endpoint = RequestMaker::buildFullUrlToEndpoint('oauth/access_token/');
     $this->logViaRequestLogger($endpoint, $data);
     $httpResponse = $this->requestMaker->put($endpoint, $data);
 
