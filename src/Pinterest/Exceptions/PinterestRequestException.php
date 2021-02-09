@@ -7,7 +7,6 @@ namespace DirkGroenen\Pinterest\Exceptions;
 use Exception;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Throwable;
 
 class PinterestRequestException extends Exception
 {
@@ -15,15 +14,11 @@ class PinterestRequestException extends Exception
 
   private ?ResponseInterface $response;
 
-  public function __construct(
-    $message = '',
-    $code = 0,
-    Throwable $previous = null,
-    ?RequestInterface $request = null,
-    ?ResponseInterface $response = null
-  )
+  public function __construct($message = '', ?RequestInterface $request = null, ?ResponseInterface $response = null)
   {
-    parent::__construct($message, $code, $previous);
+    $code = $response ? $response->getStatusCode() : 0;
+
+    parent::__construct($message, $code);
 
     $this->request = $request;
     $this->response = $response;

@@ -84,13 +84,6 @@ class RequestMaker implements RequestLoggerAwareInterface
         RequestOptions::TIMEOUT => 90,
         RequestOptions::VERIFY => false,
         RequestOptions::HTTP_ERRORS => true,
-
-        // Leftovers from "original" (non-forked lib) CURL client implementation:
-        'curl' => [
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_HEADER => false,
-          CURLINFO_HEADER_OUT => true
-        ]
       ],
       $options
     );
@@ -105,10 +98,10 @@ class RequestMaker implements RequestLoggerAwareInterface
     } catch (RequestException $e) {
       /** @see https://docs.guzzlephp.org/en/6.5/quickstart.html#exceptions */
 
-      throw new PinterestRequestException('Request failed', 0, $e, $e->getRequest(), $e->getResponse());
+      throw new PinterestRequestException('Request failed', $e->getRequest(), $e->getResponse());
 
     } catch (GuzzleException $e) {
-      throw new PinterestRequestException('Request failed with message: ' . $e->getMessage(), 0, $e);
+      throw new PinterestRequestException('Request failed with message: ' . $e->getMessage());
     }
 
     $this->lastHttpResponse = $httpResponse;

@@ -107,18 +107,17 @@ class Pinterest
    */
   public function getRateLimit()
   {
-    return $this->getHeaderValueOrUseFallback('x-ratelimit-limit', '1000');
+    return $this->getHeaderValueOrUseFallback('x-userendpoint-ratelimit-limit', '1000');
   }
 
   /**
    * Get rate limit remaining from the headers
-   * response header may change from X-Ratelimit-Remaining to X-RateLimit-Remaining
    *
    * @return string
    */
   public function getRateLimitRemaining(): string
   {
-    return $this->getHeaderValueOrUseFallback('x-ratelimit-remaining', 'unknown');
+    return $this->getHeaderValueOrUseFallback('x-userendpoint-ratelimit-remaining', 'unknown');
   }
 
   /**

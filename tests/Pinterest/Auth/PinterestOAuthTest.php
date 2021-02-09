@@ -77,11 +77,6 @@ class PinterestOAuthTest extends TestCase
           'timeout' => 90,
           'verify' => false,
           'http_errors' => true,
-          'curl' => [
-            19913 => true,
-            42 => false,
-            2 => true,
-          ],
           'form_params' => [
             'grant_type' => 'authorization_code',
             'client_id' => '0',

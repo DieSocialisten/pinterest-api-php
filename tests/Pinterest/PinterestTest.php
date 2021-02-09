@@ -21,13 +21,13 @@ class PinterestTest extends TestCase
     $this->pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
   }
 
-  public function testGetRateLimit()
+  public function testGetDefaultRateLimit()
   {
     $rateLimit = $this->pinterest->getRateLimit();
     $this->assertEquals('1000', $rateLimit);
   }
 
-  public function testGetRateLimitRemaining()
+  public function testDefaultGetRateLimitRemaining()
   {
     $rateLimitRemaining = $this->pinterest->getRateLimitRemaining();
     $this->assertEquals('unknown', $rateLimitRemaining);
