@@ -25,8 +25,7 @@ class Boards extends Endpoint
   {
     $endpoint = RequestMaker::buildFullUrlToEndpoint("boards/{$boardId}/");
 
-    $this->logViaRequestLogger($endpoint, $data);
-    $httpResponse = $this->request->get($endpoint, $data);
+    $httpResponse = $this->requestMaker->get($endpoint, $data);
 
     return new Board(ResponseFactory::createFromJson($httpResponse));
   }

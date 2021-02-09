@@ -40,11 +40,6 @@ class Pinterest
   private array $cachedEndpoints = [];
 
   /**
-   * @var RequestLoggerInterface|null
-   */
-  private ?RequestLoggerInterface $requestLogger = null;
-
-  /**
    * @param string $clientId
    * @param string $clientSecret
    * @param ?Client $httpClient
@@ -63,15 +58,9 @@ class Pinterest
     $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->requestMaker);
   }
 
-  public function setRequestLogger(?RequestLoggerInterface $requestLogger = null)
+  public function setRequestLogger(?RequestLoggerInterface $requestLogger)
   {
-    $this->requestLogger = $requestLogger;
-    $this->auth->setRequestLogger($requestLogger);
-
-    /** @var Endpoint $endpoint */
-    foreach ($this->cachedEndpoints as $endpoint) {
-      $endpoint->setRequestLogger($requestLogger);
-    }
+    $this->requestMaker->setRequestLogger($requestLogger);
   }
 
   /**
@@ -91,7 +80,7 @@ class Pinterest
         throw new PinterestConfigurationException("Requested endpoint '{$endpoint}' doesn't exist, double-check your code");
       }
 
-      $this->cachedEndpoints[$endpoint] = new $endpointClassname($this->requestMaker, $this->requestLogger);
+      $this->cachedEndpoints[$endpoint] = new $endpointClassname($this->requestMaker);
     }
 
     return $this->cachedEndpoints[$endpoint];

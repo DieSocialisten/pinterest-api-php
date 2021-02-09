@@ -6,17 +6,12 @@ namespace DirkGroenen\Pinterest\Auth;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
-use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
-use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
-use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Models\AccessToken;
 use DirkGroenen\Pinterest\Transport\RequestMaker;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
-class PinterestOAuth implements RequestLoggerAwareInterface
+class PinterestOAuth
 {
-  use RequestLoggerAwareTrait;
-
   private const OAUTH_ENDPOINT = 'https://www.pinterest.com/oauth/';
 
   /**
@@ -40,8 +35,7 @@ class PinterestOAuth implements RequestLoggerAwareInterface
   public function __construct(
     string $clientId,
     string $clientSecret,
-    RequestMaker $requestMaker,
-    ?RequestLoggerInterface $requestLogger = null
+    RequestMaker $requestMaker
   ) {
     $this->clientId = $clientId;
     $this->clientSecret = $clientSecret;
@@ -49,10 +43,6 @@ class PinterestOAuth implements RequestLoggerAwareInterface
     $this->state = $this->generateState();
 
     $this->requestMaker = $requestMaker;
-
-    if ($requestLogger) {
-      $this->setRequestLogger($requestLogger);
-    }
   }
 
   private function generateState(): string
@@ -121,7 +111,7 @@ class PinterestOAuth implements RequestLoggerAwareInterface
     ];
 
     $endpoint = RequestMaker::buildFullUrlToEndpoint('oauth/access_token/');
-    $this->logViaRequestLogger($endpoint, $data);
+
     $httpResponse = $this->requestMaker->put($endpoint, $data);
 
     return new AccessToken(ResponseFactory::createFromJson($httpResponse));

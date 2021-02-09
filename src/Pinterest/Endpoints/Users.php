@@ -23,8 +23,7 @@ class Users extends Endpoint
   {
     $endpoint = RequestMaker::buildFullUrlToEndpoint("users/me/");
 
-    $this->logViaRequestLogger($endpoint);
-    $httpResponse = $this->request->get($endpoint);
+    $httpResponse = $this->requestMaker->get($endpoint);
 
     return new User(ResponseFactory::createFromJson($httpResponse));
   }

@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace DirkGroenen\Pinterest\Transport;
 
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
+use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
+use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 
-class RequestMaker
+class RequestMaker implements RequestLoggerAwareInterface
 {
+  use RequestLoggerAwareTrait;
+
   /**
    * @var string
    */
@@ -92,6 +96,8 @@ class RequestMaker
     );
 
     $this->lastHttpResponse = null;
+
+    $this->logViaRequestLogger($fullUrlToEndpoint, $effectiveOptions);
 
     try {
       $httpResponse = $this->httpClient->request($method, $fullUrlToEndpoint, $effectiveOptions);

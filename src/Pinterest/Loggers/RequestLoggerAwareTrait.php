@@ -19,16 +19,6 @@ trait RequestLoggerAwareTrait
       return;
     }
 
-    // mask sensitive data before storing it somewhere:
-
-    if (isset($payload['client_id'])) {
-      $payload['client_id'] = '***';
-    }
-
-    if (isset($payload['client_secret'])) {
-      $payload['client_secret'] = '***';
-    }
-
     $this->requestLogger->logRequest($endpoint, $payload);
   }
 }

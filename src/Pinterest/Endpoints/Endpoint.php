@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
-use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
-use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Transport\RequestMaker;
 
-class Endpoint implements RequestLoggerAwareInterface
+class Endpoint
 {
-  use RequestLoggerAwareTrait;
+  protected RequestMaker $requestMaker;
 
-  protected RequestMaker $request;
-
-  public function __construct(RequestMaker $request, ?RequestLoggerInterface $requestLogger)
+  public function __construct(RequestMaker $requestMaker)
   {
-    $this->request = $request;
-    $this->setRequestLogger($requestLogger);
+    $this->requestMaker = $requestMaker;
   }
 }

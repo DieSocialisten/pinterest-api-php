@@ -26,8 +26,7 @@ class Pins extends Endpoint
   {
     $endpoint = RequestMaker::buildFullUrlToEndpoint("pins/{$pinId}/");
 
-    $this->logViaRequestLogger($endpoint, $data);
-    $httpResponse = $this->request->get($endpoint, $data);
+    $httpResponse = $this->requestMaker->get($endpoint, $data);
 
     return new Pin(ResponseFactory::createFromJson($httpResponse));
   }
@@ -45,8 +44,7 @@ class Pins extends Endpoint
   {
     $endpoint = RequestMaker::buildFullUrlToEndpoint("boards/{$boardId}/pins/");
 
-    $this->logViaRequestLogger($endpoint, $data);
-    $httpResponse = $this->request->get($endpoint, $data);
+    $httpResponse = $this->requestMaker->get($endpoint, $data);
 
     return new Collection(ResponseFactory::createFromJson($httpResponse), Pin::class);
   }

@@ -72,11 +72,23 @@ class PinterestOAuthTest extends TestCase
       ->with(
         'https://api.pinterest.com/v3/oauth/access_token/',
         [
-          "grant_type" => "authorization_code",
-          "code" => 'my-code',
-          "redirect_uri" => 'https://example.com',
-          "client_id" => '***',
-          "client_secret" => '***'
+          'headers' => ['Authorization: Bearer 0'],
+          'connect_timeout' => 20,
+          'timeout' => 90,
+          'verify' => false,
+          'http_errors' => true,
+          'curl' => [
+            19913 => true,
+            42 => false,
+            2 => true,
+          ],
+          'form_params' => [
+            'grant_type' => 'authorization_code',
+            'client_id' => '0',
+            'client_secret' => '0',
+            'code' => 'my-code',
+            'redirect_uri' => 'https://example.com',
+          ],
         ]
       );
 
