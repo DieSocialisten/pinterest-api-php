@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Auth;
 
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
@@ -110,7 +111,7 @@ class PinterestOAuth implements RequestLoggerAwareInterface
    * @param string $redirectUri
    * @return AccessToken
    *
-   * @throws PinterestRequestException
+   * @throws PinterestRequestException|PinterestDataException
    */
   public function exchangeCodeForAccessToken(string $code, string $redirectUri): AccessToken
   {

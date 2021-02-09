@@ -6,9 +6,8 @@ namespace DirkGroenen\Pinterest\Models;
 
 use ArrayAccess;
 use ArrayIterator;
-use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
-use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
 use DirkGroenen\Pinterest\Transport\Response;
+use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
 
@@ -46,14 +45,14 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
    * @param array|Response $items
    * @param string $model
    *
-   * @throws InvalidModelException|InvalidResponseException
+   * @throws InvalidArgumentException
    */
   public function __construct($items, string $model)
   {
     $this->model = $model;
 
     if (!class_exists($this->model)) {
-      throw new InvalidModelException();
+      throw new InvalidArgumentException();
     }
 
     // Get items and response instance
@@ -66,7 +65,7 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate
       $this->items = $items->data;
 
     } else {
-      throw new InvalidResponseException('$items needs to be an instance of Transport\Response or an array.');
+      throw new InvalidArgumentException('$items needs to be an instance of Transport\Response or an array.');
     }
 
     // Transform the raw collection data to models

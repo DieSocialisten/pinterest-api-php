@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Models;
 
-use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Transport\Response;
 use JsonSerializable;
 
@@ -75,12 +75,12 @@ abstract class Model implements JsonSerializable
    * @param string $key
    * @param mixed $value
    *
-   * @throws InvalidResponseException
+   * @throws PinterestDataException
    */
   public function __set(string $key, $value)
   {
     if (!$this->isFillable($key)) {
-      throw new InvalidResponseException(sprintf("%s is not a fillable attribute.", $key));
+      throw new PinterestDataException(sprintf("%s is not a fillable attribute.", $key));
     }
 
     $this->attributes[$key] = $value;

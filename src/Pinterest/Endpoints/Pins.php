@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
-use DirkGroenen\Pinterest\Exceptions\InvalidModelException;
-use DirkGroenen\Pinterest\Exceptions\InvalidResponseException;
 use DirkGroenen\Pinterest\Models\Collection;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
@@ -20,7 +19,7 @@ class Pins extends Endpoint
    * @param array $data
    * @return Pin
    *
-   * @throws PinterestRequestException
+   * @throws PinterestRequestException|PinterestDataException
    */
   public function get(string $pinId, array $data = []): Pin
   {
@@ -39,7 +38,7 @@ class Pins extends Endpoint
    * @param array $data
    * @return Collection
    *
-   * @throws PinterestRequestException|InvalidModelException|InvalidResponseException
+   * @throws PinterestRequestException|PinterestDataException
    */
   public function fromBoard(string $boardId, array $data = []): Collection
   {

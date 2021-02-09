@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
@@ -17,7 +18,7 @@ class Boards extends Endpoint
    * @param array $data
    * @return Board
    *
-   * @throws PinterestRequestException
+   * @throws PinterestRequestException|PinterestDataException
    */
   public function get(string $boardId, array $data = []): Board
   {

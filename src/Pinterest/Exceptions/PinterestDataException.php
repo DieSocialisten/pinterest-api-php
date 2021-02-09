@@ -6,7 +6,7 @@ namespace DirkGroenen\Pinterest\Exceptions;
 
 use Exception;
 
-class InvalidResponseException extends Exception
+class PinterestDataException extends Exception
 {
 
 }

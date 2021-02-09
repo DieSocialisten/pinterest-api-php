@@ -9,9 +9,9 @@ use DirkGroenen\Pinterest\Endpoints\Boards;
 use DirkGroenen\Pinterest\Endpoints\Endpoint;
 use DirkGroenen\Pinterest\Endpoints\Pins;
 use DirkGroenen\Pinterest\Endpoints\Users;
+use DirkGroenen\Pinterest\Exceptions\PinterestConfigurationException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Transport\RequestMaker;
-use DirkGroenen\Pinterest\Exceptions\InvalidEndpointException;
 use GuzzleHttp\Client;
 
 /**
@@ -80,7 +80,7 @@ class Pinterest
    * @param string $endpoint
    * @return Endpoint
    *
-   * @throws InvalidEndpointException
+   * @throws PinterestConfigurationException
    */
   public function __get(string $endpoint): Endpoint
   {
@@ -88,7 +88,7 @@ class Pinterest
 
     if (!isset($this->cachedEndpoints[$endpoint])) {
       if (!class_exists($endpointClassname)) {
-        throw new InvalidEndpointException();
+        throw new PinterestConfigurationException("Requested endpoint '{$endpoint}' doesn't exist, double-check your code");
       }
 
       $this->cachedEndpoints[$endpoint] = new $endpointClassname($this->requestMaker, $this->requestLogger);

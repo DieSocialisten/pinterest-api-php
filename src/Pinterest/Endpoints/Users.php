@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\User;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
@@ -15,7 +16,7 @@ class Users extends Endpoint
    *
    * @return User
    *
-   * @throws PinterestRequestException
+   * @throws PinterestRequestException|PinterestDataException
    */
   public function me(): User
   {

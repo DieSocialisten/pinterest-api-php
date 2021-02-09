@@ -6,7 +6,7 @@ namespace DirkGroenen\Pinterest\Exceptions;
 
 use Exception;
 
-class InvalidEndpointException extends Exception
+class PinterestConfigurationException extends Exception
 {
 
 }
