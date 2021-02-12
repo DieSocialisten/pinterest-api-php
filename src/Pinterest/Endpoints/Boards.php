@@ -16,8 +16,6 @@ use Generator;
 class Boards extends Endpoint
 {
   /**
-   * Find the provided board
-   *
    * @param string $boardId
    * @return Board
    *
@@ -33,7 +31,7 @@ class Boards extends Endpoint
   }
 
   /**
-   * Get all pins from the given board
+   * Fetch collection of pins from the given board and return generator pointing to the result
    *
    * @param string $boardId
    * @param int $pageSize
@@ -63,7 +61,7 @@ class Boards extends Endpoint
    * @param int $pageSize
    * @param int $maxNumberOfPages
    *
-   * @return array
+   * @return array|Pin[]
    *
    * @throws PinterestDataException
    * @throws PinterestRequestException

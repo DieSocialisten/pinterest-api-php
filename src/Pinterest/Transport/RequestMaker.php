@@ -18,52 +18,28 @@ class RequestMaker implements RequestLoggerAwareInterface
 {
   use RequestLoggerAwareTrait;
 
-  /**
-   * @var string
-   */
   private const API_BASE_URL = 'https://api.pinterest.com/v3/';
 
-  /**
-   * Access token
-   *
-   * @var string|null
-   */
   protected ?string $accessTokenValue = null;
 
-  /**
-   * @var Client
-   */
   private Client $httpClient;
-
-  private ?ResponseInterface $lastHttpResponse = null;
 
   public function __construct(Client $httpClient)
   {
     $this->httpClient = $httpClient;
   }
 
-  /**
-   * Set the access token
-   *
-   * @param string $token
-   */
   public function setAccessTokenValue(string $token)
   {
     $this->accessTokenValue = $token;
   }
 
-  /**
-   * @param string $apiCall
-   * @return string
-   */
   public static function buildFullUrlToEndpoint(string $apiCall): string
   {
     return self::API_BASE_URL . $apiCall;
   }
 
   /**
-   * Execute the http request
-   *
    * @param string $method
    * @param string $fullUrlToEndpoint
    * @param array $options
@@ -73,8 +49,8 @@ class RequestMaker implements RequestLoggerAwareInterface
    */
   private function execute(string $method, string $fullUrlToEndpoint, array $options = array()): ResponseInterface
   {
-    // Check if the access token needs to be added
-    $headers = $this->accessTokenValue != null
+    // Add access token if it's presented:
+    $headers = !is_null($this->accessTokenValue)
       ? ['Authorization' => 'Bearer ' . $this->accessTokenValue]
       : [];
 
@@ -89,8 +65,6 @@ class RequestMaker implements RequestLoggerAwareInterface
       $options
     );
 
-    $this->lastHttpResponse = null;
-
     $this->logViaRequestLogger($fullUrlToEndpoint, $effectiveOptions, $this->accessTokenValue);
 
     try {
@@ -103,19 +77,10 @@ class RequestMaker implements RequestLoggerAwareInterface
       throw new PinterestRequestException('Request failed with message: ' . $e->getMessage());
     }
 
-    $this->lastHttpResponse = $httpResponse;
-
-    return $this->lastHttpResponse;
-  }
-
-  public function getLastHttpResponse(): ?ResponseInterface
-  {
-    return $this->lastHttpResponse;
+    return $httpResponse;
   }
 
   /**
-   * Make a get request to the given endpoint
-   *
    * @param string $fullUrlToEndpoint
    * @param array $queryParameters
    * @return ResponseInterface
@@ -134,8 +99,6 @@ class RequestMaker implements RequestLoggerAwareInterface
   }
 
   /**
-   * Make a post request to the given endpoint
-   *
    * @param string $fullUrlToEndpoint
    * @param array $parameters
    * @return ResponseInterface
@@ -154,8 +117,6 @@ class RequestMaker implements RequestLoggerAwareInterface
   }
 
   /**
-   * Make a put request to the given endpoint
-   *
    * @param string $fullUrlToEndpoint
    * @param array $parameters
    * @return ResponseInterface

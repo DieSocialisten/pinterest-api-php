@@ -26,17 +26,8 @@ class Pinterest
    */
   private PinterestOAuth $auth;
 
-  /**
-   * A reference to the request class which travels
-   * through the application
-   *
-   * @var Transport\RequestMaker
-   */
   private RequestMaker $requestMaker;
 
-  /**
-   * @var array
-   */
   private array $cachedEndpoints = [];
 
   /**
@@ -73,7 +64,7 @@ class Pinterest
    */
   public function __get(string $endpoint): Endpoint
   {
-    $endpointClassname = "\\DirkGroenen\\Pinterest\\Endpoints\\" . ucfirst(strtolower($endpoint));
+    $endpointClassname = '\DirkGroenen\Pinterest\Endpoints\\' . ucfirst(strtolower($endpoint));
 
     if (!isset($this->cachedEndpoints[$endpoint])) {
       if (!class_exists($endpointClassname)) {
@@ -84,40 +75,6 @@ class Pinterest
     }
 
     return $this->cachedEndpoints[$endpoint];
-  }
-
-  private function getHeaderValueOrUseFallback(string $headerName, ?string $fallbackValue): ?string
-  {
-    $lastResponse = $this->requestMaker->getLastHttpResponse();
-
-    if (!$lastResponse) {
-      return $fallbackValue;
-    }
-
-    return $lastResponse->hasHeader($headerName)
-      ? $lastResponse->getHeaderLine($headerName)
-      : $fallbackValue;
-  }
-
-  /**
-   * Get rate limit from the headers
-   * response header may change from X-Ratelimit-Limit to X-RateLimit-Limit
-   *
-   * @return int|string
-   */
-  public function getRateLimit()
-  {
-    return $this->getHeaderValueOrUseFallback('x-userendpoint-ratelimit-limit', '1000');
-  }
-
-  /**
-   * Get rate limit remaining from the headers
-   *
-   * @return string
-   */
-  public function getRateLimitRemaining(): string
-  {
-    return $this->getHeaderValueOrUseFallback('x-userendpoint-ratelimit-remaining', 'unknown');
   }
 
   /**

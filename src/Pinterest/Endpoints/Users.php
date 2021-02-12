@@ -13,8 +13,6 @@ use DirkGroenen\Pinterest\Transport\ResponseFactory;
 class Users extends Endpoint
 {
   /**
-   * Get the current user
-   *
    * @return User
    *
    * @throws PinterestDataException

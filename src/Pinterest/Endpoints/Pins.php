@@ -13,8 +13,6 @@ use DirkGroenen\Pinterest\Transport\ResponseFactory;
 class Pins extends Endpoint
 {
   /**
-   * Get a pin object
-   *
    * @param string $pinId
    * @return Pin
    *

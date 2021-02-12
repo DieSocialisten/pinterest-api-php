@@ -14,14 +14,8 @@ class PinterestOAuth
 {
   private const OAUTH_ENDPOINT = 'https://www.pinterest.com/oauth/';
 
-  /**
-   * The application ID
-   */
   private string $clientId;
 
-  /**
-   * The app secret
-   */
   private string $clientSecret;
 
   /**
@@ -51,8 +45,6 @@ class PinterestOAuth
   }
 
   /**
-   * Returns the login url
-   *
    * @param string $redirectUri
    * @param array $scopes
    * @param string $responseType
@@ -71,21 +63,11 @@ class PinterestOAuth
     return sprintf('%s?%s', self::OAUTH_ENDPOINT, http_build_query($queryParams));
   }
 
-  /**
-   * Get the generated state
-   *
-   * @return string
-   */
   public function getState(): ?string
   {
     return $this->state;
   }
 
-  /**
-   * Set a state manually
-   *
-   * @param string|null $state
-   */
   public function setState(?string $state)
   {
     $this->state = $state;
