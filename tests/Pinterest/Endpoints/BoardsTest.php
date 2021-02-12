@@ -10,6 +10,7 @@ use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -45,7 +46,7 @@ class BoardsTest extends TestCase
     $this->assertEquals('549755885175', $board->id);
     $this->assertEquals('https://i.pinimg.com/550x/40/88/ed/4088eda9ce2153483f8dce96d1a50388.jpg', $board->image_cover_url);
     $this->assertEquals('My recipes', $board->name);
-    $this->assertEquals('', $board->url);
+    $this->assertEquals('https://www.pinterest.com/test/me', $board->getFullUrl());
   }
 
   private function getResponseBody($filename)
@@ -107,7 +108,7 @@ class BoardsTest extends TestCase
         $pins[] = $pin;
       }
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       self::assertInstanceOf(PinterestRequestException::class, $e);
     }
 

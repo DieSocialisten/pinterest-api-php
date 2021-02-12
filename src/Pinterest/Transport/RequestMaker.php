@@ -8,6 +8,7 @@ use DirkGroenen\Pinterest\Exceptions\ExceptionsFactory;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
+use DirkGroenen\Pinterest\Pinterest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -17,8 +18,6 @@ use Psr\Http\Message\ResponseInterface;
 class RequestMaker implements RequestLoggerAwareInterface
 {
   use RequestLoggerAwareTrait;
-
-  private const API_BASE_URL = 'https://api.pinterest.com/v3/';
 
   protected ?string $accessTokenValue = null;
 
@@ -36,7 +35,7 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   public static function buildFullUrlToEndpoint(string $apiCall): string
   {
-    return self::API_BASE_URL . $apiCall;
+    return Pinterest::API_BASE_URL . $apiCall;
   }
 
   /**

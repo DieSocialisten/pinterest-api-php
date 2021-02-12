@@ -7,13 +7,12 @@ namespace DirkGroenen\Pinterest\Auth;
 use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\AccessToken;
+use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Transport\RequestMaker;
 use DirkGroenen\Pinterest\Transport\ResponseFactory;
 
 class PinterestOAuth
 {
-  private const OAUTH_ENDPOINT = 'https://www.pinterest.com/oauth/';
-
   private string $clientId;
 
   private string $clientSecret;
@@ -60,7 +59,7 @@ class PinterestOAuth
       'state' => $this->state
     ];
 
-    return sprintf('%s?%s', self::OAUTH_ENDPOINT, http_build_query($queryParams));
+    return sprintf('%s?%s', Pinterest::OAUTH_BASE_URL, http_build_query($queryParams));
   }
 
   public function getState(): ?string

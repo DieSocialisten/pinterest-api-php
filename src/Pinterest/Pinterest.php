@@ -21,6 +21,9 @@ use GuzzleHttp\Client;
  */
 class Pinterest
 {
+  public const BASE_URL = 'https://www.pinterest.com/';
+  public const API_BASE_URL = 'https://api.pinterest.com/v3/';
+  public const OAUTH_BASE_URL = 'https://www.pinterest.com/oauth/';
   /**
    * @var Auth\PinterestOAuth
    */
