@@ -8,5 +8,5 @@ interface RequestLoggerAwareInterface
 {
   public function setRequestLogger(?RequestLoggerInterface $requestLogger);
 
-  public function logViaRequestLogger(string $endpoint, array $payload);
+  public function logViaRequestLogger(string $endpoint, array $payload, ?string $accessToken);
 }

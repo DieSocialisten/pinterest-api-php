@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Transport;
 
+use DirkGroenen\Pinterest\Exceptions\ExceptionsFactory;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
@@ -90,15 +91,13 @@ class RequestMaker implements RequestLoggerAwareInterface
 
     $this->lastHttpResponse = null;
 
-    $this->logViaRequestLogger($fullUrlToEndpoint, $effectiveOptions);
+    $this->logViaRequestLogger($fullUrlToEndpoint, $effectiveOptions, $this->accessTokenValue);
 
     try {
       $httpResponse = $this->httpClient->request($method, $fullUrlToEndpoint, $effectiveOptions);
 
     } catch (RequestException $e) {
-      /** @see https://docs.guzzlephp.org/en/6.5/quickstart.html#exceptions */
-
-      throw new PinterestRequestException('Request failed', $e->getRequest(), $e->getResponse());
+      throw ExceptionsFactory::createPinterestRequestException($e);
 
     } catch (GuzzleException $e) {
       throw new PinterestRequestException('Request failed with message: ' . $e->getMessage());

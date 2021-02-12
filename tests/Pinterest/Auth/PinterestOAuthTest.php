@@ -72,7 +72,7 @@ class PinterestOAuthTest extends TestCase
       ->with(
         'https://api.pinterest.com/v3/oauth/access_token/',
         [
-          'headers' => ['Authorization' => 'Bearer 0'],
+          'headers' => ['Authorization' => 'Bearer my-access-token'],
           'connect_timeout' => 20,
           'timeout' => 90,
           'verify' => false,
@@ -84,10 +84,13 @@ class PinterestOAuthTest extends TestCase
             'code' => 'my-code',
             'redirect_uri' => 'https://example.com',
           ],
-        ]
+        ],
+        'my-access-token'
       );
 
     $pinterest = PinterestMockFactory::createLoggerAwarePinterestMock($this, $loggerMock);
+
+    $pinterest->getAuthComponent()->setAccessTokenValue('my-access-token');
     $pinterest->getAuthComponent()->exchangeCodeForAccessToken('my-code', 'https://example.com');
   }
 
@@ -102,7 +105,8 @@ class PinterestOAuthTest extends TestCase
     $pinterest->getAuthComponent()->setState('ae361bd');
 
     $actualUrl = $pinterest->getAuthComponent()->getLoginUrl(
-      'https://dev-app.daniele.eu.ngrok.io/pinterest_auth/callback_access_token'
+      'https://dev-app.daniele.eu.ngrok.io/pinterest_auth/callback_access_token',
+      ['read_users']
     );
 
     self::assertEquals($expectedUrl, $actualUrl);

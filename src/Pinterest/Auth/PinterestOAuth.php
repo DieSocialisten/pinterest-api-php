@@ -58,7 +58,7 @@ class PinterestOAuth
    * @param string $responseType
    * @return string
    */
-  public function getLoginUrl(string $redirectUri, $scopes = ['read_users'], $responseType = 'code'): string
+  public function getLoginUrl(string $redirectUri, array $scopes, $responseType = 'code'): string
   {
     $queryParams = [
       'response_type' => $responseType,

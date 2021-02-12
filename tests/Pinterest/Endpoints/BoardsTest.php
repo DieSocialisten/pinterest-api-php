@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\Board;
 use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
@@ -12,8 +14,6 @@ use ReflectionException;
 
 class BoardsTest extends TestCase
 {
-  private const BOARD_ID = '503066289565421201';
-
   private Pinterest $pinterest;
 
   /**
@@ -24,24 +24,18 @@ class BoardsTest extends TestCase
     $this->pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
   }
 
-  public function testGet()
+  /**
+   * @test
+   * @responsefile get
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   */
+  public function shouldMapResponseToBoardModelProperly()
   {
-    $response = $this->pinterest->boards->get(self::BOARD_ID);
+    $board = $this->pinterest->boards->get("doesn't matter");
 
-    $this->assertInstanceOf(Board::class, $response);
-    $this->assertEquals(self::BOARD_ID, $response->id);
-  }
-
-  public function testGetWithExtraFields()
-  {
-    $response = $this->pinterest->boards->get(
-      self::BOARD_ID,
-      array(
-        "fields" => "url,description,creator,counts"
-      )
-    );
-
-    $this->assertInstanceOf(Board::class, $response);
-    $this->assertTrue(isset($response->creator['first_name']));
+    $this->assertInstanceOf(Board::class, $board);
+    $this->assertEquals('549755885175', $board->id);
   }
 }

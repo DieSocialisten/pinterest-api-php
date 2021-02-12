@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\User;
 use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
@@ -22,7 +24,14 @@ class UsersTest extends TestCase
     $this->pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
   }
 
-  public function testMe()
+  /**
+   * @test
+   * @responsefile me
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   */
+  public function shouldMapResponseToUserModelProperly()
   {
     $user = $this->pinterest->users->me();
 

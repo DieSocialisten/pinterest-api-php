@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace DirkGroenen\Pinterest\Transport;
 
 /**
- * @property array $page
  * @property array $data
- * @property string $message
- * @property string $error
+ * @property ?string bookmark
  */
 class Response
 {
@@ -26,11 +24,11 @@ class Response
    * Return the requested key data
    *
    * @param string $key
-   * @return mixed
+   * @return mixed|null
    */
   public function __get(string $key)
   {
-    return isset($this->responseData[$key]) ? $this->responseData[$key] : [];
+    return isset($this->responseData[$key]) ? $this->responseData[$key] : null;
   }
 
   /**
@@ -44,15 +42,13 @@ class Response
     return isset($this->responseData[$key]);
   }
 
-  /**
-   * Returns the error message which should normally
-   * by located in the response->message key, but can
-   * also be localed in the response->error key.
-   *
-   * @return string
-   */
-  public function getMessage(): string
+  public function hasBookmark(): bool
   {
-    return isset($this->message) ? $this->message : $this->error;
+    return isset($this->bookmark) && $this->bookmark !== '';
+  }
+
+  public function getBookmark(): ?string
+  {
+    return $this->bookmark;
   }
 }

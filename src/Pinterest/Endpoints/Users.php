@@ -17,7 +17,8 @@ class Users extends Endpoint
    *
    * @return User
    *
-   * @throws PinterestRequestException|PinterestDataException
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
    */
   public function me(): User
   {
