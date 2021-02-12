@@ -36,6 +36,12 @@ class PinsTest extends TestCase
     $pin = $this->pinterest->pins->get("doesn't matter");
 
     $this->assertInstanceOf(Pin::class, $pin);
-    $this->assertEquals("547046685988132022", $pin->id);
+
+    $this->assertEquals("734368282987016445", $pin->id);
+    $this->assertEquals("https://i.pinimg.com/600x/93/15/c3/9315c3be13eb2e7d3a63907dc14648ae.jpg", $pin->image_large_url);
+    $this->assertEquals("Friends | Wallpapers - Imgur", $pin->description);
+    $this->assertEquals("Mon, 25 Jan 2021 15:45:24 +0000", $pin->created_at);
+    $this->assertEquals("https://m.imgur.com/gallery/j2Rcwa5", $pin->link);
+    $this->assertEquals("https://www.pinterest.com/pin/734368282987016445/", $pin->shareable_url);
   }
 }

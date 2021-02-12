@@ -37,24 +37,39 @@ class Boards extends Endpoint
    *
    * @param string $boardId
    * @param int $pageSize
-   * @param int $pagesToFetch
+   * @param int $maxNumberOfPages
    *
    * @return Generator
    *
    * @throws PinterestDataException
    * @throws PinterestRequestException
    */
-  public function pins(string $boardId, int $pageSize = 100, int $pagesToFetch = 1): Generator
+  public function pinsAsGenerator(string $boardId, int $pageSize, int $maxNumberOfPages): Generator
   {
     $endpoint = RequestMaker::buildFullUrlToEndpoint("boards/{$boardId}/pins/");
 
     /** @var Response $response */
-    foreach ($this->getAllPages($pagesToFetch, $endpoint, ['page_size' => $pageSize]) as $response) {
+    foreach ($this->getAllPages($maxNumberOfPages, $endpoint, ['page_size' => $pageSize]) as $response) {
       if (isset($response->data)) {
         foreach ($response->data as $pinData) {
           yield new Pin($pinData);
         }
       }
     }
+  }
+
+  /**
+   * @param string $boardId
+   * @param int $pageSize
+   * @param int $maxNumberOfPages
+   *
+   * @return array
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   */
+  public function pinsAsArray(string $boardId, int $pageSize, int $maxNumberOfPages): array
+  {
+    return iterator_to_array($this->pinsAsGenerator($boardId, $pageSize, $maxNumberOfPages));
   }
 }

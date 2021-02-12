@@ -6,9 +6,11 @@ namespace DirkGroenen\Pinterest\Models;
 
 /**
  * @property mixed|null id
- * @property mixed|null url
- * @property mixed|null note
+ * @property mixed|null link Url to something outside of Pinterest
+ * @property mixed|null description
  * @property mixed|null created_at
+ * @property mixed|null image_large_url
+ * @property mixed|null shareable_url Url to pin
  */
 class Pin extends Model
 {
@@ -16,9 +18,11 @@ class Pin extends Model
   {
     return [
       'id',
-      'url',
+      'link',
+      'description',
       'created_at',
-      'note',
+      'image_large_url',
+      'shareable_url',
     ];
   }
 }
