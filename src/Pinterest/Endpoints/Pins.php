@@ -24,6 +24,12 @@ class Pins extends Endpoint
 
     $httpResponse = $this->requestMaker->get($endpoint);
 
-    return new Pin(ResponseFactory::createFromJson($httpResponse));
+    $pin = Pin::create(ResponseFactory::createFromJson($httpResponse));
+
+    if ($pin === false) {
+      throw new PinterestDataException("Data for pin {$pinId} is not valid");
+    }
+
+    return $pin;
   }
 }

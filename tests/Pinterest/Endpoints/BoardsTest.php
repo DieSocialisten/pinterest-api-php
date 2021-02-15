@@ -79,7 +79,7 @@ class BoardsTest extends TestCase
 
     $pins = $pinterest->boards->pinsAsArray('not important', $pageSizeDoesntMatter, 100);
 
-    self::assertCount(28, $pins);
+    self::assertCount(27, $pins);
   }
 
   /**
@@ -146,7 +146,7 @@ class BoardsTest extends TestCase
 
     $pins = $pinterest->boards->pinsAsArray('not important', $pageSizeDoesntMatter, 100);
 
-    self::assertCount(3, $pins);
+    self::assertCount(2, $pins);
   }
 
   /**

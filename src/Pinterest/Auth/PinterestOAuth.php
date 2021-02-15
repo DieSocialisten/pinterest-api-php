@@ -95,7 +95,13 @@ class PinterestOAuth
 
     $httpResponse = $this->requestMaker->put($endpoint, $data);
 
-    return new AccessToken(ResponseFactory::createFromJson($httpResponse));
+    $accessTokenModel = AccessToken::create(ResponseFactory::createFromJson($httpResponse));
+
+    if ($accessTokenModel === false) {
+      throw new PinterestDataException("Data for access token is not valid");
+    }
+
+    return $accessTokenModel;
   }
 
   /**

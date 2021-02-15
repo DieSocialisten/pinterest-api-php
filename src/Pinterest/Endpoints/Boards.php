@@ -27,7 +27,13 @@ class Boards extends Endpoint
 
     $httpResponse = $this->requestMaker->get($endpoint);
 
-    return new Board(ResponseFactory::createFromJson($httpResponse));
+    $board = Board::create(ResponseFactory::createFromJson($httpResponse));
+
+    if ($board === false) {
+      throw new PinterestDataException("Bad data for {$boardId}");
+    }
+
+    return $board;
   }
 
   /**
@@ -50,7 +56,11 @@ class Boards extends Endpoint
     foreach ($this->getAllPages($maxNumberOfPages, $endpoint, ['page_size' => $pageSize]) as $response) {
       if (isset($response->data)) {
         foreach ($response->data as $pinData) {
-          yield new Pin($pinData);
+          $pin = Pin::create($pinData);
+
+          if ($pin !== false) {
+            yield $pin;
+          }
         }
       }
     }

@@ -6,6 +6,18 @@ namespace DirkGroenen\Pinterest\Models;
 
 class Pin extends Model
 {
+  public static function isDataValid(array $data): bool
+  {
+    if (array_key_exists('type', $data)) {
+      // sometimes we're getting this alongside with items without "type" (which are actually pins):
+      if ($data['type'] == 'story') {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   protected function getAttributesToFill(): array
   {
     return [

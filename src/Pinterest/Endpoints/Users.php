@@ -24,6 +24,12 @@ class Users extends Endpoint
 
     $httpResponse = $this->requestMaker->get($endpoint);
 
-    return new User(ResponseFactory::createFromJson($httpResponse));
+    $user = User::create(ResponseFactory::createFromJson($httpResponse));
+
+    if ($user === false) {
+      throw new PinterestDataException("Data for user 'me' is not valid");
+    }
+
+    return $user;
   }
 }

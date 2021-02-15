@@ -12,18 +12,37 @@ abstract class Model
 
   protected array $modelData = [];
 
+  protected static function isDataValid(array $data): bool
+  {
+    return true;
+  }
+
   /**
    * @param array|Response $pinterestData
+   * @return false|mixed|Model
    */
-  public function __construct($pinterestData)
+  public static function create($pinterestData)
   {
-    // Fill the model
     if (is_array($pinterestData)) {
-      $this->fill($pinterestData);
-
-    } elseif ($pinterestData instanceof Response) {
-      $this->fill($pinterestData->data);
+      $data = $pinterestData;
     }
+    elseif ($pinterestData instanceof Response) {
+      $data = $pinterestData->data;
+    }
+    else {
+      return false;
+    }
+
+    if (!static::isDataValid($data)) {
+      return false;
+    }
+
+    return new static($data);
+  }
+
+  private function __construct(array $data)
+  {
+    $this->fill($data);
   }
 
   private function fill(array $data)
