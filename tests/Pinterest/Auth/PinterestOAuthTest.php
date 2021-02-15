@@ -52,7 +52,7 @@ class PinterestOAuthTest extends TestCase
 
     $accessToken = $pinterest->getAuthComponent()->exchangeCodeForAccessToken('my-code', 'https://example.com');
 
-    self::assertEquals('access token 234', $accessToken->access_token);
+    self::assertEquals('access token 234', $accessToken->getAccessTokenValue());
   }
 
   /**

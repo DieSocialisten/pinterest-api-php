@@ -6,11 +6,6 @@ namespace DirkGroenen\Pinterest\Models;
 
 use DirkGroenen\Pinterest\Pinterest;
 
-/**
- * @property string id
- * @property mixed|null name
- * @property mixed|null image_cover_url
- */
 class Board extends Model
 {
   protected function getAttributesToFill(): array
@@ -25,6 +20,21 @@ class Board extends Model
 
   public function getFullUrl(): string
   {
-    return Pinterest::BASE_URL . ltrim($this->attributes['url'], '/');
+    return Pinterest::BASE_URL . ltrim($this->modelData['url'], '/');
+  }
+
+  public function getId()
+  {
+    return $this->getValue('id');
+  }
+
+  public function getName()
+  {
+    return $this->getValue('name');
+  }
+
+  public function getImageCoverUrl()
+  {
+    return $this->getValue('image_cover_url');
   }
 }

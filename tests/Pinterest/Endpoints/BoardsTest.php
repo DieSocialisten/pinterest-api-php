@@ -43,9 +43,9 @@ class BoardsTest extends TestCase
 
     $this->assertInstanceOf(Board::class, $board);
 
-    $this->assertEquals('549755885175', $board->id);
-    $this->assertEquals('https://i.pinimg.com/550x/40/88/ed/4088eda9ce2153483f8dce96d1a50388.jpg', $board->image_cover_url);
-    $this->assertEquals('My recipes', $board->name);
+    $this->assertEquals('549755885175', $board->getId());
+    $this->assertEquals('https://i.pinimg.com/550x/40/88/ed/4088eda9ce2153483f8dce96d1a50388.jpg', $board->getImageCoverUrl());
+    $this->assertEquals('My recipes', $board->getName());
     $this->assertEquals('https://www.pinterest.com/test/me', $board->getFullUrl());
   }
 
@@ -163,13 +163,14 @@ class BoardsTest extends TestCase
       self::assertInstanceOf(Pin::class, $pin);
     }
 
+    /** @var Pin $pinA */
     $pinA = $pins[0];
 
-    $this->assertEquals("734368282987016445", $pinA->id);
-    $this->assertEquals("https://i.pinimg.com/600x/93/15/c3/9315c3be13eb2e7d3a63907dc14648ae.jpg", $pinA->image_large_url);
-    $this->assertEquals("Friends | Wallpapers - Imgur", $pinA->description);
-    $this->assertEquals("Mon, 25 Jan 2021 15:45:24 +0000", $pinA->created_at);
-    $this->assertEquals("https://m.imgur.com/gallery/j2Rcwa5", $pinA->link);
-    $this->assertEquals("https://www.pinterest.com/pin/734368282987016445/", $pinA->shareable_url);
+    $this->assertEquals("734368282987016445", $pinA->getId());
+    $this->assertEquals("https://i.pinimg.com/600x/93/15/c3/9315c3be13eb2e7d3a63907dc14648ae.jpg", $pinA->getImageUrl());
+    $this->assertEquals("Friends | Wallpapers - Imgur", $pinA->getDescription());
+    $this->assertEquals("Mon, 25 Jan 2021 15:45:24 +0000", $pinA->getCreatedAt());
+    $this->assertEquals("https://m.imgur.com/gallery/j2Rcwa5", $pinA->getLink());
+    $this->assertEquals("https://www.pinterest.com/pin/734368282987016445/", $pinA->getShareableUrl());
   }
 }
