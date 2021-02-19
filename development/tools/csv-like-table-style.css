@@ -1,0 +1,12 @@
+td {
+  display: inline-block;
+}
+
+td:after {
+  content: ",";
+  user-select: text;
+}
+
+td:nth-of-type(4) {
+  display: none;
+}

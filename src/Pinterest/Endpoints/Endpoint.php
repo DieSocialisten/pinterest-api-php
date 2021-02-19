@@ -1,45 +1,51 @@
 <?php
-/**
- * Copyright 2015 Dirk Groenen
- *
- * (c) Dirk Groenen <dirk@bitlabs.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
-use DirkGroenen\Pinterest\Transport\Request;
-use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
+use DirkGroenen\Pinterest\Transport\RequestMaker;
+use DirkGroenen\Pinterest\Transport\ResponseFactory;
+use Generator;
 
+class Endpoint
+{
+  protected RequestMaker $requestMaker;
 
-class Endpoint {
+  public function __construct(RequestMaker $requestMaker)
+  {
+    $this->requestMaker = $requestMaker;
+  }
 
-    /**
-     * Instance of the request class
-     *
-     * @var Request
-     */
-    protected $request;
+  /**
+   * @param int    $maxNumberOfPages
+   * @param string $endpoint
+   * @param array  $parameters
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   *
+   * @return Generator
+   */
+  protected function getAllPages(int $maxNumberOfPages, string $endpoint, array $parameters): Generator
+  {
+    $pagesFetched = 0;
 
-    /**
-     * Instance of the master class
-     *
-     * @var Pinterest
-     */
-    protected $master;
+    do {
+      $httpResponse = $this->requestMaker->get($endpoint, $parameters);
 
-    /**
-     * Create a new model instance
-     *
-     * @param  Request              $request
-     * @param  Pinterest            $master
-     */
-    public function __construct(Request $request, Pinterest $master)
-    {
-        $this->request = $request;
-        $this->master = $master;
-    }
+      $response = ResponseFactory::createFromJson($httpResponse);
 
+      $pagesFetched++;
+      $hasNextPage = $response->hasBookmark();
+
+      if ($hasNextPage) {
+        $parameters['bookmark'] = $response->getBookmark();
+      }
+
+      yield $response;
+    } while ($hasNextPage && $pagesFetched < $maxNumberOfPages);
+  }
 }

@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "message": "ok",
+  "code": 0,
+  "data": {
+    "access_token": "access token 234",
+    "expires_at": 0,
+    "consumer_id": "144XXXX",
+    "token_type": "bearer",
+    "authorized": true,
+    "scope": "write_boards,read_pins,write_pins"
+  }
+}

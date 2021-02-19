@@ -1,85 +1,47 @@
 <?php
 
-/**
- * Copyright 2015 Dirk Groenen
- *
- * (c) Dirk Groenen <dirk@bitlabs.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Tests\Endpoints;
 
-use \DirkGroenen\Pinterest\Pinterest;
-use \DirkGroenen\Pinterest\Tests\Utils\CurlBuilderMock;
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
+use DirkGroenen\Pinterest\Models\Pin;
+use DirkGroenen\Pinterest\Pinterest;
+use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class PinsTest extends \PHPUnit\Framework\TestCase
+class PinsTest extends TestCase
 {
+  private Pinterest $pinterest;
 
-    /**
-     * The Pinterest instance
-     *
-     * @var Pinterest
-     */
-    private $pinterest;
+  /**
+   * @throws ReflectionException
+   */
+  public function setUp(): void
+  {
+    $this->pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
+  }
 
-    /**
-     * Setup a new instance of the Pinterest class
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        $curlbuilder = CurlBuilderMock::create($this);
+  /**
+   * @test
+   * @responsefile get
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   */
+  public function shouldMapResponseToPinModelProperly()
+  {
+    $pin = $this->pinterest->pins->get("doesn't matter");
 
-        // Setup Pinterest
-        $this->pinterest = new Pinterest("0", "0", $curlbuilder);
-        $this->pinterest->auth->setOAuthToken("0");
-    }
+    $this->assertInstanceOf(Pin::class, $pin);
 
-    public function testGet()
-    {
-        $response = $this->pinterest->pins->get("181692166190246650");
-
-        $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response);
-        $this->assertEquals($response->id, "181692166190246650");
-    }
-
-    public function testFromBoard()
-    {
-        $response = $this->pinterest->pins->fromBoard("503066289565421201");
-
-        $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Collection", $response);
-        $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response->get(0));
-    }
-
-    public function testCreate()
-    {
-        $response = $this->pinterest->pins->create(array(
-            "note"      => "Test pin from API wrapper",
-            "image_url" => "https://download.unsplash.com/photo-1438216983993-cdcd7dea84ce",
-            "board"     => "503066289565421201"
-        ));
-
-        $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response);
-        $this->assertEquals($response->id, "503066220854919983");
-    }
-
-    public function testEdit()
-    {
-        $response = $this->pinterest->pins->edit("503066220854919983", array(
-            "note"      => "Test pin from API wrapper - update"
-        ));
-
-        $this->assertInstanceOf("DirkGroenen\Pinterest\Models\Pin", $response);
-        $this->assertEquals($response->id, "503066220854919983");
-    }
-
-    public function testDelete()
-    {
-        $response = $this->pinterest->pins->delete("503066220854919983");
-
-        $this->assertTrue($response);
-    }
+    $this->assertEquals('734368282987016445', $pin->getId());
+    $this->assertEquals('https://i.pinimg.com/600x/93/15/c3/9315c3be13eb2e7d3a63907dc14648ae.jpg', $pin->getImageUrl());
+    $this->assertEquals('Friends | Wallpapers - Imgur', $pin->getDescription());
+    $this->assertEquals('Mon, 25 Jan 2021 15:45:24 +0000', $pin->getCreatedAt());
+    $this->assertEquals('https://m.imgur.com/gallery/j2Rcwa5', $pin->getLink());
+    $this->assertEquals('https://www.pinterest.com/pin/734368282987016445/', $pin->getShareableUrl());
+  }
 }

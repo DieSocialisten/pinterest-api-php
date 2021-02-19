@@ -1,77 +1,84 @@
 <?php
-/**
- * Copyright 2015 Dirk Groenen
- *
- * (c) Dirk Groenen <dirk@bitlabs.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Endpoints;
 
+use DirkGroenen\Pinterest\Exceptions\PinterestDataException;
+use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Models\Board;
+use DirkGroenen\Pinterest\Models\Pin;
+use DirkGroenen\Pinterest\Transport\RequestMaker;
+use DirkGroenen\Pinterest\Transport\Response;
+use DirkGroenen\Pinterest\Transport\ResponseFactory;
+use Generator;
 
-class Boards extends Endpoint {
+class Boards extends Endpoint
+{
+  /**
+   * @param string $boardId
+   *
+   * @throws PinterestRequestException|PinterestDataException
+   *
+   * @return Board
+   */
+  public function get(string $boardId): Board
+  {
+    $endpoint = RequestMaker::buildFullUrlToEndpoint("boards/{$boardId}/");
 
-    /**
-     * Find the provided board
-     *
-     * @access public
-     * @param  string    $board_id
-     * @param  array     $data
-     * @throws Exceptions/PinterestExceptions
-     * @return Board
-     */
-    public function get($board_id, array $data = [])
-    {
-        $response = $this->request->get(sprintf("boards/%s/", $board_id), $data);
-        return new Board($this->master, $response);
+    $httpResponse = $this->requestMaker->get($endpoint);
+
+    $board = Board::create(ResponseFactory::createFromJson($httpResponse));
+
+    if ($board === false) {
+      throw new PinterestDataException("Bad data for {$boardId}");
     }
 
-    /**
-     * Create a new board
-     *
-     * @access public
-     * @param  array    $data
-     * @throws Exceptions/PinterestExceptions
-     * @return Board
-     */
-    public function create(array $data)
-    {
-        $response = $this->request->post("boards/", $data);
-        return new Board($this->master, $response);
-    }
+    return $board;
+  }
 
-    /**
-     * Edit a board
-     *
-     * @access public
-     * @param  string   $board_id
-     * @param  array    $data
-     * @param  string   $fields
-     * @throws Exceptions/PinterestExceptions
-     * @return Board
-     */
-    public function edit($board_id, array $data, $fields = null)
-    {
-        $query = (!$fields) ? array() : array("fields" => $fields);
+  /**
+   * Fetch collection of pins from the given board and return generator pointing to the result.
+   *
+   * @param string $boardId
+   * @param int    $pageSize
+   * @param int    $maxNumberOfPages
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   *
+   * @return Generator
+   */
+  public function pinsAsGenerator(string $boardId, int $pageSize, int $maxNumberOfPages): Generator
+  {
+    $endpoint = RequestMaker::buildFullUrlToEndpoint("boards/{$boardId}/pins/");
 
-        $response = $this->request->update(sprintf("boards/%s/", $board_id), $data, $query);
-        return new Board($this->master, $response);
-    }
+    /** @var Response $response */
+    foreach ($this->getAllPages($maxNumberOfPages, $endpoint, ['page_size' => $pageSize]) as $response) {
+      if (isset($response->data)) {
+        foreach ($response->data as $pinData) {
+          $pin = Pin::create($pinData);
 
-    /**
-     * Delete a board
-     *
-     * @access public
-     * @param  string    $board_id
-     * @throws Exceptions/PinterestExceptions
-     * @return boolean
-     */
-    public function delete($board_id)
-    {
-        $this->request->delete(sprintf("boards/%s/", $board_id));
-        return true;
+          if ($pin !== false) {
+            yield $pin;
+          }
+        }
+      }
     }
+  }
+
+  /**
+   * @param string $boardId
+   * @param int    $pageSize
+   * @param int    $maxNumberOfPages
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   *
+   * @return array|Pin[]
+   */
+  public function pinsAsArray(string $boardId, int $pageSize, int $maxNumberOfPages): array
+  {
+    return iterator_to_array($this->pinsAsGenerator($boardId, $pageSize, $maxNumberOfPages));
+  }
 }

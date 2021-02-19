@@ -1,0 +1,13 @@
+version: "3.4"
+services:
+
+  pinterest-api-php-dev:
+    container_name: pinterest-api-php-dev
+    image: wallsio/development:walls-php-1.21
+    user: ${USER_ID}:${GROUP_ID}
+    volumes:
+      - type: bind
+        source: ../
+        target: /var/www/pinterest-api-php
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"

@@ -1,129 +1,90 @@
 <?php
-/**
- * Copyright 2015 Dirk Groenen
- *
- * (c) Dirk Groenen <dirk@bitlabs.nl>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest;
 
 use DirkGroenen\Pinterest\Auth\PinterestOAuth;
-use DirkGroenen\Pinterest\Utils\CurlBuilder;
-use DirkGroenen\Pinterest\Transport\Request;
-use DirkGroenen\Pinterest\Exceptions\InvalidEndpointException;
+use DirkGroenen\Pinterest\Endpoints\Boards;
+use DirkGroenen\Pinterest\Endpoints\Endpoint;
+use DirkGroenen\Pinterest\Endpoints\Pins;
+use DirkGroenen\Pinterest\Endpoints\Users;
+use DirkGroenen\Pinterest\Exceptions\PinterestConfigurationException;
+use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
+use DirkGroenen\Pinterest\Transport\RequestMaker;
+use GuzzleHttp\Client;
 
 /**
- * @property \DirkGroenen\Pinterest\Endpoints\Boards boards
- * @property \DirkGroenen\Pinterest\Endpoints\Following following
- * @property \DirkGroenen\Pinterest\Endpoints\Pins pins
- * @property \DirkGroenen\Pinterest\Endpoints\Users users
- * @property \DirkGroenen\Pinterest\Endpoints\Sections sections
+ * @property Boards boards
+ * @property Pins pins
+ * @property Users users
  */
-class Pinterest {
+class Pinterest
+{
+  public const BASE_URL = 'https://www.pinterest.com/';
+  public const API_BASE_URL = 'https://api.pinterest.com/v3/';
+  public const OAUTH_BASE_URL = 'https://www.pinterest.com/oauth/';
+  /**
+   * @var Auth\PinterestOAuth
+   */
+  private PinterestOAuth $auth;
 
-    /**
-     * Reference to authentication class instance
-     *
-     * @var Auth\PinterestOAuth
-     */
-    public $auth;
+  private RequestMaker $requestMaker;
 
-    /**
-     * A reference to the request class which travels
-     * through the application
-     *
-     * @var Transport\Request
-     */
-    public $request;
+  private array $cachedEndpoints = [];
 
-    /**
-     * A array containing the cached endpoints
-     *
-     * @var array
-     */
-    private $cachedEndpoints = [];
-
-    /**
-     * Constructor
-     *
-     * @param  string       $client_id
-     * @param  string       $client_secret
-     * @param  CurlBuilder  $curlbuilder
-     */
-    public function __construct($client_id, $client_secret, $curlbuilder = null)
-    {
-        if ($curlbuilder == null) {
-            $curlbuilder = new CurlBuilder();
-        }
-
-        // Create new instance of Transport\Request
-        $this->request = new Request($curlbuilder);
-
-        // Create and set new instance of the OAuth class
-        $this->auth = new PinterestOAuth($client_id, $client_secret, $this->request);
+  /**
+   * @param string  $clientId
+   * @param string  $clientSecret
+   * @param ?Client $httpClient
+   */
+  public function __construct(
+    string $clientId,
+    string $clientSecret,
+    ?Client $httpClient = null
+  ) {
+    if ($httpClient == null) {
+      $httpClient = new Client();
     }
 
-    /**
-     * Get an Pinterest API endpoint
-     *
-     * @access public
-     * @param string    $endpoint
-     * @return mixed
-     * @throws Exceptions\InvalidEndpointException
-     */
-    public function __get($endpoint)
-    {
-        $endpoint = strtolower($endpoint);
-        $class = "\\DirkGroenen\\Pinterest\\Endpoints\\" . ucfirst($endpoint);
+    $this->requestMaker = new RequestMaker($httpClient);
+    $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->requestMaker);
+  }
 
-        // Check if an instance has already been initiated
-        if (!isset($this->cachedEndpoints[$endpoint])) {
-            // Check endpoint existence
-            if (!class_exists($class)) {
-                throw new InvalidEndpointException;
-            }
+  public function setRequestLogger(?RequestLoggerInterface $requestLogger)
+  {
+    $this->requestMaker->setRequestLogger($requestLogger);
+  }
 
-            // Create a reflection of the called class and initialize it
-            // with a reference to the request class
-            $ref = new \ReflectionClass($class);
-            $obj = $ref->newInstanceArgs([$this->request, $this]);
+  /**
+   * Get an Pinterest API endpoint.
+   *
+   * @param string $endpoint
+   *
+   * @throws PinterestConfigurationException
+   *
+   * @return Endpoint
+   */
+  public function __get(string $endpoint): Endpoint
+  {
+    $endpointClassname = '\DirkGroenen\Pinterest\Endpoints\\' . ucfirst(strtolower($endpoint));
 
-            $this->cachedEndpoints[$endpoint] = $obj;
-        }
+    if (!isset($this->cachedEndpoints[$endpoint])) {
+      if (!class_exists($endpointClassname)) {
+        throw new PinterestConfigurationException("Requested endpoint '{$endpoint}' doesn't exist, double-check your code");
+      }
 
-        return $this->cachedEndpoints[$endpoint];
+      $this->cachedEndpoints[$endpoint] = new $endpointClassname($this->requestMaker);
     }
 
-    /**
-     * Get rate limit from the headers
-     * response header may change from X-Ratelimit-Limit to X-RateLimit-Limit
-     * @access public
-     * @return integer
-     */
-    public function getRateLimit()
-    {
-        $header = $this->request->getHeaders();
-        if (is_array($header)) {
-            $header = array_change_key_case($header, CASE_LOWER);
-        }
-        return (isset($header['x-ratelimit-limit']) ? $header['x-ratelimit-limit'] : 1000);
-    }
+    return $this->cachedEndpoints[$endpoint];
+  }
 
-    /**
-     * Get rate limit remaining from the headers
-     * response header may change from X-Ratelimit-Remaining to X-RateLimit-Remaining
-     * @access public
-     * @return mixed
-     */
-    public function getRateLimitRemaining()
-    {
-        $header = $this->request->getHeaders();
-        if (is_array($header)) {
-            $header = array_change_key_case($header, CASE_LOWER);
-        }
-        return (isset($header['x-ratelimit-remaining']) ? $header['x-ratelimit-remaining'] : 'unknown');
-    }
+  /**
+   * @return PinterestOAuth
+   */
+  public function getAuthComponent(): PinterestOAuth
+  {
+    return $this->auth;
+  }
 }

@@ -1,2 +1,6 @@
 README.html
 /vendor/
+
+.phpunit.result.cache
+
+/.idea
