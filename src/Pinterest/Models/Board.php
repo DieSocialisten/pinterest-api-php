@@ -14,7 +14,7 @@ class Board extends Model
       'id',
       'name',
       'url',
-      'image_cover_url'
+      'image_cover_url',
     ];
   }
 

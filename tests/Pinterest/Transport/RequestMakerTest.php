@@ -27,8 +27,7 @@ class RequestMakerTest extends TestCase
   {
     if ($exceptionToRaise) {
       $this->expectException($exceptionToRaise);
-    }
-    else {
+    } else {
       $this->expectNotToPerformAssertions();
     }
 
@@ -49,17 +48,17 @@ class RequestMakerTest extends TestCase
 
     return [
       'No error' => [
-        $response => new Response(200, [], ''),
+        $response         => new Response(200, [], ''),
         $exceptionToRaise => null,
       ],
 
       'Error 400' => [
-        $response => new Response(400, [], ''),
+        $response         => new Response(400, [], ''),
         $exceptionToRaise => PinterestRequestException::class,
       ],
 
       'Error 500' => [
-        $response => new Response(500, [], ''),
+        $response         => new Response(500, [], ''),
         $exceptionToRaise => PinterestRequestException::class,
       ],
     ];

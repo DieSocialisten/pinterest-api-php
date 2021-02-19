@@ -40,13 +40,14 @@ class PinterestOAuth
 
   private function generateState(): string
   {
-    return substr(md5((string)rand()), 0, 7);
+    return substr(md5((string) rand()), 0, 7);
   }
 
   /**
    * @param string $redirectUri
-   * @param array $scopes
+   * @param array  $scopes
    * @param string $responseType
+   *
    * @return string
    */
   public function getLoginUrl(string $redirectUri, array $scopes, $responseType = 'code'): string
@@ -56,7 +57,7 @@ class PinterestOAuth
       'redirect_uri' => $redirectUri,
       'client_id' => $this->clientId,
       'scope' => implode(',', $scopes),
-      'state' => $this->state
+      'state' => $this->state,
     ];
 
     return sprintf('%s?%s', Pinterest::OAUTH_BASE_URL, http_build_query($queryParams));
@@ -77,18 +78,19 @@ class PinterestOAuth
    *
    * @param string $code
    * @param string $redirectUri
-   * @return AccessToken
    *
    * @throws PinterestRequestException|PinterestDataException
+   *
+   * @return AccessToken
    */
   public function exchangeCodeForAccessToken(string $code, string $redirectUri): AccessToken
   {
     $data = [
-      'grant_type' => 'authorization_code',
-      'client_id' => $this->clientId,
+      'grant_type'    => 'authorization_code',
+      'client_id'     => $this->clientId,
       'client_secret' => $this->clientSecret,
-      'code' => $code,
-      'redirect_uri' => $redirectUri,
+      'code'          => $code,
+      'redirect_uri'  => $redirectUri,
     ];
 
     $endpoint = RequestMaker::buildFullUrlToEndpoint('oauth/access_token/');
@@ -98,14 +100,14 @@ class PinterestOAuth
     $accessTokenModel = AccessToken::create(ResponseFactory::createFromJson($httpResponse));
 
     if ($accessTokenModel === false) {
-      throw new PinterestDataException("Data for access token is not valid");
+      throw new PinterestDataException('Data for access token is not valid');
     }
 
     return $accessTokenModel;
   }
 
   /**
-   * Set the access token for further requests
+   * Set the access token for further requests.
    *
    * @param string $accessToken
    */

@@ -41,12 +41,13 @@ class RequestMaker implements RequestLoggerAwareInterface
   /**
    * @param string $method
    * @param string $fullUrlToEndpoint
-   * @param array $options
-   * @return ResponseInterface
+   * @param array  $options
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
-  private function execute(string $method, string $fullUrlToEndpoint, array $options = array()): ResponseInterface
+  private function execute(string $method, string $fullUrlToEndpoint, array $options = []): ResponseInterface
   {
     // Add access token if it's presented:
     $headers = !is_null($this->accessTokenValue)
@@ -55,11 +56,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
     $effectiveOptions = array_merge(
       [
-        RequestOptions::HEADERS => $headers,
+        RequestOptions::HEADERS         => $headers,
         RequestOptions::CONNECT_TIMEOUT => 20,
-        RequestOptions::TIMEOUT => 90,
-        RequestOptions::VERIFY => false,
-        RequestOptions::HTTP_ERRORS => true,
+        RequestOptions::TIMEOUT         => 90,
+        RequestOptions::VERIFY          => false,
+        RequestOptions::HTTP_ERRORS     => true,
       ],
       $options
     );
@@ -68,10 +69,8 @@ class RequestMaker implements RequestLoggerAwareInterface
 
     try {
       $httpResponse = $this->httpClient->request($method, $fullUrlToEndpoint, $effectiveOptions);
-
     } catch (RequestException $e) {
       throw ExceptionsFactory::createPinterestRequestException($e);
-
     } catch (GuzzleException $e) {
       throw new PinterestRequestException('Request failed with message: ' . $e->getMessage());
     }
@@ -81,10 +80,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array $queryParameters
-   * @return ResponseInterface
+   * @param array  $queryParameters
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
   public function get(string $fullUrlToEndpoint, array $queryParameters = []): ResponseInterface
   {
@@ -99,12 +99,13 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array $parameters
-   * @return ResponseInterface
+   * @param array  $parameters
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
-  public function post(string $fullUrlToEndpoint, array $parameters = array()): ResponseInterface
+  public function post(string $fullUrlToEndpoint, array $parameters = []): ResponseInterface
   {
     $options = [];
 
@@ -117,12 +118,13 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array $parameters
-   * @return ResponseInterface
+   * @param array  $parameters
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
-  public function put(string $fullUrlToEndpoint, array $parameters = array()): ResponseInterface
+  public function put(string $fullUrlToEndpoint, array $parameters = []): ResponseInterface
   {
     $options = [];
 

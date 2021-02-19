@@ -36,7 +36,7 @@ class Pin extends Model
   }
 
   /**
-   * Url to something outside of Pinterest
+   * Url to something outside of Pinterest.
    *
    * @return mixed|null
    */
@@ -61,7 +61,7 @@ class Pin extends Model
   }
 
   /**
-   * Url to pin
+   * Url to pin.
    *
    * @return mixed|null
    */

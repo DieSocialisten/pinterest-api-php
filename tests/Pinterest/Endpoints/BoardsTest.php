@@ -87,7 +87,6 @@ class BoardsTest extends TestCase
    *
    * Note: this also an example on usage of "partial" data loading with help of generators.
    *  So we still can have part of the data even if Pinterest API failed
-   *
    */
   public function shouldLoadAllPagesUntilExceptionMet()
   {
@@ -107,7 +106,6 @@ class BoardsTest extends TestCase
       foreach ($pinsGenerator as $pin) {
         $pins[] = $pin;
       }
-
     } catch (Exception $e) {
       self::assertInstanceOf(PinterestRequestException::class, $e);
     }
@@ -166,11 +164,11 @@ class BoardsTest extends TestCase
     /** @var Pin $pinA */
     $pinA = $pins[0];
 
-    $this->assertEquals("734368282987016445", $pinA->getId());
-    $this->assertEquals("https://i.pinimg.com/600x/93/15/c3/9315c3be13eb2e7d3a63907dc14648ae.jpg", $pinA->getImageUrl());
-    $this->assertEquals("Friends | Wallpapers - Imgur", $pinA->getDescription());
-    $this->assertEquals("Mon, 25 Jan 2021 15:45:24 +0000", $pinA->getCreatedAt());
-    $this->assertEquals("https://m.imgur.com/gallery/j2Rcwa5", $pinA->getLink());
-    $this->assertEquals("https://www.pinterest.com/pin/734368282987016445/", $pinA->getShareableUrl());
+    $this->assertEquals('734368282987016445', $pinA->getId());
+    $this->assertEquals('https://i.pinimg.com/600x/93/15/c3/9315c3be13eb2e7d3a63907dc14648ae.jpg', $pinA->getImageUrl());
+    $this->assertEquals('Friends | Wallpapers - Imgur', $pinA->getDescription());
+    $this->assertEquals('Mon, 25 Jan 2021 15:45:24 +0000', $pinA->getCreatedAt());
+    $this->assertEquals('https://m.imgur.com/gallery/j2Rcwa5', $pinA->getLink());
+    $this->assertEquals('https://www.pinterest.com/pin/734368282987016445/', $pinA->getShareableUrl());
   }
 }

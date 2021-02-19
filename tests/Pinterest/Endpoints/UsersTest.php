@@ -37,9 +37,9 @@ class UsersTest extends TestCase
 
     $this->assertInstanceOf(User::class, $user);
 
-    $this->assertEquals("734368420396834766", $user->getId());
-    $this->assertEquals("vladimirpwalls", $user->getUsername());
-    $this->assertEquals("Vladimir Pwalls", $user->getFullName());
-    $this->assertEquals("https://s.pinimg.com/images/user/default_60.png", $user->getImageUrl());
+    $this->assertEquals('734368420396834766', $user->getId());
+    $this->assertEquals('vladimirpwalls', $user->getUsername());
+    $this->assertEquals('Vladimir Pwalls', $user->getFullName());
+    $this->assertEquals('https://s.pinimg.com/images/user/default_60.png', $user->getImageUrl());
   }
 }

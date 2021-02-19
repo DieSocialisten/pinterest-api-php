@@ -19,7 +19,9 @@ class ExceptionsFactory
 
   /**
    * @see https://docs.guzzlephp.org/en/6.5/quickstart.html#exceptions
+   *
    * @param RequestException $e
+   *
    * @return PinterestRequestException
    */
   public static function createPinterestRequestException(RequestException $e): PinterestRequestException

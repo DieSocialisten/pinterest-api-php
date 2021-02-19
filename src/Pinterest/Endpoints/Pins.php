@@ -14,9 +14,10 @@ class Pins extends Endpoint
 {
   /**
    * @param string $pinId
-   * @return Pin
    *
    * @throws PinterestRequestException|PinterestDataException
+   *
+   * @return Pin
    */
   public function get(string $pinId): Pin
   {

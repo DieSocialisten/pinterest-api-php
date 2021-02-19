@@ -6,10 +6,10 @@ $source = fopen('./codes.csv', 'r');
 
 $data = [];
 while (($line = fgetcsv($source)) != null) {
-    $lineTrimmed = array_map('trim', $line);
-    list($message, $code, $http) = $lineTrimmed;
+  $lineTrimmed = array_map('trim', $line);
+  list($message, $code, $http) = $lineTrimmed;
 
-    $data["{$code}_{$http}"] = $message;
+  $data["{$code}_{$http}"] = $message;
 }
 
 var_export($data);

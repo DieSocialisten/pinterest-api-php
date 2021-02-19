@@ -8,5 +8,4 @@ use Exception;
 
 class PinterestDataException extends Exception
 {
-
 }

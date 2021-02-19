@@ -17,9 +17,10 @@ class Boards extends Endpoint
 {
   /**
    * @param string $boardId
-   * @return Board
    *
    * @throws PinterestRequestException|PinterestDataException
+   *
+   * @return Board
    */
   public function get(string $boardId): Board
   {
@@ -37,16 +38,16 @@ class Boards extends Endpoint
   }
 
   /**
-   * Fetch collection of pins from the given board and return generator pointing to the result
+   * Fetch collection of pins from the given board and return generator pointing to the result.
    *
    * @param string $boardId
-   * @param int $pageSize
-   * @param int $maxNumberOfPages
-   *
-   * @return Generator
+   * @param int    $pageSize
+   * @param int    $maxNumberOfPages
    *
    * @throws PinterestDataException
    * @throws PinterestRequestException
+   *
+   * @return Generator
    */
   public function pinsAsGenerator(string $boardId, int $pageSize, int $maxNumberOfPages): Generator
   {
@@ -68,13 +69,13 @@ class Boards extends Endpoint
 
   /**
    * @param string $boardId
-   * @param int $pageSize
-   * @param int $maxNumberOfPages
-   *
-   * @return array|Pin[]
+   * @param int    $pageSize
+   * @param int    $maxNumberOfPages
    *
    * @throws PinterestDataException
    * @throws PinterestRequestException
+   *
+   * @return array|Pin[]
    */
   public function pinsAsArray(string $boardId, int $pageSize, int $maxNumberOfPages): array
   {

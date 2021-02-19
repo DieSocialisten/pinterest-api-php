@@ -16,6 +16,7 @@ class PinterestOAuthTest extends TestCase
 {
   /**
    * @test
+   *
    * @throws ReflectionException
    */
   public function shouldHaveRandomStateRightAfterCreation()
@@ -29,6 +30,7 @@ class PinterestOAuthTest extends TestCase
 
   /**
    * @test
+   *
    * @throws ReflectionException
    */
   public function shouldKeepStateOnceReceiveIt()
@@ -44,6 +46,7 @@ class PinterestOAuthTest extends TestCase
   /**
    * @test
    * @responsefile oauth-access_token
+   *
    * @throws ReflectionException|PinterestDataException|PinterestRequestException
    */
   public function shouldGetAccessTokenAfterExchange()
@@ -71,17 +74,17 @@ class PinterestOAuthTest extends TestCase
       ->with(
         'https://api.pinterest.com/v3/oauth/access_token/',
         [
-          'headers' => ['Authorization' => 'Bearer my-access-token'],
+          'headers'         => ['Authorization' => 'Bearer my-access-token'],
           'connect_timeout' => 20,
-          'timeout' => 90,
-          'verify' => false,
-          'http_errors' => true,
-          'form_params' => [
-            'grant_type' => 'authorization_code',
-            'client_id' => '0',
+          'timeout'         => 90,
+          'verify'          => false,
+          'http_errors'     => true,
+          'form_params'     => [
+            'grant_type'    => 'authorization_code',
+            'client_id'     => '0',
             'client_secret' => '0',
-            'code' => 'my-code',
-            'redirect_uri' => 'https://example.com',
+            'code'          => 'my-code',
+            'redirect_uri'  => 'https://example.com',
           ],
         ],
         'my-access-token'
@@ -100,7 +103,7 @@ class PinterestOAuthTest extends TestCase
   {
     $expectedUrl = 'https://www.pinterest.com/oauth/?response_type=code&redirect_uri=https%3A%2F%2Fdev-app.daniele.eu.ngrok.io%2Fpinterest_auth%2Fcallback_access_token&client_id=123&scope=read_users&state=ae361bd';
 
-    $pinterest = new Pinterest("123", "456", null);
+    $pinterest = new Pinterest('123', '456', null);
     $pinterest->getAuthComponent()->setState('ae361bd');
 
     $actualUrl = $pinterest->getAuthComponent()->getLoginUrl(

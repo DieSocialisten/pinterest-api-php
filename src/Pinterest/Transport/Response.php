@@ -21,9 +21,10 @@ class Response
   }
 
   /**
-   * Return the requested key data
+   * Return the requested key data.
    *
    * @param string $key
+   *
    * @return mixed|null
    */
   public function __get(string $key)
@@ -32,9 +33,10 @@ class Response
   }
 
   /**
-   * Return if the key is set
+   * Return if the key is set.
    *
    * @param string $key
+   *
    * @return bool
    */
   public function __isset(string $key): bool

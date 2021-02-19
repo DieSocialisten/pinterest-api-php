@@ -8,5 +8,4 @@ use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 
 class PinterestAccessTokenException extends PinterestRequestException
 {
-
 }

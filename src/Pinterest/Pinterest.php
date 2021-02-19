@@ -34,16 +34,15 @@ class Pinterest
   private array $cachedEndpoints = [];
 
   /**
-   * @param string $clientId
-   * @param string $clientSecret
+   * @param string  $clientId
+   * @param string  $clientSecret
    * @param ?Client $httpClient
    */
   public function __construct(
     string $clientId,
     string $clientSecret,
     ?Client $httpClient = null
-  )
-  {
+  ) {
     if ($httpClient == null) {
       $httpClient = new Client();
     }
@@ -58,12 +57,13 @@ class Pinterest
   }
 
   /**
-   * Get an Pinterest API endpoint
+   * Get an Pinterest API endpoint.
    *
    * @param string $endpoint
-   * @return Endpoint
    *
    * @throws PinterestConfigurationException
+   *
+   * @return Endpoint
    */
   public function __get(string $endpoint): Endpoint
   {

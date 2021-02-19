@@ -17,9 +17,10 @@ class HttpClientMockFactory
 {
   /**
    * @param TestCase $instance
-   * @return Client
    *
    * @throws ReflectionException
+   *
+   * @return Client
    */
   public static function parseAnnotationsAndCreate(TestCase $instance): Client
   {
@@ -39,12 +40,11 @@ class HttpClientMockFactory
 
     // Build response file path
     $responseFilePath = __DIR__ . '/../responses/' . (new ReflectionClass($instance))->getShortName() . '/' .
-      $responseFile[0] . ".json";
+      $responseFile[0] . '.json';
 
     if (file_exists($responseFilePath)) {
       $responseData = file_get_contents($responseFilePath);
-    }
-    else {
+    } else {
       $responseData = null;
     }
 
@@ -56,16 +56,16 @@ class HttpClientMockFactory
 
   /**
    * Parse the methods docblock and search for the
-   * requested tag's value
+   * requested tag's value.
    *
    * @param string|false $docBlock
-   * @param string $tag
+   * @param string       $tag
    *
    * @return array
    */
   private static function parseAnnotationsTag($docBlock, string $tag): array
   {
-    $matches = array();
+    $matches = [];
 
     if (empty($docBlock)) {
       return $matches;
@@ -75,7 +75,7 @@ class HttpClientMockFactory
     preg_match_all($regex, $docBlock, $matches);
 
     if (empty($matches[1])) {
-      return array();
+      return [];
     }
 
     // Removed extra index

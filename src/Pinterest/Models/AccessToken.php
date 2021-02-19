@@ -9,7 +9,7 @@ class AccessToken extends Model
   protected function getAttributesToFill(): array
   {
     return [
-      'access_token'
+      'access_token',
     ];
   }
 

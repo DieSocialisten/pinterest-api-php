@@ -20,14 +20,14 @@ class Endpoint
   }
 
   /**
-   * @param int $maxNumberOfPages
+   * @param int    $maxNumberOfPages
    * @param string $endpoint
-   * @param array $parameters
-   *
-   * @return Generator
+   * @param array  $parameters
    *
    * @throws PinterestDataException
    * @throws PinterestRequestException
+   *
+   * @return Generator
    */
   protected function getAllPages(int $maxNumberOfPages, string $endpoint, array $parameters): Generator
   {
@@ -42,11 +42,10 @@ class Endpoint
       $hasNextPage = $response->hasBookmark();
 
       if ($hasNextPage) {
-        $parameters["bookmark"] = $response->getBookmark();
+        $parameters['bookmark'] = $response->getBookmark();
       }
 
       yield $response;
-
     } while ($hasNextPage && $pagesFetched < $maxNumberOfPages);
   }
 }

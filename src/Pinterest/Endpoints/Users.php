@@ -13,14 +13,14 @@ use DirkGroenen\Pinterest\Transport\ResponseFactory;
 class Users extends Endpoint
 {
   /**
-   * @return User
-   *
    * @throws PinterestDataException
    * @throws PinterestRequestException
+   *
+   * @return User
    */
   public function me(): User
   {
-    $endpoint = RequestMaker::buildFullUrlToEndpoint("users/me/");
+    $endpoint = RequestMaker::buildFullUrlToEndpoint('users/me/');
 
     $httpResponse = $this->requestMaker->get($endpoint);
 

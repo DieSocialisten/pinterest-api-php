@@ -19,17 +19,16 @@ abstract class Model
 
   /**
    * @param array|Response $pinterestData
+   *
    * @return false|mixed|Model
    */
   public static function create($pinterestData)
   {
     if (is_array($pinterestData)) {
       $data = $pinterestData;
-    }
-    elseif ($pinterestData instanceof Response) {
+    } elseif ($pinterestData instanceof Response) {
       $data = $pinterestData->data;
-    }
-    else {
+    } else {
       return false;
     }
 

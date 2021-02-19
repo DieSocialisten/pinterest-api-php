@@ -13,24 +13,28 @@ class PinterestMockFactory
 {
   /**
    * @param $testCase
-   * @return Pinterest
+   *
    * @throws ReflectionException
+   *
+   * @return Pinterest
    */
   public static function parseAnnotationsAndCreatePinterestMock(TestCase $testCase): Pinterest
   {
     $httpClient = HttpClientMockFactory::parseAnnotationsAndCreate($testCase);
 
-    $pinterest = new Pinterest("0", "0", $httpClient);
-    $pinterest->getAuthComponent()->setAccessTokenValue("0");
+    $pinterest = new Pinterest('0', '0', $httpClient);
+    $pinterest->getAuthComponent()->setAccessTokenValue('0');
 
     return $pinterest;
   }
 
   /**
-   * @param TestCase $testCase
+   * @param TestCase               $testCase
    * @param RequestLoggerInterface $requestLogger
-   * @return Pinterest
+   *
    * @throws ReflectionException
+   *
+   * @return Pinterest
    */
   public static function createLoggerAwarePinterestMock(
     TestCase $testCase,
