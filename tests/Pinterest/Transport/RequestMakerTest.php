@@ -18,12 +18,12 @@ class RequestMakerTest extends TestCase
    * @test
    * @dataProvider shouldRaiseAnExceptionInCaseOfAPIErrorDataProvider
    *
-   * @param $response
+   * @param array $responses
    * @param $exceptionToRaise
    *
    * @throws PinterestRequestException
    */
-  public function shouldRaiseAnExceptionInCaseOfAPIError($response, $exceptionToRaise)
+  public function shouldRaiseAnExceptionInCaseOfAPIError(array $responses, $exceptionToRaise)
   {
     if ($exceptionToRaise) {
       $this->expectException($exceptionToRaise);
@@ -31,7 +31,7 @@ class RequestMakerTest extends TestCase
       $this->expectNotToPerformAssertions();
     }
 
-    $mock = new MockHandler([$response]);
+    $mock = new MockHandler($responses);
     $handlerStack = HandlerStack::create($mock);
 
     $client = new Client(['handler' => $handlerStack]);
@@ -43,22 +43,46 @@ class RequestMakerTest extends TestCase
   public function shouldRaiseAnExceptionInCaseOfAPIErrorDataProvider(): array
   {
     // indices:
-    $response = 0;
+    $responses = 0;
     $exceptionToRaise = 1;
 
     return [
       'No error' => [
-        $response         => new Response(200, [], ''),
+        $responses => [new Response(200, [], '')],
         $exceptionToRaise => null,
       ],
 
       'Error 400' => [
-        $response         => new Response(400, [], ''),
+        $responses => [new Response(400, [], '')],
+        $exceptionToRaise => PinterestRequestException::class,
+      ],
+
+      'Error 401: retried request is successful' => [
+        $responses => [
+          new Response(401, [], ''),
+          new Response(200, [], ''),
+        ],
+        $exceptionToRaise => null,
+      ],
+
+      'Error 401: retried request has also 401 status' => [
+        $responses => [
+          new Response(401, [], ''),
+          new Response(401, [], ''),
+        ],
+        $exceptionToRaise => PinterestRequestException::class,
+      ],
+
+      'Error 401: retried request has 500 status' => [
+        $responses => [
+          new Response(401, [], ''),
+          new Response(500, [], ''),
+        ],
         $exceptionToRaise => PinterestRequestException::class,
       ],
 
       'Error 500' => [
-        $response         => new Response(500, [], ''),
+        $responses => [new Response(500, [], '')],
         $exceptionToRaise => PinterestRequestException::class,
       ],
     ];
