@@ -103,7 +103,7 @@ class PinterestOAuthTest extends TestCase
   {
     $expectedUrl = 'https://www.pinterest.com/oauth/?response_type=code&redirect_uri=https%3A%2F%2Fdev-app.daniele.eu.ngrok.io%2Fpinterest_auth%2Fcallback_access_token&client_id=123&scope=read_users&state=ae361bd';
 
-    $pinterest = new Pinterest('123', '456', null);
+    $pinterest = new Pinterest('123', '456');
     $pinterest->getAuthComponent()->setState('ae361bd');
 
     $actualUrl = $pinterest->getAuthComponent()->getLoginUrl(

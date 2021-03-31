@@ -33,21 +33,12 @@ class Pinterest
 
   private array $cachedEndpoints = [];
 
-  /**
-   * @param string  $clientId
-   * @param string  $clientSecret
-   * @param ?Client $httpClient
-   */
   public function __construct(
     string $clientId,
     string $clientSecret,
-    ?Client $httpClient = null
+    array $httpClientConfig = []
   ) {
-    if ($httpClient == null) {
-      $httpClient = new Client();
-    }
-
-    $this->requestMaker = new RequestMaker($httpClient);
+    $this->requestMaker = new RequestMaker(new Client($httpClientConfig));
     $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->requestMaker);
   }
 

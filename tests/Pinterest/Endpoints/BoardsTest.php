@@ -11,7 +11,6 @@ use DirkGroenen\Pinterest\Models\Pin;
 use DirkGroenen\Pinterest\Pinterest;
 use DirkGroenen\Pinterest\Tests\Utils\PinterestMockFactory;
 use Exception;
-use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -60,9 +59,7 @@ class BoardsTest extends TestCase
   {
     $handlerStack = HandlerStack::create(new MockHandler($responses));
 
-    $client = new Client(['handler' => $handlerStack]);
-
-    return new Pinterest('0', '0', $client);
+    return new Pinterest('0', '0', ['handler' => $handlerStack]);
   }
 
   /**

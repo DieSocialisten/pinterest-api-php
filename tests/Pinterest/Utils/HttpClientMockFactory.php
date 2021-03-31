@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DirkGroenen\Pinterest\Tests\Utils;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -20,9 +19,9 @@ class HttpClientMockFactory
    *
    * @throws ReflectionException
    *
-   * @return Client
+   * @return array
    */
-  public static function parseAnnotationsAndCreate(TestCase $instance): Client
+  public static function parseAnnotationsAndCreate(TestCase $instance): array
   {
     $reflection = new ReflectionMethod($instance, $instance->getName());
     $docBlock = $reflection->getDocComment();
@@ -51,7 +50,7 @@ class HttpClientMockFactory
     $mock = new MockHandler([new Response($responseCode[0], [], $responseData)]);
     $handlerStack = HandlerStack::create($mock);
 
-    return new Client(['handler' => $handlerStack]);
+    return ['handler' => $handlerStack];
   }
 
   /**
