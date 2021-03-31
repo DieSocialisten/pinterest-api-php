@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DirkGroenen\Pinterest\Transport;
 
 use DirkGroenen\Pinterest\Exceptions\ExceptionsFactory;
-use DirkGroenen\Pinterest\Exceptions\PinterestRequest\PinterestAccessTokenException;
 use DirkGroenen\Pinterest\Exceptions\PinterestRequestException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareInterface;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerAwareTrait;
@@ -42,11 +41,11 @@ class RequestMaker implements RequestLoggerAwareInterface
   /**
    * @param string $method
    * @param string $fullUrlToEndpoint
-   * @param array $options
-   *
-   * @return ResponseInterface
+   * @param array  $options
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
   private function execute(string $method, string $fullUrlToEndpoint, array $options = []): ResponseInterface
   {
@@ -57,46 +56,21 @@ class RequestMaker implements RequestLoggerAwareInterface
 
     $effectiveOptions = array_merge(
       [
-        RequestOptions::HEADERS => $headers,
+        RequestOptions::HEADERS         => $headers,
         RequestOptions::CONNECT_TIMEOUT => 20,
-        RequestOptions::TIMEOUT => 90,
-        RequestOptions::VERIFY => false,
-        RequestOptions::HTTP_ERRORS => true,
+        RequestOptions::TIMEOUT         => 90,
+        RequestOptions::VERIFY          => false,
+        RequestOptions::HTTP_ERRORS     => true,
       ],
       $options
     );
 
     $this->logViaRequestLogger($fullUrlToEndpoint, $effectiveOptions, $this->accessTokenValue);
 
-    return $this->doRequest($method, $fullUrlToEndpoint, $effectiveOptions, true);
-  }
-
-  /**
-   * @param string $method
-   * @param string $fullUrlToEndpoint
-   * @param array $effectiveOptions
-   * @param bool $retryAfterAuthenticationError
-   *
-   * @return ResponseInterface
-   *
-   * @throws PinterestRequestException
-   */
-  private function doRequest(
-    string $method,
-    string $fullUrlToEndpoint,
-    array $effectiveOptions,
-    bool $retryAfterAuthenticationError
-  ): ResponseInterface {
     try {
       $httpResponse = $this->httpClient->request($method, $fullUrlToEndpoint, $effectiveOptions);
     } catch (RequestException $e) {
-      $pinterestException = ExceptionsFactory::createPinterestRequestException($e);
-
-      if ($retryAfterAuthenticationError && $pinterestException instanceof PinterestAccessTokenException) {
-        return $this->doRequest($method, $fullUrlToEndpoint, $effectiveOptions, false);
-      }
-
-      throw $pinterestException;
+      throw ExceptionsFactory::createPinterestRequestException($e);
     } catch (GuzzleException $e) {
       throw new PinterestRequestException('Request failed with message: ' . $e->getMessage());
     }
@@ -106,11 +80,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array $queryParameters
-   *
-   * @return ResponseInterface
+   * @param array  $queryParameters
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
   public function get(string $fullUrlToEndpoint, array $queryParameters = []): ResponseInterface
   {
@@ -125,11 +99,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array $parameters
-   *
-   * @return ResponseInterface
+   * @param array  $parameters
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
   public function post(string $fullUrlToEndpoint, array $parameters = []): ResponseInterface
   {
@@ -144,11 +118,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array $parameters
-   *
-   * @return ResponseInterface
+   * @param array  $parameters
    *
    * @throws PinterestRequestException
+   *
+   * @return ResponseInterface
    */
   public function put(string $fullUrlToEndpoint, array $parameters = []): ResponseInterface
   {
