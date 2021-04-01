@@ -19,26 +19,18 @@ use ReflectionException;
 
 class BoardsTest extends TestCase
 {
-  private Pinterest $pinterest;
-
-  /**
-   * @throws ReflectionException
-   */
-  public function setUp(): void
-  {
-    $this->pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
-  }
-
   /**
    * @test
    * @responsefile get
    *
    * @throws PinterestDataException
    * @throws PinterestRequestException
+   * @throws ReflectionException
    */
   public function shouldMapResponseToBoardModelProperly()
   {
-    $board = $this->pinterest->boards->get("doesn't matter");
+    $pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
+    $board = $pinterest->boards->get("doesn't matter");
 
     $this->assertInstanceOf(Board::class, $board);
 
@@ -80,18 +72,18 @@ class BoardsTest extends TestCase
   }
 
   /**
-   * @test
-   *
    * Note: this also an example on usage of "partial" data loading with help of generators.
    *  So we still can have part of the data even if Pinterest API failed
+   *
+   * @test
+   * @dataProvider shouldLoadAllPagesUntilExceptionMetDataProvider
+   *
+   * @param array $responses
+   * @param int $expectedCount
    */
-  public function shouldLoadAllPagesUntilExceptionMet()
+  public function shouldLoadAllPagesUntilExceptionMet(array $responses, int $expectedCount)
   {
-    $pinterest = $this->createPinterestInstanceWithPredefinedResponses([
-      new Response(200, [], $this->getResponseBody('boardsPinsWithPaginationBookmark.json')),
-      new Response(400, [], 'No no no, don\'t phunk with my heart'),
-      new Response(200, [], $this->getResponseBody('boardsPinsWithoutPaginationBookmark.json')),
-    ]);
+    $pinterest = $this->createPinterestInstanceWithPredefinedResponses($responses);
 
     $pageSizeDoesntMatter = 999;
 
@@ -107,7 +99,34 @@ class BoardsTest extends TestCase
       self::assertInstanceOf(PinterestRequestException::class, $e);
     }
 
-    self::assertCount(25, $pins);
+    self::assertCount($expectedCount, $pins);
+  }
+
+  public function shouldLoadAllPagesUntilExceptionMetDataProvider(): array
+  {
+    // indices:
+    $responses = 0;
+    $expectedCount = 1;
+
+    return [
+      'Case: we were able to recover from 400 http error with retry' => [
+        $responses => [
+          new Response(200, [], $this->getResponseBody('boardsPinsWithPaginationBookmark.json')),
+          new Response(400, [], ''),
+          new Response(200, [], $this->getResponseBody('boardsPinsWithoutPaginationBookmark.json')),
+        ],
+        $expectedCount => 27,
+      ],
+      'Case: we were not able to recover from several 400 http errors' => [
+        $responses => [
+          new Response(200, [], $this->getResponseBody('boardsPinsWithPaginationBookmark.json')),
+          new Response(400, [], ''),
+          new Response(400, [], ''),
+          new Response(200, [], $this->getResponseBody('boardsPinsWithoutPaginationBookmark.json')),
+        ],
+        $expectedCount => 25,
+      ],
+    ];
   }
 
   /**
@@ -147,11 +166,16 @@ class BoardsTest extends TestCase
   /**
    * @test
    * @responsefile boardsPinsWithoutPaginationBookmark
+   *
+   * @throws PinterestDataException
+   * @throws PinterestRequestException
+   * @throws ReflectionException
    */
   public function shouldProperlySetUpBoardPins()
   {
+    $pinterest = PinterestMockFactory::parseAnnotationsAndCreatePinterestMock($this);
     $pageSizeDoesntMatter = 999;
-    $pins = $this->pinterest->boards->pinsAsArray('not important', $pageSizeDoesntMatter, 1);
+    $pins = $pinterest->boards->pinsAsArray('not important', $pageSizeDoesntMatter, 1);
 
     /** @var Pin $pin */
     foreach ($pins as $pin) {

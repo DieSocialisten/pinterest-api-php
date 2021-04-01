@@ -12,6 +12,10 @@ use DirkGroenen\Pinterest\Pinterest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 
@@ -23,9 +27,55 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   private Client $httpClient;
 
-  public function __construct(Client $httpClient)
+  public function __construct(array $httpClientConfig)
   {
-    $this->httpClient = $httpClient;
+    $this->httpClient = $this->createClient($httpClientConfig);
+  }
+
+  private function createClient(array $httpClientConfig): Client
+  {
+    /** @var HandlerStack $handlerStack */
+    $handlerStack = $httpClientConfig['handler'] ?? HandlerStack::create();
+
+    $this->attachRetryMiddleware($handlerStack);
+
+    return new Client(array_merge($httpClientConfig, [
+      'handler' => $handlerStack,
+    ]));
+  }
+
+  private function attachRetryMiddleware(HandlerStack $handlerStack): void
+  {
+    $maxRetries = 1;
+    $millisecondsToWait = 1000;
+
+    $statusCodeToRetryFrom = 400;
+    $statusCodeToRetryTo = 403;
+
+    $shallWeRetryDecisionFunction = function (
+      int $retries,
+      Request $request,
+      Response $response = null,
+      RequestException $exception = null
+    ) use ($maxRetries, $statusCodeToRetryFrom, $statusCodeToRetryTo) {
+      if ($retries >= $maxRetries) {
+        return false;
+      }
+
+      if ($response instanceof Response) {
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode >= $statusCodeToRetryFrom && $statusCode <= $statusCodeToRetryTo) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    $handlerStack->push(
+      Middleware::retry($shallWeRetryDecisionFunction, fn () => $millisecondsToWait)
+    );
   }
 
   public function setAccessTokenValue(string $token)
@@ -41,11 +91,11 @@ class RequestMaker implements RequestLoggerAwareInterface
   /**
    * @param string $method
    * @param string $fullUrlToEndpoint
-   * @param array  $options
-   *
-   * @throws PinterestRequestException
+   * @param array $options
    *
    * @return ResponseInterface
+   *
+   * @throws PinterestRequestException
    */
   private function execute(string $method, string $fullUrlToEndpoint, array $options = []): ResponseInterface
   {
@@ -56,11 +106,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
     $effectiveOptions = array_merge(
       [
-        RequestOptions::HEADERS         => $headers,
+        RequestOptions::HEADERS => $headers,
         RequestOptions::CONNECT_TIMEOUT => 20,
-        RequestOptions::TIMEOUT         => 90,
-        RequestOptions::VERIFY          => false,
-        RequestOptions::HTTP_ERRORS     => true,
+        RequestOptions::TIMEOUT => 90,
+        RequestOptions::VERIFY => false,
+        RequestOptions::HTTP_ERRORS => true,
       ],
       $options
     );
@@ -80,11 +130,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array  $queryParameters
-   *
-   * @throws PinterestRequestException
+   * @param array $queryParameters
    *
    * @return ResponseInterface
+   *
+   * @throws PinterestRequestException
    */
   public function get(string $fullUrlToEndpoint, array $queryParameters = []): ResponseInterface
   {
@@ -99,11 +149,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array  $parameters
-   *
-   * @throws PinterestRequestException
+   * @param array $parameters
    *
    * @return ResponseInterface
+   *
+   * @throws PinterestRequestException
    */
   public function post(string $fullUrlToEndpoint, array $parameters = []): ResponseInterface
   {
@@ -118,11 +168,11 @@ class RequestMaker implements RequestLoggerAwareInterface
 
   /**
    * @param string $fullUrlToEndpoint
-   * @param array  $parameters
-   *
-   * @throws PinterestRequestException
+   * @param array $parameters
    *
    * @return ResponseInterface
+   *
+   * @throws PinterestRequestException
    */
   public function put(string $fullUrlToEndpoint, array $parameters = []): ResponseInterface
   {

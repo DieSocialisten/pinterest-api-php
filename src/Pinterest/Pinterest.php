@@ -12,7 +12,6 @@ use DirkGroenen\Pinterest\Endpoints\Users;
 use DirkGroenen\Pinterest\Exceptions\PinterestConfigurationException;
 use DirkGroenen\Pinterest\Loggers\RequestLoggerInterface;
 use DirkGroenen\Pinterest\Transport\RequestMaker;
-use GuzzleHttp\Client;
 
 /**
  * @property Boards boards
@@ -38,7 +37,7 @@ class Pinterest
     string $clientSecret,
     array $httpClientConfig = []
   ) {
-    $this->requestMaker = new RequestMaker(new Client($httpClientConfig));
+    $this->requestMaker = new RequestMaker($httpClientConfig);
     $this->auth = new PinterestOAuth($clientId, $clientSecret, $this->requestMaker);
   }
 

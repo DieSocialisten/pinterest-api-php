@@ -20,9 +20,9 @@ class PinterestMockFactory
    */
   public static function parseAnnotationsAndCreatePinterestMock(TestCase $testCase): Pinterest
   {
-    $httpClient = HttpClientMockFactory::parseAnnotationsAndCreate($testCase);
+    $httpClientConfig = HttpClientMockFactory::parseAnnotationsAndCreate($testCase);
 
-    $pinterest = new Pinterest('0', '0', $httpClient);
+    $pinterest = new Pinterest('0', '0', $httpClientConfig);
     $pinterest->getAuthComponent()->setAccessTokenValue('0');
 
     return $pinterest;
